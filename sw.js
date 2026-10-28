@@ -40,6 +40,10 @@ self.addEventListener("activate", (event) =>
   ),
 );
 self.addEventListener("fetch", (event) => {
+  // Development studies are independent pages, never the cached production shell.
+  const prototypePath = new URL("./public/mouth-prototype/", self.location.href)
+    .pathname;
+  if (new URL(event.request.url).pathname.startsWith(prototypePath)) return;
   if (
     event.request.method === "GET" &&
     new URL(event.request.url).origin === self.location.origin

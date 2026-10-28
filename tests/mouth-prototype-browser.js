@@ -67,6 +67,9 @@ try {
     }),
     errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
+  // Exercise navigation from the installed production offline worker as well.
+  await page.goto("http://localhost:5188/freakshow-projection/");
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   await page.goto(
     "http://localhost:5188/freakshow-projection/public/mouth-prototype/index.html",
   );

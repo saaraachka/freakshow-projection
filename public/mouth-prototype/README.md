@@ -2,7 +2,7 @@
 
 Review prototype only. The production renderer, clown artwork, audio analysis, and Song Lab are not imported or changed.
 
-Open `public/mouth-prototype/index.html` through the existing development server or GitHub Pages. The existing build copies this directory without changing the production entry point. This page does not register a service worker or load external libraries.
+Open `public/mouth-prototype/index.html` through the existing development server or GitHub Pages. The existing build copies this directory without changing the production entry point. This page does not register a service worker or load external libraries. The production offline worker has a path-only exception for this directory, so it cannot substitute the cached production shell for the development page. No production rendering or audio code is changed.
 
 ## Construction
 
