@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js";
+import { createProceduralHead } from "./procedural-head.js?anatomy=1";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -117,7 +117,7 @@ requestAnimationFrame(draw);
 canvas.dataset.modelLoaded = "true";
 canvas.dataset.modelSource = "procedural-code";
 $("status").textContent =
-  "Procedural clown · continuous skull/face surface · 24 rigid teeth · geometric spiral curls. No image assets.";
+  "Anatomy refinement · continuous skull, sockets, lips and chin · 24 rigid teeth · irregular tapered curl strands. No image assets.";
 window.assetViewer = {
   renderer,
   scene,

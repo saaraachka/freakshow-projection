@@ -1,25 +1,36 @@
-# Procedural 3D clown — anatomy review
+# Procedural 3D clown — structural refinement
 
-Open `index.html`. A visible Three.js character is generated immediately by `procedural-head.js`; no upload, GLB, external model service, illustration texture, sprite or production renderer is involved. Production FREAKSHOW is unchanged.
+Use the same `index.html` viewer and orbit/zoom controls. This development route is isolated from production FREAKSHOW. It uses only generated geometry: no illustration, plane, sprite, GLB or external model service. Lighting, camera presets, orbit controls and quality options remain unchanged for comparison.
 
-## Modeled geometry
+## Anatomy
 
-The skin is one indexed polygon mesh continuing from lip border through cheeks, sculpted socket recesses, brow and nose-bridge volumes, forehead, jawline and chin, around the sides to the rear skull. An annular front topology preserves loops around the oral aperture. A continuous oral wall starts at the exact aperture boundary and recesses into a throat volume. Rounded lip geometry follows the same boundary. Lower-face deformation uses spatial hinge weights; lower crowns, gum ridge and tongue use one shared rigid jaw rotation. Each of the 24 crowns retains its vertices and dimensions when the jaw opens.
+`implicit-skin.js` defines a continuous solid containing the reduced frontal/occipital vault, temples, orbital mounds, cheekbones, maxilla, mandibular body, chin, nose bridge and clown nose. Smooth unions blend those volumes. Recessed sockets and an oral cavity are cut into that same solid. Marching tetrahedra extracts one indexed, connected skin surface; normals come from the scalar-field gradient. The lip relief, mouth corners and nasolabial tension belong to this skin, rather than separate lip or eyelid tubes. There is no separate chin or neck ball. The head finishes in a continuous mandibular/submental surface.
 
-Eyes are solid eyeballs with separate iris and pupil meshes, surrounded by curved upper/lower lid volumes. The clown nose protrudes from the modeled bridge. Ear pinnae have a recessed bowl, raised outer helix, front and rear surfaces. Hair consists of dimensional spiral tubes merged into one draw mesh, with a modeled scalp surface beneath the rear curls. All surfaces use untextured clay materials and simple studio lights.
+The white globes sit inside the orbital recesses, behind the surrounding lid surface. Green irises and black pupils remain actual small dimensional lens surfaces. The red nose is part of the skin solid and blends into the bridge and alae. Its maximum forward extent and that of the eye volumes are reduced from the previous model. Pinnae have pointed upper helices, conchal bowls, antihelix folds, rear surfaces and thickness; their medial sections embed in the modeled temporal/mastoid roots. The ear shells are separate overlapping meshes, not a fully welded ear retopology.
 
-## This stage and its limits
+The oral cut extends behind the teeth and includes an inner wall and back surface. Both gum arches now sit behind the facial border, so the lower ridge does not read as an external tube. All 24 crowns remain rigid. The lower teeth, gum ridge and tongue share a physical jaw hinge; a spatially weighted deformation moves the corresponding continuous skin and oral wall. Relaxed and asymmetric contours alter cheek/corner tension on the same topology. These are development studies, not a finished FACS or speech rig.
 
-The default is a wide tooth-bearing grin. The contour selector offers a relaxed smile and asymmetric smirk study. These currently recompute the same skin topology; they are not a completed library of artist-reviewed morph targets. Jaw deformation is geometric weighting plus a rigid lower-arch transform. The topology/rig organization supports future lip, cheek and expression work, but no music-reactive controller or vintage ink shader is connected.
+## Hair
 
-This is an initial procedural anatomical study, not a finished sculpt or an assertion of anatomical accuracy. Ear-root blending, orbital/lid transitions, mouth-corner thickness, chin movement at large openings, posterior dental arch alignment and curl grooming remain refinement targets. Eyelids and pinnae are separate modeled surfaces that overlap the skin at their attachment, not yet a fully welded retopology. The lip loop follows the aperture but is also a separate volume. The rear skull is genuine mesh geometry, not a backdrop.
+The groom contains 762 deterministic, open 3D strands. Each varies radius, taper, thickness, handedness, turn count, orientation and drift. Coils progress along a local scalp tangent instead of circling one root like a torus. Sideburn locks and wisps change the silhouette. Color variation uses ordinary untextured standard materials; there is no NPR shader. Scalp color under the overlapping strands is part of the skin mesh, with an irregular receding boundary. The groom is merged for drawing and remains a volume from the rear and underside.
 
-Inspect front, three-quarter, side, back, underside and jaw-open images in `review/`. Rotate the live head through 360°, pinch/scroll to zoom, or reset the camera. The wireframe and hair visibility controls expose geometry for inspection.
+## Review and checks
 
-## Rendering and verification
+`review/index.html` shows front, three-quarter, side, back, underside and jaw-open renders. Each required view includes the previous geometry for comparison with identical camera and lighting presets. The WebKit/iPhone-viewport screenshot and `checks.json` record current verification. Screenshots are evidence of this geometry, not approval of the sculpt.
 
-The viewer only draws when the camera, pose, size or controls change; idle rendering pauses. The displayed metric is draws per second, not a continuous animation benchmark. Pixel ratio is capped at 2, with a DPR-1 option. This saves idle GPU work but does not establish sustained iPhone performance.
+```sh
+PAGES_BASE=/freakshow-projection/ npm run build
+node tests/sculpted-viewer-browser.js
+```
 
-Run `PAGES_BASE=/freakshow-projection/ npm run build`, then `node tests/sculpted-viewer-browser.js`. Set `FREAKSHOW_WEBKIT_EXECUTABLE` to include WebKit. Set `FREAKSHOW_BASE_URL=https://saaraachka.github.io/freakshow-projection/` to verify the published route. Tests check generated mesh rendering, required views, rigid crown vertices under jaw rotation, mobile width, and absence of image/model requests. WebKit viewport checks are not physical iPhone Safari testing.
+Set `FREAKSHOW_WEBKIT_EXECUTABLE` to a supported Playwright WebKit executable to include WebKit. Set `FREAKSHOW_BASE_URL=https://saaraachka.github.io/freakshow-projection/` to check the deployed route without a local server. The focused test checks:
 
-No model approval or production integration is implied by test success.
+- One connected skin component, finite matching geometry attributes and unit normals.
+- No separate lip, lid, chin or neck meshes; bounded eye/nose projection.
+- Open, varied, oppositely wound hair strands and an unchanged rigid crown arrangement through jaw deformation.
+- All required camera views, real rendered pixels, mobile layout, orbit/zoom and jaw controls.
+- No illustration/model requests, failed assets or application console errors.
+
+Rendering pauses when idle. Mesh generation is synchronous once per page load (the measured generation time is in the report); pose changes update existing buffers. This higher-detail study has roughly 423,000 visible triangles. Use the existing **Lower cost · DPR 1** option if needed on a phone. WebKit viewport checks use software WebGL in this cloud and do not establish physical iPhone Safari frame rate or thermal performance. Actual device review remains necessary.
+
+Production application files, audio detection and reaction code are unchanged. No production integration or NPR work is included.

@@ -1,7 +1,188 @@
 {
-  "engine": "webkit",
-  "errors": [],
-  "teeth": 24,
-  "source": "procedural-code",
+  "revision": "anatomy-refinement-1",
+  "runs": [
+    {
+      "engine": "chromium",
+      "structure": {
+        "components": 1,
+        "finite": true,
+        "attributesMatch": true,
+        "normalRange": [
+          0.9999999536830665,
+          1.0000000470634827
+        ],
+        "skinBounds": {
+          "isBox3": true,
+          "min": {
+            "x": -1.079708218574524,
+            "y": -1.1648452281951904,
+            "z": -0.949999988079071
+          },
+          "max": {
+            "x": 1.079708218574524,
+            "y": 1.1399478912353516,
+            "z": 0.9096617102622986
+          }
+        },
+        "meshNames": [
+          "ContinuousSkullCheeksChinJaw",
+          "UpperTooth0",
+          "UpperTooth1",
+          "UpperTooth2",
+          "UpperTooth3",
+          "UpperTooth4",
+          "UpperTooth5",
+          "UpperTooth6",
+          "UpperTooth7",
+          "UpperTooth8",
+          "UpperTooth9",
+          "UpperTooth10",
+          "UpperTooth11",
+          "MaxillaryGingiva",
+          "PalatalVault",
+          "LowerTooth0",
+          "LowerTooth1",
+          "LowerTooth2",
+          "LowerTooth3",
+          "LowerTooth4",
+          "LowerTooth5",
+          "LowerTooth6",
+          "LowerTooth7",
+          "LowerTooth8",
+          "LowerTooth9",
+          "LowerTooth10",
+          "LowerTooth11",
+          "MandibularGingiva",
+          "Tongue",
+          "RecessedEyeball",
+          "Iris",
+          "Pupil",
+          "LeftPinna",
+          "RecessedEyeball",
+          "Iris",
+          "Pupil",
+          "RightPinna",
+          "OverlappingTaperedCurlyStrands"
+        ],
+        "faceVertices": 73589,
+        "generationMs": 4137.89999999851,
+        "revision": "anatomy-refinement-1",
+        "hairStrands": 762,
+        "curlRadiusRange": [
+          0.032076043978333475,
+          0.15262579789276015
+        ],
+        "thicknessRange": [
+          0.005684485320885068,
+          0.04819617666597304
+        ],
+        "openStrands": true,
+        "bothDirections": true,
+        "eyeFront": 0.6400000017881393
+      },
+      "mobile": {
+        "fits": true,
+        "dpr": 1,
+        "webgl2": true,
+        "range": 223,
+        "generationMs": 2821.1999999955297,
+        "triangles": 423108
+      },
+      "errors": [],
+      "assetFailures": [],
+      "physicalIPhoneTested": false
+    },
+    {
+      "engine": "webkit",
+      "structure": {
+        "components": 1,
+        "finite": true,
+        "attributesMatch": true,
+        "normalRange": [
+          0.9999999536830665,
+          1.0000000470634827
+        ],
+        "skinBounds": {
+          "isBox3": true,
+          "min": {
+            "x": -1.079708218574524,
+            "y": -1.1648452281951904,
+            "z": -0.949999988079071
+          },
+          "max": {
+            "x": 1.079708218574524,
+            "y": 1.1399478912353516,
+            "z": 0.9096617102622986
+          }
+        },
+        "meshNames": [
+          "ContinuousSkullCheeksChinJaw",
+          "UpperTooth0",
+          "UpperTooth1",
+          "UpperTooth2",
+          "UpperTooth3",
+          "UpperTooth4",
+          "UpperTooth5",
+          "UpperTooth6",
+          "UpperTooth7",
+          "UpperTooth8",
+          "UpperTooth9",
+          "UpperTooth10",
+          "UpperTooth11",
+          "MaxillaryGingiva",
+          "PalatalVault",
+          "LowerTooth0",
+          "LowerTooth1",
+          "LowerTooth2",
+          "LowerTooth3",
+          "LowerTooth4",
+          "LowerTooth5",
+          "LowerTooth6",
+          "LowerTooth7",
+          "LowerTooth8",
+          "LowerTooth9",
+          "LowerTooth10",
+          "LowerTooth11",
+          "MandibularGingiva",
+          "Tongue",
+          "RecessedEyeball",
+          "Iris",
+          "Pupil",
+          "LeftPinna",
+          "RecessedEyeball",
+          "Iris",
+          "Pupil",
+          "RightPinna",
+          "OverlappingTaperedCurlyStrands"
+        ],
+        "faceVertices": 73589,
+        "generationMs": 3318.0000000000005,
+        "revision": "anatomy-refinement-1",
+        "hairStrands": 762,
+        "curlRadiusRange": [
+          0.032076043978333475,
+          0.15262579789276015
+        ],
+        "thicknessRange": [
+          0.005684485320885068,
+          0.04819617666597304
+        ],
+        "openStrands": true,
+        "bothDirections": true,
+        "eyeFront": 0.6400000017881393
+      },
+      "mobile": {
+        "fits": true,
+        "dpr": 1,
+        "webgl2": true,
+        "range": 223,
+        "generationMs": 2500,
+        "triangles": 423108
+      },
+      "errors": [],
+      "assetFailures": [],
+      "physicalIPhoneTested": false
+    }
+  ],
   "physicalIPhoneTested": false
 }
