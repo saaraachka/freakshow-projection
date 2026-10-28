@@ -26,6 +26,7 @@ export class CharacterMotion {
     this.speech = "closed";
     this.strength = 1;
     this.pupil = 0;
+    this.gaze = { x: 0, y: 0, idle: 1 };
     this.lastTime = null;
   }
   step(state, controls = {}) {
@@ -87,15 +88,19 @@ export class CharacterMotion {
       this.params[key] += (target[key] - this.params[key]) * alpha;
     const dilation = controls.pupil == null ? state.eyeAccent : controls.pupil;
     this.pupil += (clamp(dilation) - this.pupil) * (1 - Math.exp(-dt / 0.018));
+    const gazeAlpha = 1 - Math.exp(-dt / 0.12);
+    this.gaze.x += ((controls.gazeX ?? 0) - this.gaze.x) * gazeAlpha;
+    this.gaze.y += ((controls.gazeY ?? 0) - this.gaze.y) * gazeAlpha;
+    this.gaze.idle += ((controls.gazeIdle ?? 1) - this.gaze.idle) * gazeAlpha;
     return {
       params: { ...this.params },
       speech,
       opening,
       pupil: this.pupil,
       emotion,
-      gazeX: controls.gazeX ?? 0,
-      gazeY: controls.gazeY ?? 0,
-      gazeIdle: controls.gazeIdle ?? 1,
+      gazeX: this.gaze.x,
+      gazeY: this.gaze.y,
+      gazeIdle: this.gaze.idle,
       source: APPROVED_RIG_SOURCE,
       note: this.count,
     };

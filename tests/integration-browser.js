@@ -131,6 +131,14 @@ try {
       );
     });
   }
+  await page.locator('[data-mode="studio"]').click();await page.locator('#meshSpeech').selectOption('closed');await page.locator('#rigGaze').selectOption('left');await page.locator('#rigPupil').selectOption('0');
+  await page.waitForTimeout(700);
+  const resting=await page.evaluate(async()=>{const {approvedStatus}=await import('./src/approved-character.js');return approvedStatus(document.querySelector('#preview'));});
+  await page.locator('#rigPupil').selectOption('1');await page.waitForTimeout(250);
+  const dilated=await page.evaluate(async()=>{const {approvedStatus}=await import('./src/approved-character.js');return approvedStatus(document.querySelector('#preview'));});
+  assert.equal(resting.irisRadius,dilated.irisRadius);assert.ok(dilated.pupilRadius>resting.pupilRadius+7);assert.ok(Math.abs(resting.gaze.x-dilated.gaze.x)<.1);
+  await page.locator('#preview').screenshot({path:'artifacts/integration/pupil-dilation.png'});
+  await page.locator('#rigPupil').selectOption('animated');await page.locator('#rigGaze').selectOption('idle');
   assert.deepEqual(errors, []);
   console.log(
     "Stage 1: actual approved mesh, legacy fallback, full expression controls and narrow viewport render without runtime errors.",

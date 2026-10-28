@@ -87,3 +87,43 @@ test("pupil dilation returns to rest and does not alter the shared gaze", () => 
     dilated = gazeTarget(9, { gazeIdle: 1, pupil: 1 });
   assert.deepEqual(resting, dilated);
 });
+
+test("kick-driven pupil pulses leave mouth and shared gaze independent", () => {
+  const kick = {
+    duration: 1.5,
+    sampleRate: 44100,
+    tones: [0.3, 0.8].map((start) => ({
+      start,
+      end: start + 0.1,
+      frequency: 80,
+      amplitude: 0.8,
+    })),
+  };
+  const frames = addRigMotion(simulate(analyzePCM(synthesize(kick))));
+  assert.equal(
+    frames.flatMap((f) => f.events).filter((e) => e.kind === "eye").length,
+    2,
+  );
+  assert.ok(frames.every((f) => f.anatomy.params.jaw === 0));
+  assert.ok(frames.some((f) => f.anatomy.pupil > 0.15));
+  assert.ok(frames.at(-1).anatomy.pupil < 0.001);
+  for (const f of frames)
+    assert.deepEqual(
+      gazeTarget(f.time, { ...f.anatomy, pupil: 0 }),
+      gazeTarget(f.time, { ...f.anatomy, pupil: 1 }),
+    );
+});
+test("manual gaze changes ease toward one target without depending on pupil state", () => {
+  const a = new CharacterMotion(),
+    b = new CharacterMotion();
+  let first;
+  for (let i = 0; i < 90; i++) {
+    const state = { time: i / 60, events: [], eyeAccent: 0 };
+    const x = a.step(state, { gazeX: 1, gazeIdle: 0, pupil: 0 }),
+      y = b.step(state, { gazeX: 1, gazeIdle: 0, pupil: 1 });
+    if (i === 0) first = x;
+    assert.equal(x.gazeX, y.gazeX);
+    assert.equal(x.gazeY, y.gazeY);
+  }
+  assert.ok(first.gazeX > 0 && first.gazeX < 0.2);
+});

@@ -225,6 +225,8 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
     economy,
     gaze,
     pupil: state.anatomy?.pupil ?? 0,
+    irisRadius: 20,
+    pupilRadius: 5 + 9 * (state.anatomy?.pupil ?? 0),
     headBounds: { width: 900 * scale, height: 1000 * scale },
     stage,
   };
