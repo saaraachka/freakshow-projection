@@ -59,3 +59,13 @@ The service worker uses a versioned app-shell cache. Increment `CACHE` in `sw.js
 The v4 selective thresholds, adaptive baselines, cooldowns, continuous eye/jaw drive, idle artwork, and motion envelopes remain the baseline. Detection now advances at a fixed cadence instead of requestAnimationFrame. Replay/seek uses precomputed states, eliminating seek history and display-rate dependence. Microphone input uses the same feature extractor and engine at 60 Hz. Browser audio decoders can differ slightly across platforms; deterministic regression exports pin the extracted features. The old exaggeration selector computed a scale without applying it; v5 applies the chosen expression strength while preserving the original extreme setting as default. Random demo timing is replaced by a repeatable rehearsal. Automatic scene cycling and the OS setup wizard are omitted in favor of explicit scene choices and browser-native device access.
 
 No strobe is used. Test projector placement and playback conditions on the intended hardware before a show.
+
+## Persistent GitHub Pages preview
+
+The `Deploy FREAKSHOW preview` workflow builds and tests `main`, then publishes `dist/` to GitHub Pages. No third-party hosting account or deployment secret is required.
+
+One-time repository setup: open **Settings → Pages → Build and deployment → Source**, choose **GitHub Actions**, and save if prompted. In **Actions → Deploy FREAKSHOW preview**, choose **Run workflow** on `main` if the initial push ran before Pages was enabled. Approve the `github-pages` deployment if your repository's environment rules require it.
+
+After a successful deployment, the expected address is `https://saaraachka.github.io/freakshow-projection/`. Use the URL reported by the successful GitHub Actions deployment as the authoritative live address. Subsequent pushes to `main` rebuild it automatically. This is the production app with offline caching, microphone support over HTTPS, and a separate projector window; it requires no download. Enable popups and microphone access in your browser when testing Live Show.
+
+The Codex cloud workspace and desktop browser panel do not necessarily share localhost. If the cloud server returns HTTP 200 but the panel reports connection refused, use a platform-provided forwarded URL when available or the Pages preview above. Restarting the healthy server does not create a tunnel.
