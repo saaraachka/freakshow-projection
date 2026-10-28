@@ -53,7 +53,7 @@ test("presentation filtering preserves detection results and reproduces seek pos
   );
 });
 test("every inspection expression uses the same canonical incisors and fangs", () => {
-  assert.equal(Object.keys(RIG_POSES).length, 7);
+  assert.equal(Object.keys(RIG_POSES).length, 6);
   assert.equal(DENTITION.upper.incisors, 2);
   assert.equal(DENTITION.upper.fangs, 2);
   for (const pose of Object.keys(RIG_POSES)) {
@@ -61,6 +61,6 @@ test("every inspection expression uses the same canonical incisors and fangs", (
     let output;
     for (let i = 0; i < 60; i++) output = rig.step(state(), { pose });
     assert.ok(Math.abs(output.rig.mouth - RIG_POSES[pose].mouth) < 1e-12);
-    assert.equal(mouthPose(output.rig.mouth).teethScale, 0.73);
+    assert.equal(mouthPose(output.rig.mouth).teethScale, 0.55);
   }
 });

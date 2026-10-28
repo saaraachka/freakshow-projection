@@ -1,34 +1,104 @@
-// Presentation-only, fixed-step smoothing. This never detects or schedules audio events.
+// Presentation only: no audio detection or scheduling changes.
 export const RIG_POSES = Object.freeze({
-  closed: { mouth: 0, width: 1, tongue: 0 },
-  small: { mouth: 0.22, width: 1, tongue: 0 },
-  wide: { mouth: 0.83, width: 1, tongue: 0 },
-  round: { mouth: 0.7, width: 0.62, tongue: 0 },
-  stretched: { mouth: 0.42, width: 1.12, tongue: 0 },
-  tongue: { mouth: 0.9, width: 1, tongue: 1 },
-  extreme: { mouth: 1, width: 1.04, tongue: 0 },
+  closed: {
+    mouth: 0,
+    span: 112,
+    top: 325,
+    bottom: 325,
+    corner: 326,
+    curl: 1,
+    bow: 2,
+    cheek: 0.9,
+    jaw: 0,
+    jawWidth: 0,
+  },
+  o: {
+    mouth: 0.66,
+    span: 57,
+    top: 310,
+    bottom: 363,
+    corner: 331,
+    curl: 16,
+    bow: 0,
+    cheek: 1.05,
+    jaw: 5,
+    jawWidth: -2,
+  },
+  a: {
+    mouth: 0.82,
+    span: 112,
+    top: 313,
+    bottom: 376,
+    corner: 329,
+    curl: 5,
+    bow: 2,
+    cheek: 0.95,
+    jaw: 9,
+    jawWidth: 1,
+  },
+  e: {
+    mouth: 0.42,
+    span: 147,
+    top: 322,
+    bottom: 348,
+    corner: 328,
+    curl: 1,
+    bow: 0,
+    cheek: 0.8,
+    jaw: 2,
+    jawWidth: 3,
+  },
+  grin: {
+    mouth: 0.54,
+    span: 152,
+    top: 321,
+    bottom: 355,
+    corner: 311,
+    curl: 0,
+    bow: -5,
+    cheek: 0.84,
+    jaw: 3,
+    jawWidth: 4,
+  },
+  scream: {
+    mouth: 1,
+    span: 124,
+    top: 302,
+    bottom: 385,
+    corner: 331,
+    curl: 12,
+    bow: 1,
+    cheek: 1.1,
+    jaw: 12,
+    jawWidth: -1,
+  },
 });
+export function interpolatePose(a, b, t) {
+  t = Math.max(0, Math.min(1, t || 0));
+  return Object.fromEntries(
+    Object.keys(a).map((k) => [k, a[k] + (b[k] - a[k]) * t]),
+  );
+}
 export class RigMotion {
   constructor() {
     this.reset();
   }
   reset() {
-    this.fast = { mouth: 0, eye: 0, width: 1, tongue: 0 };
+    this.fast = { ...RIG_POSES.closed, eye: 0 };
     this.smooth = { ...this.fast };
   }
   step(state, preview = null) {
     const pose =
       preview?.pose === "custom"
-        ? { mouth: preview.amount, width: 1, tongue: 0 }
+        ? interpolatePose(RIG_POSES.closed, RIG_POSES.a, preview.amount)
         : RIG_POSES[preview?.pose];
     const target = {
-      mouth: pose?.mouth ?? state.mouthAccent,
+      ...(pose ??
+        interpolatePose(RIG_POSES.closed, RIG_POSES.a, state.mouthAccent)),
       eye: state.eyeAccent,
-      width: pose?.width ?? 1,
-      tongue: pose?.tongue ?? 0,
     };
+    const alpha = 1 - Math.exp(-(1 / 60) / 0.025);
     for (const key of Object.keys(target)) {
-      const alpha = 1 - Math.exp(-(1 / 60) / 0.025);
       this.fast[key] += (target[key] - this.fast[key]) * alpha;
       this.smooth[key] += (this.fast[key] - this.smooth[key]) * alpha;
     }

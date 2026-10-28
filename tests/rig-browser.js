@@ -41,7 +41,7 @@ try {
     fullPage: true,
   });
   const closed = await page.locator("#preview").evaluate((c) => c.toDataURL());
-  await page.locator("#rigPose").selectOption("extreme");
+  await page.locator("#rigPose").selectOption("scream");
   await page.waitForTimeout(500);
   const open = await page.locator("#preview").evaluate((c) => c.toDataURL());
   assert.notEqual(open, closed);
@@ -110,10 +110,11 @@ try {
       c.fillText(name.toUpperCase(), column * 360 + 12, row * 550 + 23);
       index++;
     }
-    const upper = records[0].teeth.find((t) => t.source.width === 226),
-      lower = records[0].teeth.find((t) => t.source.width === 195);
+    const upper = records[2].teeth.find((t) => t.source.width === 226),
+      lower = records[2].teeth.find((t) => t.source.width === 195);
     return records.map((r) => ({
       name: r.name,
+      closed: r.name === "closed",
       upperSame:
         r.teeth.find((t) => t.source.width === 226)?.source === upper.source,
       lowerSame:
@@ -121,18 +122,65 @@ try {
       sizes: r.teeth.map((t) => [t.width, t.height]),
     }));
   });
-  assert.equal(geometry.length, 7);
+  assert.equal(geometry.length, 6);
   for (const pose of geometry) {
+    if (pose.closed) {
+      assert.deepEqual(pose.sizes, []);
+      continue;
+    }
     assert.ok(
       pose.upperSame && pose.lowerSame,
       pose.name + " must reuse identical tooth textures",
     );
-    assert.deepEqual(pose.sizes, geometry[0].sizes);
+    assert.deepEqual(pose.sizes, geometry[2].sizes);
   }
   await page
     .locator("#rigContact")
     .screenshot({ path: "artifacts/approved-rig-contact-sheet.png" });
   await page.locator("#rigContact").evaluate((c) => c.remove());
+  await page.evaluate(async () => {
+    const { drawClownRig } = await import("./src/clown-rig.js");
+    const { RIG_POSES, interpolatePose } = await import("./src/rig-motion.js");
+    const c = document.createElement("canvas");
+    c.id = "mouthMatrix";
+    c.width = 1500;
+    c.height = 1200;
+    Object.assign(c.style, { position: "fixed", inset: 0, zIndex: 9999 });
+    document.body.append(c);
+    const x = c.getContext("2d");
+    x.fillStyle = "#e9d9bf";
+    x.fillRect(0, 0, 1500, 1200);
+    let row = 0;
+    for (const [name, pose] of Object.entries(RIG_POSES)) {
+      for (let col = 0; col < 5; col++) {
+        const stage = document.createElement("canvas");
+        stage.width = 1280;
+        stage.height = 720;
+        const p = interpolatePose(RIG_POSES.closed, pose, col / 4);
+        drawClownRig(stage.getContext("2d"), { rig: p }, { idle: "still" }, 0);
+        x.drawImage(
+          stage,
+          480,
+          420,
+          320,
+          210,
+          col * 300,
+          row * 200 + 25,
+          300,
+          170,
+        );
+        x.fillStyle = "#211b18";
+        x.font = "16px Georgia";
+        x.fillText(name + " " + col * 25 + "%", col * 300 + 10, row * 200 + 20);
+      }
+      row++;
+    }
+  });
+  await page
+    .locator("#mouthMatrix")
+    .screenshot({ path: "artifacts/mouth-matrix.png" });
+  await page.locator("#mouthMatrix").evaluate((c) => c.remove());
+
   await page.locator("#rigMouth").fill("0.5");
   await page.waitForTimeout(300);
   assert.equal(await page.locator("#rigPose").inputValue(), "custom");
@@ -146,7 +194,7 @@ try {
   });
   assert.deepEqual(errors, []);
   console.log(
-    "Rig browser checks passed: approved image loads under Pages path and offline; seven rendered poses share identical tooth sprites and dimensions; manual and triggered preview work; no console/asset errors.",
+    "Rig browser checks passed: approved image loads under Pages path and offline; six rendered poses share identical tooth sprites and dimensions; manual and triggered preview work; no console/asset errors.",
   );
 } catch (error) {
   console.error(error);
