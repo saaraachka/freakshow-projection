@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>FREAKSHOW · Sculpted 3D asset viewer</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #191d24;
+        color: #eee9df;
+        font: 15px system-ui;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        min-height: 100svh;
+      }
+      #stage {
+        position: relative;
+        height: 100svh;
+        min-height: 400px;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+      }
+      header {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        pointer-events: none;
+      }
+      h1 {
+        font-size: 19px;
+        margin: 0 0 8px;
+      }
+      header p {
+        margin: 0;
+        color: #b7bec8;
+      }
+      aside {
+        padding: 22px;
+        background: #242a34;
+      }
+      p,
+      small {
+        line-height: 1.5;
+        color: #bdc6d2;
+      }
+      label {
+        display: block;
+        margin: 20px 0 7px;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      button,
+      select {
+        padding: 9px;
+        background: #394455;
+        border: 1px solid #69778b;
+        color: white;
+        border-radius: 5px;
+      }
+      select,
+      input[type="range"] {
+        width: 100%;
+      }
+      button {
+        cursor: pointer;
+        margin: 4px 0;
+      }
+      button:disabled,
+      select:disabled,
+      input:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      #empty {
+        position: absolute;
+        inset: 20%;
+        display: grid;
+        align-content: center;
+        pointer-events: none;
+        max-width: 520px;
+      }
+      #empty h2 {
+        font-size: 24px;
+      }
+      #status {
+        overflow-wrap: anywhere;
+      }
+      #metrics {
+        position: absolute;
+        bottom: 15px;
+        left: 20px;
+        font: 12px monospace;
+        color: #bcc4d1;
+      }
+      #views {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      a {
+        color: #e0c18a;
+      }
+      input[type="file"] {
+        width: 100%;
+        color: #c9d1dd;
+      }
+      small {
+        display: block;
+        margin-top: 15px;
+      }
+      @media (max-width: 700px) {
+        main {
+          display: block;
+        }
+        #stage {
+          height: 68svh;
+          min-height: 400px;
+        }
+        #empty {
+          inset: 22% 8%;
+        }
+        aside {
+          padding: 18px;
+        }
+        header {
+          left: 14px;
+          top: 14px;
+        }
+        h1 {
+          font-size: 17px;
+        }
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../character-3d/vendor/three.module.js",
+          "three/addons/controls/OrbitControls.js": "../character-3d/vendor/OrbitControls.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <section id="stage">
+        <header>
+          <h1>FREAKSHOW / Sculpted 3D asset viewer</h1>
+          <p>Separate development route · production unchanged</p>
+        </header>
+        <canvas id="scene" aria-label="Orbitable GLB character viewer"></canvas>
+        <div id="empty">
+          <h2>A sculpted character asset is required.</h2>
+          <p>
+            No approved organic 3D clown model is available here. This viewer
+            deliberately contains no illustrated head, textured plane, sprite,
+            or primitive substitute.
+          </p>
+          <p>
+            Load a modeled and rigged GLB exported from Blender to inspect its
+            actual geometry.
+          </p>
+        </div>
+        <div id="metrics">Initializing WebGL…</div>
+      </section>
+      <aside>
+        <h2>Model inspection</h2>
+        <p>
+          Drag to orbit through 360°. Pinch or scroll to zoom. Use the underside
+          and back views to inspect volume.
+        </p>
+        <label for="asset">Load a local GLB</label
+        ><input id="asset" type="file" accept=".glb,model/gltf-binary" />
+        <p id="status" role="status">
+          Waiting for a modeled character. Files stay on your device.
+        </p>
+        <button id="reset" disabled>Reset camera</button>
+        <div id="views">
+          <button data-view="front" disabled>Front</button
+          ><button data-view="side" disabled>Side</button
+          ><button data-view="back" disabled>Back</button
+          ><button data-view="underside" disabled>Underside</button
+          ><button data-view="mouth" disabled>Mouth interior</button>
+        </div>
+        <label for="expression">Expression morph target</label
+        ><select id="expression" disabled>
+          <option>Requires a rigged model</option></select
+        ><label for="intensity">Expression intensity</label
+        ><input
+          id="intensity"
+          type="range"
+          min="0"
+          max="1"
+          value="1"
+          step=".01"
+          disabled
+        /><label for="jaw">Jaw open</label
+        ><input
+          id="jaw"
+          type="range"
+          min="0"
+          max="1"
+          value="0"
+          step=".01"
+          disabled
+        /><small id="jawStatus"
+          >Requires a jawOpen morph or a jaw bone with local X rotation.</small
+        ><label for="quality">Rendering resolution</label
+        ><select id="quality">
+          <option value="2">Sharp · DPR up to 2</option>
+          <option value="1">Lower cost · DPR 1</option></select
+        ><label
+          ><input type="checkbox" id="wire" disabled /> Inspect topology</label
+        ><small
+          >All imported surfaces use clay materials in this viewer. Image
+          textures are discarded. Expressions use the asset's real morph
+          targets; the jaw uses a morph target or skeletal rotation.</small
+        ><small
+          >The organic model and front/side/back/underside character renders are
+          still missing. A functional viewer does not establish anatomical
+          quality.</small
+        >
+        <p><a href="./ASSET-BRIEF.md">Blender asset requirements</a></p>
+      </aside>
+    </main>
+    <script type="module" src="./viewer.js"></script>
+  </body>
+</html>
