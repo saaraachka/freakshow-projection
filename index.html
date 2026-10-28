@@ -30,7 +30,7 @@
           </p>
         </div>
         <span class="version"
-          >ORIGINAL V4 ARTWORK<br />SHARED MOTION ENGINE</span
+          >APPROVED MODEL-SHEET RIG<br />SHARED MOTION ENGINE</span
         >
       </div>
       <div class="workspace">
@@ -89,6 +89,39 @@
               ><button id="triggerMouth">Trigger jaw</button
               ><button id="rehearse" class="secondary">Start rehearsal</button>
             </div>
+            <fieldset class="rig-inspector">
+              <legend>Approved character rig</legend>
+              <label for="rigPose">Inspect expression</label
+              ><select id="rigPose">
+                <option value="animated">Animated / follow triggers</option>
+                <option value="closed">Closed</option>
+                <option value="small">Small open</option>
+                <option value="wide">Wide open</option>
+                <option value="round">Round “O”</option>
+                <option value="stretched">Stretched “E”</option>
+                <option value="tongue">Tongue out</option>
+                <option value="extreme">Extreme</option>
+                <option value="custom">Manual opening</option></select
+              ><label for="rigMouth">Mouth opening</label
+              ><input
+                id="rigMouth"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0"
+              />
+              <p class="muted">
+                Every pose uses the same incisors and fangs. Selecting a pose
+                blends smoothly; triggers return to animation.
+              </p>
+              <a
+                href="Vintage%20Horror%20Clown%20Model%20Sheet.png"
+                target="_blank"
+                rel="noopener"
+                >View approved character sheet</a
+              >
+            </fieldset>
             <label for="idle">Idle character</label
             ><select id="idle">
               <option value="haunt">Slow haunt · v4</option>

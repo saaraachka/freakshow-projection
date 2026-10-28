@@ -701,3 +701,25 @@ body.projector #preview {
 #fileStatus {
   line-height: 1.5;
 }
+
+.rig-inspector {
+  border: 1px solid #5b4c41;
+  border-radius: 5px;
+  padding: 12px;
+  margin: 16px 0;
+}
+.rig-inspector legend {
+  font-size: 11px;
+  color: #dfbc76;
+  padding: 0 5px;
+}
+.rig-inspector a {
+  color: #dfbc76;
+  font-size: 11px;
+}
+.rig-inspector input {
+  width: 100%;
+}
+.rig-inspector label {
+  margin-top: 12px;
+}

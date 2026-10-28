@@ -7,10 +7,11 @@
     "dev": "node scripts/serve.js",
     "build": "node scripts/build.js",
     "preview": "node scripts/serve.js dist",
-    "test": "node --test tests/engine.test.js",
+    "test": "node --test tests/engine.test.js tests/rig.test.js",
     "test:browser": "npm run build && node tests/browser.js",
     "check-session": "node scripts/check-session.js",
-    "format": "prettier --write index.html styles.css src scripts tests README.md package.json manifest.webmanifest sw.js"
+    "format": "prettier --write index.html styles.css src scripts tests README.md package.json manifest.webmanifest sw.js",
+    "test:rig": "npm run build && node tests/rig-browser.js"
   },
   "engines": {
     "node": ">=20"

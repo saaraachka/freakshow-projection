@@ -1,4 +1,4 @@
-const CACHE = "freakshow-v5-2";
+const CACHE = "freakshow-v5-3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,6 +9,9 @@ const ASSETS = [
   "./src/analysis.js",
   "./src/analysis-worker.js",
   "./src/renderer.js",
+  "./src/clown-rig.js",
+  "./src/rig-motion.js",
+  "./Vintage%20Horror%20Clown%20Model%20Sheet.png",
   "./src/song-editor.js",
   "./src/mic-worklet.js",
   "./public/baseline-v4.html",

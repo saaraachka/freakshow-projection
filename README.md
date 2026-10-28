@@ -1,6 +1,6 @@
 # FREAKSHOW Projection Workshop
 
-A local, cross-platform web app with three workspaces and the original v4 clown artwork. Songs and microphone audio stay on your device. No account, API keys, backend, or external assets are required.
+A local, cross-platform web app with three workspaces and a rig based on the approved clown character sheet. Songs and microphone audio stay on your device. No account, API keys, backend, or external assets are required.
 
 ## Develop
 
@@ -52,7 +52,9 @@ The service worker uses a versioned app-shell cache. Increment `CACHE` in `sw.js
 - `src/analysis.js`: pure Blackman-window FFT, v4 frequency bands/gains and spectral smoothing; shared by worker and microphone PCM capture.
 - `src/analysis-worker.js`: recorded-song analysis away from the UI thread.
 - `src/mic-worklet.js`: microphone PCM windows on the audio clock, independent of display frame rate.
-- `src/renderer.js`: extracted v4 canvas paths and scene drawing, consuming explicit state rather than DOM controls.
+- `src/renderer.js`: shared stage drawing and retained v4 scenes, consuming explicit state rather than DOM controls.
+- `src/clown-rig.js`: reference-textured face, hair, eyes, lips, tongue, and immutable tooth arches.
+- `src/rig-motion.js`: deterministic presentation smoothing and inspection poses.
 - `src/app.js`: workspace orchestration, transport, notes, diagnostics, device lifecycle, and projector messaging.
 - `public/baseline-v4.html`: the original repository page, preserved byte-for-byte for comparison.
 
@@ -89,3 +91,15 @@ One-time repository setup: open **Settings → Pages → Build and deployment �
 After a successful deployment, the expected address is `https://saaraachka.github.io/freakshow-projection/`. Use the URL reported by the successful GitHub Actions deployment as the authoritative live address. Subsequent pushes to `main` rebuild it automatically. This is the production app with offline caching, microphone support over HTTPS, and a separate projector window; it requires no download. Enable popups and microphone access in your browser when testing Live Show.
 
 The Codex cloud workspace and desktop browser panel do not necessarily share localhost. If the cloud server returns HTTP 200 but the panel reports connection refused, use a platform-provided forwarded URL when available or the Pages preview above. Restarting the healthy server does not create a tunnel.
+
+## Approved clown rig
+
+`Vintage Horror Clown Model Sheet.png` is the user-approved source, retained unchanged at the repository root. The production build copies it to the same root-relative location and the service worker caches it for offline use. `src/clown-rig.js` builds transparent hair/face plates and the two canonical tooth arches directly from this sheet at runtime. The large portrait supplies hair, skull, green eyes, blue paint, red nose and ears; the closed study supplies the neutral lower face; the teeth detail supplies both arches. It is a front-facing 2D texture rig, not a 3D or multi-angle character model. The remaining v4 scenes and original baseline page remain available.
+
+The upper incisors and fangs and lower teeth reuse identical source sprites and scale for closed, small-open, wide-open, round O, stretched E, tongue-out and extreme expressions. Mouth shape changes how lips occlude the teeth; it does not generate a different set. The upper arch remains anchored, the lower arch follows the jaw, and the tongue is its own clipped layer from the sheet. Fine linework in the smaller expression studies is limited by the supplied image's resolution.
+
+Visual Studio offers **Inspect expression** and a **Mouth opening** control. Changing targets blends smoothly. Eye/jaw trigger buttons and rehearsal return to animated mode. **Still pose** freezes autonomous head/pupil/hair movement while leaving mouth inspection available; **Pause motion** holds the current pose. The same rig renders Song Lab and Live Show/projector output.
+
+`src/rig-motion.js` applies presentation-only smoothing at 60 Hz. Song frames precompute it so seeking remains reproducible; microphone and studio frames use the same filter. It leaves audio feature extraction, detection, event timestamps, and mappings unchanged. This adds a small visual response delay (about two fixed filter time constants, approximately 50 ms) rather than changing audio onsets.
+
+Run `npm run test:rig` after installing a Playwright Chromium browser, or `CHROMIUM_PATH=/usr/bin/chromium npm run test:rig` in this cloud machine. It checks seven rendered poses, identical tooth textures and dimensions in every expression, manual/triggered inspection, root image loading under the Pages base path, offline reload, and console/asset errors. Screenshots are saved to ignored `artifacts/approved-rig-*.png`; inspect the contact sheet beside the approved reference. `npm test` includes smoothing, monotonic jaw geometry, unchanged event lists and deterministic seek-pose tests. The broad `test:browser` suite still covers Song Lab, microphone and projector operation.

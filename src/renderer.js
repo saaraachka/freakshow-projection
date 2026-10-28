@@ -1,4 +1,5 @@
-// Artwork and scene paths extracted unchanged from the original v4 app.
+import { drawClownRig } from "./clown-rig.js";
+// Shared stage renderer; the clown uses the approved model-sheet rig.
 export function drawScene(canvas, state, options, time) {
   const ctx = canvas.getContext("2d"),
     W = 1280,
@@ -60,105 +61,7 @@ export function drawScene(canvas, state, options, time) {
     );
   }
   function clown(p, t) {
-    ctx.save();
-    // Two independent motion systems: slow autonomous haunt and reactive music accents.
-    const floatY = idle * (Math.sin(t * 0.58) * 17 + Math.sin(t * 0.21) * 11);
-    const floatX = idle * Math.sin(t * 0.31) * 13;
-    ctx.translate(W / 2 + floatX, H / 2 + 12 + floatY);
-    ctx.rotate(
-      idle * (Math.sin(t * 0.39) * 0.043 + Math.sin(t * 0.16) * 0.021),
-    );
-    const eyeOpen = Math.min(1.5, 0.1 + bassDrive * 0.62 + eyeAccent * 0.92);
-    const jawOpen = Math.min(1.5, 0.045 + midDrive * 0.66 + mouthAccent * 1.03);
-    ctx.fillStyle = p.ink;
-    for (let side of [-1, 1])
-      for (let i = 0; i < 5; i++) {
-        let x = side * (180 + i * 32),
-          y =
-            -120 +
-            Math.sin(t * 0.85 + i * 0.8) * 14 +
-            Math.sin(t * 4.5 + i * 2) * clownHair * 14;
-        ctx.beginPath();
-        ctx.arc(x, y, 65 - i * 5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    ctx.beginPath();
-    ctx.moveTo(-205, -130);
-    ctx.bezierCurveTo(-240, -350, 240, -350, 205, -130);
-    ctx.bezierCurveTo(260, 190, 130, 270, 0, 285);
-    ctx.bezierCurveTo(-130, 270, -260, 190, -205, -130);
-    ctx.fill();
-    // Fixed eyebrows preserve the sinister expression while the sockets change shape.
-    ctx.fillStyle = p.bg;
-    ctx.beginPath();
-    ctx.moveTo(-160, -80);
-    ctx.lineTo(-30, -30);
-    ctx.lineTo(-150, -15);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(160, -80);
-    ctx.lineTo(30, -30);
-    ctx.lineTo(150, -15);
-    ctx.fill();
-    // Dark socket apertures expand with bass; pupils wander slowly and pulse on hits.
-    for (let side of [-1, 1]) {
-      const cx = side * 92,
-        cy = -39;
-      const rx = 28 + eyeOpen * 33,
-        ry = 20 + eyeOpen * 25;
-      ctx.fillStyle = p.bg;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, rx, ry, side * 0.13, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = p.accent;
-      ctx.lineWidth = 5 + eyeAccent * 3;
-      ctx.stroke();
-      const wanderX =
-        Math.sin(t * 0.66 + side * 0.7) * Math.min(16, rx * 0.36) +
-        Math.sin(t * 0.23) * 7;
-      const wanderY = Math.sin(t * 0.43 + side) * Math.min(10, ry * 0.3);
-      const pupil = 8 + eyeAccent * 13 + bassDrive * 6;
-      ctx.fillStyle = p.accent;
-      ctx.beginPath();
-      ctx.arc(cx + wanderX, cy + wanderY, pupil, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = p.bg;
-      ctx.beginPath();
-      ctx.arc(
-        cx + wanderX - 3,
-        cy + wanderY - 3,
-        Math.max(2, pupil * 0.19),
-        0,
-        Math.PI * 2,
-      );
-      ctx.fill();
-    }
-    ctx.fillStyle = p.accent;
-    ctx.beginPath();
-    ctx.moveTo(0, -28);
-    ctx.lineTo(-32, 40);
-    ctx.lineTo(32, 40);
-    ctx.fill();
-    // The upper lip stays fixed; lower jaw is articulated downward, not an oval scale.
-    const idleJaw = 3 + idle * Math.pow((Math.sin(t * 0.83) + 1) / 2, 4) * 13;
-    const gape = idleJaw + jawOpen * 180;
-    ctx.fillStyle = p.bg;
-    ctx.beginPath();
-    ctx.moveTo(-105, 109);
-    ctx.quadraticCurveTo(0, 92, 105, 109);
-    ctx.bezierCurveTo(105, 136 + gape, 68, 145 + gape, 0, 148 + gape);
-    ctx.bezierCurveTo(-68, 145 + gape, -105, 136 + gape, -105, 109);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = p.accent;
-    ctx.lineWidth = 9;
-    ctx.stroke();
-    ctx.fillStyle = p.ink;
-    for (let i = -3; i <= 3; i++) {
-      let x = i * 26;
-      ctx.fillRect(x - 9, 111, 18, Math.min(25, 9 + gape * 0.12));
-    }
-    ctx.restore();
+    drawClownRig(ctx, state, options, t);
   }
   function hand(x, y, scale, angle, p, t, flip = 1) {
     ctx.save();

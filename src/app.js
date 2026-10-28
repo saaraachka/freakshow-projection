@@ -1,3 +1,4 @@
+import { RigMotion, addRigMotion, RIG_POSES } from "./rig-motion.js";
 import {
   Engine,
   DEFAULTS,
@@ -13,6 +14,11 @@ const $ = (id) => document.getElementById(id),
   timeline = $("timeline");
 
 let timelineDirty = true;
+const rigMotion = new RigMotion();
+const rigPreview = () =>
+  mode === "studio"
+    ? { pose: $("rigPose").value, amount: Number($("rigMouth").value) }
+    : null;
 const audio = new Audio();
 audio.preload = "auto";
 let mode = "song",
@@ -98,7 +104,7 @@ function allEvents() {
 }
 function rebuild() {
   timelineDirty = true;
-  frames = simulate(features, options);
+  frames = addRigMotion(simulate(features, options));
   results = [];
   renderNotes();
   drawTimeline();
@@ -350,9 +356,27 @@ function seek(time) {
 }
 $("rewind").onclick = () => seek(0);
 $("seek").oninput = (e) => seek(Number(e.target.value));
-$("triggerEye").onclick = () => manual.push("eye");
-$("triggerMouth").onclick = () => manual.push("mouth");
+$("triggerEye").onclick = () => {
+  $("rigPose").value = "animated";
+  manual.push("eye");
+};
+$("triggerMouth").onclick = () => {
+  $("rigPose").value = "animated";
+  manual.push("mouth");
+};
+$("rigMouth").oninput = () => {
+  $("rigPose").value = "custom";
+  paused = false;
+  $("pauseMotion").textContent = "Pause motion";
+};
+$("rigPose").onchange = () => {
+  if (RIG_POSES[$("rigPose").value])
+    $("rigMouth").value = RIG_POSES[$("rigPose").value].mouth;
+  paused = false;
+  $("pauseMotion").textContent = "Pause motion";
+};
 $("rehearse").onclick = () => {
+  $("rigPose").value = "animated";
   rehearsal = !rehearsal;
   $("rehearse").textContent = rehearsal ? "Stop rehearsal" : "Start rehearsal";
 };
@@ -587,7 +611,9 @@ async function startMic() {
     const extractor = new FeatureExtractor(context.sampleRate);
     worklet.port.onmessage = ({ data }) => {
       if (!mic) return;
-      state = engine.step(extractor.process(data.pcm), data.time);
+      state = rigMotion.step(
+        engine.step(extractor.process(data.pcm), data.time),
+      );
       studioTime = data.time;
     };
     mic = { stream, context, source, worklet };
@@ -662,8 +688,8 @@ if (isProjector) {
           : state.detections || [];
       const recent = lastHeard.at(-1);
       $("detectionMonitor").textContent = recent
-        ? `Heard: ${recent.source === "kick" ? "low thump" : recent.source === "lead" ? "tonal note" : "bright tick"} → ${recent.ignored ? "ignored" : recent.kind === "eye" ? "eye trigger" : "mouth trigger"} | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}%`
-        : `No recent onset | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}% · idle motion continues`;
+        ? `Heard: ${recent.source === "kick" ? "low thump" : recent.source === "lead" ? "tonal note" : "bright tick"} → ${recent.ignored ? "ignored" : recent.kind === "eye" ? "eye trigger" : "mouth trigger"} | Eyes ${Math.round((state.rig?.eye ?? state.eyeAccent) * 100)}% · Mouth ${Math.round((state.rig?.mouth ?? state.mouthAccent) * 100)}%`
+        : `No recent onset | Eyes ${Math.round((state.rig?.eye ?? state.eyeAccent) * 100)}% · Mouth ${Math.round((state.rig?.mouth ?? state.mouthAccent) * 100)}% · idle motion continues`;
     }
   });
 }
@@ -699,7 +725,10 @@ function tick(now) {
         if (Math.floor(studioTime / STEP) % 90 === 0) commands.push("eye");
         if (Math.floor(studioTime / STEP) % 130 === 0) commands.push("mouth");
       }
-      state = engine.step({ bass: 0, mid: 0, high: 0 }, studioTime, commands);
+      state = rigMotion.step(
+        engine.step({ bass: 0, mid: 0, high: 0 }, studioTime, commands),
+        rigPreview(),
+      );
     }
   }
   drawScene(preview, state, options, studioTime);
@@ -714,14 +743,16 @@ function tick(now) {
       : state.detections || [];
   const recent = lastHeard.at(-1);
   $("detectionMonitor").textContent = recent
-    ? `Heard: ${recent.source === "kick" ? "low thump" : recent.source === "lead" ? "tonal note" : "bright tick"} → ${recent.ignored ? "ignored" : recent.kind === "eye" ? "eye trigger" : "mouth trigger"} | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}%`
-    : `No recent onset | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}% · idle motion continues`;
+    ? `Heard: ${recent.source === "kick" ? "low thump" : recent.source === "lead" ? "tonal note" : "bright tick"} → ${recent.ignored ? "ignored" : recent.kind === "eye" ? "eye trigger" : "mouth trigger"} | Eyes ${Math.round((state.rig?.eye ?? state.eyeAccent) * 100)}% · Mouth ${Math.round((state.rig?.mouth ?? state.mouthAccent) * 100)}%`
+    : `No recent onset | Eyes ${Math.round((state.rig?.eye ?? state.eyeAccent) * 100)}% · Mouth ${Math.round((state.rig?.mouth ?? state.mouthAccent) * 100)}% · idle motion continues`;
   $("stateLabel").textContent =
-    state.eyeAccent > 0.15
-      ? "EYES / BASS ACCENT"
-      : state.mouthAccent > 0.15
-        ? "JAW / MIDRANGE ACCENT"
-        : "IDLE / ALWAYS ALIVE";
+    mode === "studio" && $("rigPose").value !== "animated"
+      ? "INSPECTING / " + $("rigPose").value.toUpperCase()
+      : (state.rig?.eye ?? state.eyeAccent) > 0.15
+        ? "EYES / BASS ACCENT"
+        : (state.rig?.mouth ?? state.mouthAccent) > 0.15
+          ? "JAW / MIDRANGE ACCENT"
+          : "IDLE / ALWAYS ALIVE";
   $("sourceLabel").textContent =
     mode === "song" && song
       ? audio.paused
