@@ -1,0 +1,80 @@
+{
+  "revision": "cranial-groom-5",
+  "runs": [
+    {
+      "engine": "chromium",
+      "revision": "cranial-groom-5",
+      "baseline": "precision-correction-4",
+      "facialDifferences": 0,
+      "nonHairMeshesUnchanged": true,
+      "skinTopologyUnchanged": true,
+      "cranialChanges": 9738,
+      "beforeTriangles": 392742,
+      "afterTriangles": 369944,
+      "geometry": {
+        "components": 1,
+        "nonManifoldEdges": 0,
+        "crownSamples": 8871,
+        "uncovered": 0,
+        "embeddedRoots": [
+          -0.1552884350847518,
+          -0.14665825202279953,
+          -0.12720224505943198,
+          -0.15859705221141043,
+          -0.1436589768323266
+        ],
+        "finite": true,
+        "hairLocks": 65,
+        "primaryMasses": 20
+      },
+      "mobile": {
+        "fits": true,
+        "revision": "cranial-groom-5",
+        "rendered": "cranial-groom-5",
+        "dpr": 1
+      },
+      "images": 49,
+      "consoleErrors": [],
+      "failedAssets": [],
+      "physicalIPhoneTested": false
+    },
+    {
+      "engine": "webkit",
+      "revision": "cranial-groom-5",
+      "baseline": "precision-correction-4",
+      "facialDifferences": 0,
+      "nonHairMeshesUnchanged": true,
+      "skinTopologyUnchanged": true,
+      "cranialChanges": 9738,
+      "beforeTriangles": 392742,
+      "afterTriangles": 369944,
+      "geometry": {
+        "components": 1,
+        "nonManifoldEdges": 0,
+        "crownSamples": 8871,
+        "uncovered": 0,
+        "embeddedRoots": [
+          -0.1552884350847518,
+          -0.14665825202279953,
+          -0.12720224505943198,
+          -0.15859705221141043,
+          -0.1436589768323266
+        ],
+        "finite": true,
+        "hairLocks": 65,
+        "primaryMasses": 20
+      },
+      "mobile": {
+        "fits": true,
+        "revision": "cranial-groom-5",
+        "rendered": "cranial-groom-5",
+        "dpr": 1
+      },
+      "images": 49,
+      "consoleErrors": [],
+      "failedAssets": [],
+      "physicalIPhoneTested": false
+    }
+  ],
+  "physicalIPhoneTested": false
+}

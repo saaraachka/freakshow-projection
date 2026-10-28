@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>FREAKSHOW · Precision correction review</title>
+    <title>FREAKSHOW · Skull and hair review</title>
     <style>
       :root {
         color-scheme: dark;
@@ -90,843 +90,729 @@
   <body>
     <main>
       <p>
-        <a href="../index.html?sculpt=4">Interactive before/after viewer</a> ·
-        <a href="../baseline-6b838a5/index.html"
-          >Preserved baseline and rollback</a
-        >
+        <a href="../index.html?sculpt=5">Interactive comparison</a> ·
+        <a href="../baseline-8777414/index.html">Preserved 8777414 viewer</a> ·
+        <a href="precision-8777414.html">Previous precision review</a>
       </p>
-      <h1>Precision correction · same character</h1>
+      <h1>Skull and hair only</h1>
       <p>
-        The pre-correction <strong>6b838a5</strong> sculpt is on the left. The
-        current correction is on the right. Cameras, framing, opaque neutral
-        clay and white studio lights match. The skull loft, face proportions and
-        individual dental crown shapes are retained. The dental arch position,
-        socket clearance, lip coverage, ear rims and groom are corrected.
+        The preserved 8777414 sculpt is on the left; the current pass is on the
+        right. Cameras, framing, neutral clay and white studio lighting match.
+        Black silhouettes use an unlit material on white. Hair-only silhouettes
+        hide the anatomical meshes solely to inspect the groom outline.
       </p>
       <p>
-        Inspect the top and back for hair coverage, then the eye and mouth
-        close-ups. The tissue diagnostic uses gray skin, coral lips, blue
-        gums/palate/tongue, ivory enamel and purple cavity walls. It changes
-        colors only; no surfaces are made transparent or hidden. Surface-role
-        colors are approximate vertex labels.
+        The eyes, nose, mouth, teeth, ears and expression are protected. The
+        skull adjustment is confined to the posterior crown; the hairstyle
+        follows that scalp through broad primary masses, attached secondary
+        curls and five fine flyaways. Facial animation, audio and production
+        remain unchanged.
       </p>
       <p>
-        This is a static geometry review for your approval. No animation, audio
-        work, NPR shading or production integration. Phone-sized WebKit tests do
-        not establish physical iPhone performance.
+        Inspect the hairline and crown, then the rear mass and silhouettes.
+        These are real Three.js renders, not replacement image geometry. Static
+        artistic approval and physical iPhone performance review remain pending.
       </p>
       <nav>
-        <a href="#front">Front</a
-        ><a href="#left-three-quarter">Left three-quarter</a
-        ><a href="#right-three-quarter">Right three-quarter</a
-        ><a href="#left-profile">Left profile</a
-        ><a href="#right-profile">Right profile</a
-        ><a href="#rear-three-quarter">Rear three-quarter</a
-        ><a href="#left-rear-three-quarter">Left rear three-quarter</a
-        ><a href="#back">Back</a><a href="#top">Crown · top-down</a
-        ><a href="#underside">Underside</a
-        ><a href="#bare-profile">Preserved skull · hair hidden</a
-        ><a href="#bare-back">Preserved back of skull · hair hidden</a
-        ><a href="#eyes">Eyes · front close-up</a
-        ><a href="#eyes-three-quarter">Eyes · three-quarter close-up</a
-        ><a href="#eyes-side">Eyes · profile close-up</a
-        ><a href="#mouth">Lips and teeth · front</a
-        ><a href="#mouth-left-corner">Left mouth corner</a
-        ><a href="#mouth-right-corner">Right mouth corner</a
-        ><a href="#mouth-three-quarter">Mouth · three-quarter</a
-        ><a href="#mouth-side">Mouth · profile</a
-        ><a href="#ear">Ear cartilage</a><a href="#nose">Nose</a
-        ><a href="#hair">Hair close-up</a
-        ><a href="#diagnostic-mouth">Tissue diagnostic · front</a
-        ><a href="#diagnostic-mouth-left-corner"
-          >Tissue diagnostic · left corner</a
-        ><a href="#diagnostic-mouth-right-corner"
-          >Tissue diagnostic · right corner</a
-        ><a href="#diagnostic-mouth-three-quarter"
-          >Tissue diagnostic · three-quarter</a
-        ><a href="#diagnostic-mouth-side">Tissue diagnostic · profile</a>
+        <a href="#clay-front">Neutral clay · front</a
+        ><a href="#clay-three-quarter">Neutral clay · three quarter</a
+        ><a href="#clay-profile">Neutral clay · profile</a
+        ><a href="#clay-back">Neutral clay · back</a
+        ><a href="#clay-top">Neutral clay · top</a
+        ><a href="#clay-left-three-quarter">Neutral clay · left three quarter</a
+        ><a href="#clay-left-profile">Neutral clay · left profile</a
+        ><a href="#silhouette-front">Head silhouette · front</a
+        ><a href="#silhouette-three-quarter">Head silhouette · three quarter</a
+        ><a href="#silhouette-profile">Head silhouette · profile</a
+        ><a href="#silhouette-back">Head silhouette · back</a
+        ><a href="#silhouette-top">Head silhouette · top</a
+        ><a href="#silhouette-left-three-quarter"
+          >Head silhouette · left three quarter</a
+        ><a href="#silhouette-left-profile">Head silhouette · left profile</a
+        ><a href="#hair-silhouette-front">Hair-only silhouette · front</a
+        ><a href="#hair-silhouette-three-quarter"
+          >Hair-only silhouette · three quarter</a
+        ><a href="#hair-silhouette-profile">Hair-only silhouette · profile</a
+        ><a href="#hair-silhouette-back">Hair-only silhouette · back</a
+        ><a href="#hair-silhouette-top">Hair-only silhouette · top</a
+        ><a href="#hair-silhouette-left-three-quarter"
+          >Hair-only silhouette · left three quarter</a
+        ><a href="#hair-silhouette-left-profile"
+          >Hair-only silhouette · left profile</a
+        ><a href="#skull-front">Skull without hair · front</a
+        ><a href="#skull-profile">Skull without hair · profile</a
+        ><a href="#skull-back">Skull without hair · back</a>
       </nav>
-      <section id="front">
-        <h2>Front</h2>
+      <section id="clay-front">
+        <h2>Neutral clay · front</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-front.png?sculpt=4"
+            <a href="skull-hair/before-clay-front.png?sculpt=5"
               ><img
-                src="sculpt/before-front.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Front"
+                src="skull-hair/before-clay-front.png?sculpt=5"
+                alt="Before · 8777414 — Neutral clay · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/front.png?sculpt=4"
+            <a href="skull-hair/after-clay-front.png?sculpt=5"
               ><img
-                src="sculpt/front.png?sculpt=4"
-                alt="Current correction — Front"
+                src="skull-hair/after-clay-front.png?sculpt=5"
+                alt="Current skull/hair pass — Neutral clay · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="left-three-quarter">
-        <h2>Left three-quarter</h2>
+      <section id="clay-three-quarter">
+        <h2>Neutral clay · three quarter</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-left-three-quarter.png?sculpt=4"
+            <a href="skull-hair/before-clay-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/before-left-three-quarter.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Left three-quarter"
+                src="skull-hair/before-clay-three-quarter.png?sculpt=5"
+                alt="Before · 8777414 — Neutral clay · three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/left-three-quarter.png?sculpt=4"
+            <a href="skull-hair/after-clay-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/left-three-quarter.png?sculpt=4"
-                alt="Current correction — Left three-quarter"
+                src="skull-hair/after-clay-three-quarter.png?sculpt=5"
+                alt="Current skull/hair pass — Neutral clay · three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="right-three-quarter">
-        <h2>Right three-quarter</h2>
+      <section id="clay-profile">
+        <h2>Neutral clay · profile</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-right-three-quarter.png?sculpt=4"
+            <a href="skull-hair/before-clay-profile.png?sculpt=5"
               ><img
-                src="sculpt/before-right-three-quarter.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Right three-quarter"
+                src="skull-hair/before-clay-profile.png?sculpt=5"
+                alt="Before · 8777414 — Neutral clay · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/right-three-quarter.png?sculpt=4"
+            <a href="skull-hair/after-clay-profile.png?sculpt=5"
               ><img
-                src="sculpt/right-three-quarter.png?sculpt=4"
-                alt="Current correction — Right three-quarter"
+                src="skull-hair/after-clay-profile.png?sculpt=5"
+                alt="Current skull/hair pass — Neutral clay · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="left-profile">
-        <h2>Left profile</h2>
+      <section id="clay-back">
+        <h2>Neutral clay · back</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-left-profile.png?sculpt=4"
+            <a href="skull-hair/before-clay-back.png?sculpt=5"
               ><img
-                src="sculpt/before-left-profile.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Left profile"
+                src="skull-hair/before-clay-back.png?sculpt=5"
+                alt="Before · 8777414 — Neutral clay · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/left-profile.png?sculpt=4"
+            <a href="skull-hair/after-clay-back.png?sculpt=5"
               ><img
-                src="sculpt/left-profile.png?sculpt=4"
-                alt="Current correction — Left profile"
+                src="skull-hair/after-clay-back.png?sculpt=5"
+                alt="Current skull/hair pass — Neutral clay · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="right-profile">
-        <h2>Right profile</h2>
+      <section id="clay-top">
+        <h2>Neutral clay · top</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-right-profile.png?sculpt=4"
+            <a href="skull-hair/before-clay-top.png?sculpt=5"
               ><img
-                src="sculpt/before-right-profile.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Right profile"
+                src="skull-hair/before-clay-top.png?sculpt=5"
+                alt="Before · 8777414 — Neutral clay · top"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/right-profile.png?sculpt=4"
+            <a href="skull-hair/after-clay-top.png?sculpt=5"
               ><img
-                src="sculpt/right-profile.png?sculpt=4"
-                alt="Current correction — Right profile"
+                src="skull-hair/after-clay-top.png?sculpt=5"
+                alt="Current skull/hair pass — Neutral clay · top"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="rear-three-quarter">
-        <h2>Rear three-quarter</h2>
+      <section id="clay-left-three-quarter">
+        <h2>Neutral clay · left three quarter</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-rear-three-quarter.png?sculpt=4"
+            <a href="skull-hair/before-clay-left-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/before-rear-three-quarter.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Rear three-quarter"
+                src="skull-hair/before-clay-left-three-quarter.png?sculpt=5"
+                alt="Before · 8777414 — Neutral clay · left three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/rear-three-quarter.png?sculpt=4"
+            <a href="skull-hair/after-clay-left-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/rear-three-quarter.png?sculpt=4"
-                alt="Current correction — Rear three-quarter"
+                src="skull-hair/after-clay-left-three-quarter.png?sculpt=5"
+                alt="Current skull/hair pass — Neutral clay · left three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="left-rear-three-quarter">
-        <h2>Left rear three-quarter</h2>
+      <section id="clay-left-profile">
+        <h2>Neutral clay · left profile</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-left-rear-three-quarter.png?sculpt=4"
+            <a href="skull-hair/before-clay-left-profile.png?sculpt=5"
               ><img
-                src="sculpt/before-left-rear-three-quarter.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Left rear three-quarter"
+                src="skull-hair/before-clay-left-profile.png?sculpt=5"
+                alt="Before · 8777414 — Neutral clay · left profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/left-rear-three-quarter.png?sculpt=4"
+            <a href="skull-hair/after-clay-left-profile.png?sculpt=5"
               ><img
-                src="sculpt/left-rear-three-quarter.png?sculpt=4"
-                alt="Current correction — Left rear three-quarter"
+                src="skull-hair/after-clay-left-profile.png?sculpt=5"
+                alt="Current skull/hair pass — Neutral clay · left profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="back">
-        <h2>Back</h2>
+      <section id="silhouette-front">
+        <h2>Head silhouette · front</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-back.png?sculpt=4"
+            <a href="skull-hair/before-silhouette-front.png?sculpt=5"
               ><img
-                src="sculpt/before-back.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Back"
+                src="skull-hair/before-silhouette-front.png?sculpt=5"
+                alt="Before · 8777414 — Head silhouette · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/back.png?sculpt=4"
+            <a href="skull-hair/after-silhouette-front.png?sculpt=5"
               ><img
-                src="sculpt/back.png?sculpt=4"
-                alt="Current correction — Back"
+                src="skull-hair/after-silhouette-front.png?sculpt=5"
+                alt="Current skull/hair pass — Head silhouette · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="top">
-        <h2>Crown · top-down</h2>
+      <section id="silhouette-three-quarter">
+        <h2>Head silhouette · three quarter</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-top.png?sculpt=4"
+            <a href="skull-hair/before-silhouette-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/before-top.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Crown · top-down"
+                src="skull-hair/before-silhouette-three-quarter.png?sculpt=5"
+                alt="Before · 8777414 — Head silhouette · three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/top.png?sculpt=4"
+            <a href="skull-hair/after-silhouette-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/top.png?sculpt=4"
-                alt="Current correction — Crown · top-down"
+                src="skull-hair/after-silhouette-three-quarter.png?sculpt=5"
+                alt="Current skull/hair pass — Head silhouette · three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="underside">
-        <h2>Underside</h2>
+      <section id="silhouette-profile">
+        <h2>Head silhouette · profile</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-underside.png?sculpt=4"
+            <a href="skull-hair/before-silhouette-profile.png?sculpt=5"
               ><img
-                src="sculpt/before-underside.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Underside"
+                src="skull-hair/before-silhouette-profile.png?sculpt=5"
+                alt="Before · 8777414 — Head silhouette · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/underside.png?sculpt=4"
+            <a href="skull-hair/after-silhouette-profile.png?sculpt=5"
               ><img
-                src="sculpt/underside.png?sculpt=4"
-                alt="Current correction — Underside"
+                src="skull-hair/after-silhouette-profile.png?sculpt=5"
+                alt="Current skull/hair pass — Head silhouette · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="bare-profile">
-        <h2>Preserved skull · hair hidden</h2>
+      <section id="silhouette-back">
+        <h2>Head silhouette · back</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-bare-profile.png?sculpt=4"
+            <a href="skull-hair/before-silhouette-back.png?sculpt=5"
               ><img
-                src="sculpt/before-bare-profile.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Preserved skull · hair hidden"
+                src="skull-hair/before-silhouette-back.png?sculpt=5"
+                alt="Before · 8777414 — Head silhouette · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/bare-profile.png?sculpt=4"
+            <a href="skull-hair/after-silhouette-back.png?sculpt=5"
               ><img
-                src="sculpt/bare-profile.png?sculpt=4"
-                alt="Current correction — Preserved skull · hair hidden"
+                src="skull-hair/after-silhouette-back.png?sculpt=5"
+                alt="Current skull/hair pass — Head silhouette · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="bare-back">
-        <h2>Preserved back of skull · hair hidden</h2>
+      <section id="silhouette-top">
+        <h2>Head silhouette · top</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-bare-back.png?sculpt=4"
+            <a href="skull-hair/before-silhouette-top.png?sculpt=5"
               ><img
-                src="sculpt/before-bare-back.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Preserved back of skull · hair hidden"
+                src="skull-hair/before-silhouette-top.png?sculpt=5"
+                alt="Before · 8777414 — Head silhouette · top"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/bare-back.png?sculpt=4"
+            <a href="skull-hair/after-silhouette-top.png?sculpt=5"
               ><img
-                src="sculpt/bare-back.png?sculpt=4"
-                alt="Current correction — Preserved back of skull · hair hidden"
+                src="skull-hair/after-silhouette-top.png?sculpt=5"
+                alt="Current skull/hair pass — Head silhouette · top"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="eyes">
-        <h2>Eyes · front close-up</h2>
+      <section id="silhouette-left-three-quarter">
+        <h2>Head silhouette · left three quarter</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-eyes.png?sculpt=4"
+            <a
+              href="skull-hair/before-silhouette-left-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/before-eyes.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Eyes · front close-up"
+                src="skull-hair/before-silhouette-left-three-quarter.png?sculpt=5"
+                alt="Before · 8777414 — Head silhouette · left three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/eyes.png?sculpt=4"
+            <a
+              href="skull-hair/after-silhouette-left-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/eyes.png?sculpt=4"
-                alt="Current correction — Eyes · front close-up"
+                src="skull-hair/after-silhouette-left-three-quarter.png?sculpt=5"
+                alt="Current skull/hair pass — Head silhouette · left three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="eyes-three-quarter">
-        <h2>Eyes · three-quarter close-up</h2>
+      <section id="silhouette-left-profile">
+        <h2>Head silhouette · left profile</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-eyes-three-quarter.png?sculpt=4"
+            <a href="skull-hair/before-silhouette-left-profile.png?sculpt=5"
               ><img
-                src="sculpt/before-eyes-three-quarter.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Eyes · three-quarter close-up"
+                src="skull-hair/before-silhouette-left-profile.png?sculpt=5"
+                alt="Before · 8777414 — Head silhouette · left profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/eyes-three-quarter.png?sculpt=4"
+            <a href="skull-hair/after-silhouette-left-profile.png?sculpt=5"
               ><img
-                src="sculpt/eyes-three-quarter.png?sculpt=4"
-                alt="Current correction — Eyes · three-quarter close-up"
+                src="skull-hair/after-silhouette-left-profile.png?sculpt=5"
+                alt="Current skull/hair pass — Head silhouette · left profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="eyes-side">
-        <h2>Eyes · profile close-up</h2>
+      <section id="hair-silhouette-front">
+        <h2>Hair-only silhouette · front</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-eyes-side.png?sculpt=4"
+            <a href="skull-hair/before-hair-silhouette-front.png?sculpt=5"
               ><img
-                src="sculpt/before-eyes-side.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Eyes · profile close-up"
+                src="skull-hair/before-hair-silhouette-front.png?sculpt=5"
+                alt="Before · 8777414 — Hair-only silhouette · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/eyes-side.png?sculpt=4"
+            <a href="skull-hair/after-hair-silhouette-front.png?sculpt=5"
               ><img
-                src="sculpt/eyes-side.png?sculpt=4"
-                alt="Current correction — Eyes · profile close-up"
+                src="skull-hair/after-hair-silhouette-front.png?sculpt=5"
+                alt="Current skull/hair pass — Hair-only silhouette · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="mouth">
-        <h2>Lips and teeth · front</h2>
+      <section id="hair-silhouette-three-quarter">
+        <h2>Hair-only silhouette · three quarter</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-mouth.png?sculpt=4"
+            <a
+              href="skull-hair/before-hair-silhouette-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/before-mouth.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Lips and teeth · front"
+                src="skull-hair/before-hair-silhouette-three-quarter.png?sculpt=5"
+                alt="Before · 8777414 — Hair-only silhouette · three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/mouth.png?sculpt=4"
+            <a
+              href="skull-hair/after-hair-silhouette-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/mouth.png?sculpt=4"
-                alt="Current correction — Lips and teeth · front"
+                src="skull-hair/after-hair-silhouette-three-quarter.png?sculpt=5"
+                alt="Current skull/hair pass — Hair-only silhouette · three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="mouth-left-corner">
-        <h2>Left mouth corner</h2>
+      <section id="hair-silhouette-profile">
+        <h2>Hair-only silhouette · profile</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-mouth-left-corner.png?sculpt=4"
+            <a href="skull-hair/before-hair-silhouette-profile.png?sculpt=5"
               ><img
-                src="sculpt/before-mouth-left-corner.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Left mouth corner"
+                src="skull-hair/before-hair-silhouette-profile.png?sculpt=5"
+                alt="Before · 8777414 — Hair-only silhouette · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/mouth-left-corner.png?sculpt=4"
+            <a href="skull-hair/after-hair-silhouette-profile.png?sculpt=5"
               ><img
-                src="sculpt/mouth-left-corner.png?sculpt=4"
-                alt="Current correction — Left mouth corner"
+                src="skull-hair/after-hair-silhouette-profile.png?sculpt=5"
+                alt="Current skull/hair pass — Hair-only silhouette · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="mouth-right-corner">
-        <h2>Right mouth corner</h2>
+      <section id="hair-silhouette-back">
+        <h2>Hair-only silhouette · back</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-mouth-right-corner.png?sculpt=4"
+            <a href="skull-hair/before-hair-silhouette-back.png?sculpt=5"
               ><img
-                src="sculpt/before-mouth-right-corner.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Right mouth corner"
+                src="skull-hair/before-hair-silhouette-back.png?sculpt=5"
+                alt="Before · 8777414 — Hair-only silhouette · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/mouth-right-corner.png?sculpt=4"
+            <a href="skull-hair/after-hair-silhouette-back.png?sculpt=5"
               ><img
-                src="sculpt/mouth-right-corner.png?sculpt=4"
-                alt="Current correction — Right mouth corner"
+                src="skull-hair/after-hair-silhouette-back.png?sculpt=5"
+                alt="Current skull/hair pass — Hair-only silhouette · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="mouth-three-quarter">
-        <h2>Mouth · three-quarter</h2>
+      <section id="hair-silhouette-top">
+        <h2>Hair-only silhouette · top</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-mouth-three-quarter.png?sculpt=4"
+            <a href="skull-hair/before-hair-silhouette-top.png?sculpt=5"
               ><img
-                src="sculpt/before-mouth-three-quarter.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Mouth · three-quarter"
+                src="skull-hair/before-hair-silhouette-top.png?sculpt=5"
+                alt="Before · 8777414 — Hair-only silhouette · top"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/mouth-three-quarter.png?sculpt=4"
+            <a href="skull-hair/after-hair-silhouette-top.png?sculpt=5"
               ><img
-                src="sculpt/mouth-three-quarter.png?sculpt=4"
-                alt="Current correction — Mouth · three-quarter"
+                src="skull-hair/after-hair-silhouette-top.png?sculpt=5"
+                alt="Current skull/hair pass — Hair-only silhouette · top"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="mouth-side">
-        <h2>Mouth · profile</h2>
+      <section id="hair-silhouette-left-three-quarter">
+        <h2>Hair-only silhouette · left three quarter</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-mouth-side.png?sculpt=4"
+            <a
+              href="skull-hair/before-hair-silhouette-left-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/before-mouth-side.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Mouth · profile"
+                src="skull-hair/before-hair-silhouette-left-three-quarter.png?sculpt=5"
+                alt="Before · 8777414 — Hair-only silhouette · left three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/mouth-side.png?sculpt=4"
+            <a
+              href="skull-hair/after-hair-silhouette-left-three-quarter.png?sculpt=5"
               ><img
-                src="sculpt/mouth-side.png?sculpt=4"
-                alt="Current correction — Mouth · profile"
+                src="skull-hair/after-hair-silhouette-left-three-quarter.png?sculpt=5"
+                alt="Current skull/hair pass — Hair-only silhouette · left three quarter"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="ear">
-        <h2>Ear cartilage</h2>
+      <section id="hair-silhouette-left-profile">
+        <h2>Hair-only silhouette · left profile</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-ear.png?sculpt=4"
+            <a
+              href="skull-hair/before-hair-silhouette-left-profile.png?sculpt=5"
               ><img
-                src="sculpt/before-ear.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Ear cartilage"
+                src="skull-hair/before-hair-silhouette-left-profile.png?sculpt=5"
+                alt="Before · 8777414 — Hair-only silhouette · left profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/ear.png?sculpt=4"
+            <a href="skull-hair/after-hair-silhouette-left-profile.png?sculpt=5"
               ><img
-                src="sculpt/ear.png?sculpt=4"
-                alt="Current correction — Ear cartilage"
+                src="skull-hair/after-hair-silhouette-left-profile.png?sculpt=5"
+                alt="Current skull/hair pass — Hair-only silhouette · left profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="nose">
-        <h2>Nose</h2>
+      <section id="skull-front">
+        <h2>Skull without hair · front</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-nose.png?sculpt=4"
+            <a href="skull-hair/before-skull-front.png?sculpt=5"
               ><img
-                src="sculpt/before-nose.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Nose"
+                src="skull-hair/before-skull-front.png?sculpt=5"
+                alt="Before · 8777414 — Skull without hair · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/nose.png?sculpt=4"
+            <a href="skull-hair/after-skull-front.png?sculpt=5"
               ><img
-                src="sculpt/nose.png?sculpt=4"
-                alt="Current correction — Nose"
+                src="skull-hair/after-skull-front.png?sculpt=5"
+                alt="Current skull/hair pass — Skull without hair · front"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="hair">
-        <h2>Hair close-up</h2>
+      <section id="skull-profile">
+        <h2>Skull without hair · profile</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-hair.png?sculpt=4"
+            <a href="skull-hair/before-skull-profile.png?sculpt=5"
               ><img
-                src="sculpt/before-hair.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Hair close-up"
+                src="skull-hair/before-skull-profile.png?sculpt=5"
+                alt="Before · 8777414 — Skull without hair · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/hair.png?sculpt=4"
+            <a href="skull-hair/after-skull-profile.png?sculpt=5"
               ><img
-                src="sculpt/hair.png?sculpt=4"
-                alt="Current correction — Hair close-up"
+                src="skull-hair/after-skull-profile.png?sculpt=5"
+                alt="Current skull/hair pass — Skull without hair · profile"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
-      <section id="diagnostic-mouth">
-        <h2>Tissue diagnostic · front</h2>
+      <section id="skull-back">
+        <h2>Skull without hair · back</h2>
         <div class="pair">
           <figure>
-            <a href="sculpt/before-diagnostic-mouth.png?sculpt=4"
+            <a href="skull-hair/before-skull-back.png?sculpt=5"
               ><img
-                src="sculpt/before-diagnostic-mouth.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Tissue diagnostic · front"
+                src="skull-hair/before-skull-back.png?sculpt=5"
+                alt="Before · 8777414 — Skull without hair · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
+            <figcaption>Before · 8777414</figcaption>
           </figure>
           <figure>
-            <a href="sculpt/diagnostic-mouth.png?sculpt=4"
+            <a href="skull-hair/after-skull-back.png?sculpt=5"
               ><img
-                src="sculpt/diagnostic-mouth.png?sculpt=4"
-                alt="Current correction — Tissue diagnostic · front"
+                src="skull-hair/after-skull-back.png?sculpt=5"
+                alt="Current skull/hair pass — Skull without hair · back"
                 loading="lazy"
                 width="960"
                 height="1000"
             /></a>
-            <figcaption>Current correction</figcaption>
-          </figure>
-        </div>
-      </section>
-      <section id="diagnostic-mouth-left-corner">
-        <h2>Tissue diagnostic · left corner</h2>
-        <div class="pair">
-          <figure>
-            <a href="sculpt/before-diagnostic-mouth-left-corner.png?sculpt=4"
-              ><img
-                src="sculpt/before-diagnostic-mouth-left-corner.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Tissue diagnostic · left corner"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
-          </figure>
-          <figure>
-            <a href="sculpt/diagnostic-mouth-left-corner.png?sculpt=4"
-              ><img
-                src="sculpt/diagnostic-mouth-left-corner.png?sculpt=4"
-                alt="Current correction — Tissue diagnostic · left corner"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Current correction</figcaption>
-          </figure>
-        </div>
-      </section>
-      <section id="diagnostic-mouth-right-corner">
-        <h2>Tissue diagnostic · right corner</h2>
-        <div class="pair">
-          <figure>
-            <a href="sculpt/before-diagnostic-mouth-right-corner.png?sculpt=4"
-              ><img
-                src="sculpt/before-diagnostic-mouth-right-corner.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Tissue diagnostic · right corner"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
-          </figure>
-          <figure>
-            <a href="sculpt/diagnostic-mouth-right-corner.png?sculpt=4"
-              ><img
-                src="sculpt/diagnostic-mouth-right-corner.png?sculpt=4"
-                alt="Current correction — Tissue diagnostic · right corner"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Current correction</figcaption>
-          </figure>
-        </div>
-      </section>
-      <section id="diagnostic-mouth-three-quarter">
-        <h2>Tissue diagnostic · three-quarter</h2>
-        <div class="pair">
-          <figure>
-            <a href="sculpt/before-diagnostic-mouth-three-quarter.png?sculpt=4"
-              ><img
-                src="sculpt/before-diagnostic-mouth-three-quarter.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Tissue diagnostic · three-quarter"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
-          </figure>
-          <figure>
-            <a href="sculpt/diagnostic-mouth-three-quarter.png?sculpt=4"
-              ><img
-                src="sculpt/diagnostic-mouth-three-quarter.png?sculpt=4"
-                alt="Current correction — Tissue diagnostic · three-quarter"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Current correction</figcaption>
-          </figure>
-        </div>
-      </section>
-      <section id="diagnostic-mouth-side">
-        <h2>Tissue diagnostic · profile</h2>
-        <div class="pair">
-          <figure>
-            <a href="sculpt/before-diagnostic-mouth-side.png?sculpt=4"
-              ><img
-                src="sculpt/before-diagnostic-mouth-side.png?sculpt=4"
-                alt="Before correction · 6b838a5 — Tissue diagnostic · profile"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Before correction · 6b838a5</figcaption>
-          </figure>
-          <figure>
-            <a href="sculpt/diagnostic-mouth-side.png?sculpt=4"
-              ><img
-                src="sculpt/diagnostic-mouth-side.png?sculpt=4"
-                alt="Current correction — Tissue diagnostic · profile"
-                loading="lazy"
-                width="960"
-                height="1000"
-            /></a>
-            <figcaption>Current correction</figcaption>
+            <figcaption>Current skull/hair pass</figcaption>
           </figure>
         </div>
       </section>
       <section>
-        <h2>Color and phone review</h2>
+        <h2>Phone-sized browser review</h2>
+        <img
+          src="skull-hair/phone-chromium.png?sculpt=5"
+          alt="Phone-sized review viewer"
+          loading="lazy"
+        />
         <p>
-          Green irises, aligned pupils and opaque eye globes are visible in
-          color. Use the interactive viewer to orbit and inspect the same
-          geometry.
-        </p>
-        <div class="pair">
-          <figure>
-            <img
-              src="sculpt/color.png?sculpt=4"
-              alt="Current colored sculpt"
-              loading="lazy"
-            />
-          </figure>
-          <figure>
-            <img
-              src="sculpt/phone-webkit.png?sculpt=4"
-              alt="Current sculpt in iPhone-sized WebKit"
-              loading="lazy"
-            />
-          </figure>
-        </div>
-        <p>
-          <a href="sculpt/checks.json?sculpt=4">Recorded browser and geometry checks</a>
+          <a href="skull-hair/phone-webkit.png?sculpt=5"
+            >WebKit phone capture</a
+          >
+          ·
+          <a href="skull-hair/checks.json?sculpt=5"
+            >Geometry and browser checks</a
+          >
         </p>
       </section>
     </main>

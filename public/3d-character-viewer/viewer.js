@@ -4,7 +4,7 @@ import {
   restoreMouthMaterials,
 } from "./mouth-diagnostic.js?sculpt=4";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js?sculpt=4";
+import { createProceduralHead } from "./procedural-head.js?sculpt=5";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -104,7 +104,27 @@ const reviewClay = new THREE.MeshStandardMaterial({
   color: 0xaaa59d,
   roughness: 0.9,
 });
+const silhouetteMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+function setSilhouette(enabled) {
+  $("silhouette").checked = enabled;
+  stage.classList.toggle("silhouette", enabled);
+  renderer.setClearColor(enabled ? 0xffffff : 0x191d24);
+  if (enabled) {
+    $("clay").checked = false;
+    $("diagnostic").checked = false;
+    $("diagnostic-key").hidden = true;
+    restoreMouthMaterials(character);
+    scene.overrideMaterial = silhouetteMaterial;
+  } else scene.overrideMaterial = $("clay").checked ? reviewClay : null;
+  dirty = true;
+}
+$("silhouette").onchange = (e) => setSilhouette(e.target.checked);
 function setClay(enabled) {
+  if (enabled) {
+    $("silhouette").checked = false;
+    stage.classList.remove("silhouette");
+    renderer.setClearColor(0x191d24);
+  }
   if (enabled) {
     $("diagnostic").checked = false;
     $("diagnostic-key").hidden = true;
@@ -114,6 +134,11 @@ function setClay(enabled) {
   dirty = true;
 }
 function setDiagnostic(enabled) {
+  if (enabled) {
+    $("silhouette").checked = false;
+    stage.classList.remove("silhouette");
+    renderer.setClearColor(0x191d24);
+  }
   $("diagnostic").checked = enabled;
   $("diagnostic-key").hidden = !enabled;
   if (enabled) {
@@ -183,9 +208,9 @@ canvas.dataset.modelSource = "procedural-code";
 const headCache = new Map([["refined", character]]);
 function modelStatus() {
   $("status").textContent =
-    character.state.revision === "precision-correction-4"
-      ? "Precision correction · full crown, complete eyes and fitted dental arches. Static review."
-      : "Before correction · 6b838a5. Preserved geometry.";
+    character.state.revision === "cranial-groom-5"
+      ? "Skull and hierarchical curl masses · static review. Facial features preserved."
+      : "Before skull/hair pass · 8777414. Preserved geometry.";
 }
 async function setModel(version) {
   $("model-version").disabled = true;
@@ -193,7 +218,7 @@ async function setModel(version) {
   try {
     if (!headCache.has(version)) {
       const module = await import(
-        "./baseline-6b838a5/procedural-head.js?sculpt=3"
+        "./baseline-8777414/procedural-head.js?sculpt=4"
       );
       headCache.set(version, await module.createProceduralHead());
     }
@@ -231,6 +256,7 @@ window.assetViewer = {
   setModel,
   setCamera,
   setClay,
+  setSilhouette,
   setDiagnostic,
   get model() {
     return character.root;

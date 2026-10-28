@@ -1,18 +1,18 @@
 {
-  "revision": "precision-correction-4",
-  "sourceHash": "ee77e152cd025478bd3d92ce860230026a1ee439664d558c9d806db20ff649c9",
+  "revision": "cranial-groom-5",
+  "sourceHash": "4f5f4a5f4811571d3630af1322848f5df573748a5d81a2b8065ada268764525d",
   "parts": {
     "skin": {
-      "file": "skin-ee77e152cd02.bin.gz",
+      "file": "skin-4f5f4a5f4811.bin.gz",
       "triangles": 161790,
       "vertices": 80897,
-      "bytes": 2443593
+      "bytes": 2444804
     },
     "hair": {
-      "file": "hair-ee77e152cd02.bin.gz",
-      "triangles": 184112,
-      "vertices": 92080,
-      "bytes": 2770887
+      "file": "hair-4f5f4a5f4811.bin.gz",
+      "triangles": 161314,
+      "vertices": 80792,
+      "bytes": 2406955
     }
   }
 }

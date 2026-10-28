@@ -4,11 +4,12 @@ import { createHash } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import { MeshoptSimplifier } from "meshoptimizer";
 import * as THREE from "../public/character-3d/vendor/three.module.js";
-import { createSkinGeometry } from "../public/3d-character-viewer/implicit-skin.js";
+import { createRefinedSkinGeometry } from "../public/3d-character-viewer/cranial-refinement.js";
 import { createHairGeometry } from "../public/3d-character-viewer/sculpt-hair.js";
 const root = new URL("../public/3d-character-viewer/", import.meta.url);
 export const sources = [
   "implicit-skin.js",
+  "cranial-refinement.js",
   "surface-nets.js",
   "sculpt-hair.js",
   "volume-mesh.js",
@@ -26,13 +27,13 @@ export async function sourceHash() {
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   const hash = await sourceHash(),
     manifest = {
-      revision: "precision-correction-4",
+      revision: "cranial-groom-5",
       sourceHash: hash,
       parts: {},
     };
   await mkdir(new URL("generated/", root), { recursive: true });
   for (const [part, generate] of [
-    ["skin", createSkinGeometry],
+    ["skin", createRefinedSkinGeometry],
     ["hair", createHairGeometry],
   ]) {
     const start = performance.now(),
@@ -81,7 +82,7 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
           3,
           [0.001, 0.001, 0.001],
           locked,
-          180000 * 3,
+          Math.min(180000 * 3, input.length),
           0.003,
           ["LockBorder", "ErrorAbsolute"],
         );

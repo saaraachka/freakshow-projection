@@ -156,6 +156,11 @@
           font-size: 17px;
         }
       }
+      .silhouette header h1,
+      .silhouette header p,
+      .silhouette #metrics {
+        color: #111;
+      }
     </style>
     <script type="importmap">
       {
@@ -177,19 +182,19 @@
         <div id="metrics">Initializing WebGL…</div>
       </section>
       <aside>
-        <h2>Precision correction</h2>
+        <h2>Skull and hair review</h2>
         <label for="model-version">Compare sculpt</label
         ><select id="model-version" disabled>
-          <option value="refined">Current correction</option>
-          <option value="approved">Before correction · 6b838a5</option>
+          <option value="refined">Current skull/hair pass</option>
+          <option value="approved">Before skull/hair pass · 8777414</option>
         </select>
         <small
           >Switch versions without changing your viewing angle, zoom or
           lighting.</small
         >
         <p>
-          <a href="./baseline-6b838a5/index.html"
-            >Open the preserved pre-correction viewer</a
+          <a href="./baseline-8777414/index.html"
+            >Open the preserved 8777414 sculpt</a
           >
         </p>
         <p>
@@ -199,6 +204,7 @@
         <p id="status" role="status">Generating 3D geometry…</p>
         <button id="reset">Reset camera</button>
         <label><input id="clay" type="checkbox" checked /> Neutral clay</label>
+        <label><input id="silhouette" type="checkbox" /> Silhouette</label>
         <label
           ><input id="diagnostic" type="checkbox" /> Mouth tissue colors</label
         >
@@ -249,17 +255,17 @@
           acid-green eyes and navy-black groom.</small
         >
         <small
-          >Refinement of the approved sculpt, awaiting review. No facial
-          animation, audio reactions or NPR shading. Production FREAKSHOW is
-          unchanged.</small
+          >Skull and hair pass, awaiting review. Facial anatomy is preserved. No
+          facial animation, audio reactions or NPR shading. Production FREAKSHOW
+          is unchanged.</small
         >
         <p>
-          <a href="./review/index.html?sculpt=4"
+          <a href="./review/index.html?sculpt=5"
             >Clay review · matched views and approved foundation</a
           >
         </p>
       </aside>
     </main>
-    <script type="module" src="./viewer.js?sculpt=4"></script>
+    <script type="module" src="./viewer.js?sculpt=5"></script>
   </body>
 </html>

@@ -10,7 +10,7 @@ export async function createProceduralHead() {
     new Promise((resolve, reject) => {
       const worker = new Worker(
         new URL(
-          "./sculpt-worker.js?sculpt=4&part=" +
+          "./sculpt-worker.js?sculpt=5&part=" +
             part +
             (new URL(location.href).searchParams.has("generate")
               ? "&generate=1"
@@ -139,7 +139,7 @@ export async function createProceduralHead() {
     get state() {
       return {
         source: "procedural-code",
-        revision: "precision-correction-4",
+        revision: "cranial-groom-5",
         staticSculpt: true,
         cacheHash: geometry.userData.cacheHash || null,
         hairCacheHash: hairGeometry.userData.cacheHash || null,

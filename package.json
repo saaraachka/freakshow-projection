@@ -16,7 +16,8 @@
     "test:rig": "npm run build && node tests/rig-browser.js",
     "test:pages": "PAGES_BASE=/freakshow-projection/ npm run build && node tests/pages-browser.js",
     "sculpt:bake": "node scripts/bake-character-sculpt.js",
-    "sculpt:check": "node scripts/check-character-sculpt-cache.js"
+    "sculpt:check": "node scripts/check-character-sculpt-cache.js",
+    "test:sculpt": "npm run build && node tests/skull-hair-browser.js"
   },
   "engines": {
     "node": ">=20"
