@@ -32,6 +32,8 @@ try {
     await rig.loadClownRig();
   });
   await page.locator('[data-mode="studio"]').click();
+  await page.locator("summary").filter({ hasText: "Stage appearance" }).click();
+  await page.locator("#character").selectOption("legacy");
   await page.locator("#idle").selectOption("still");
   await mkdir("artifacts", { recursive: true });
   await page.locator("#rigPose").selectOption("closed");

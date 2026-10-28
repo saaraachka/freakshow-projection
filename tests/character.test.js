@@ -127,3 +127,87 @@ test("manual gaze changes ease toward one target without depending on pupil stat
   }
   assert.ok(first.gazeX > 0 && first.gazeX < 0.2);
 });
+
+test("production rehearsal uses the approved three shapes with full releases even under acting", () => {
+  const motion = new CharacterMotion(),
+    frames = [];
+  for (let i = 0; i < 180; i++)
+    frames.push(
+      motion.step(
+        { time: i / 60, eyeAccent: 0, events: [] },
+        {
+          speech: "animated",
+          emotion: "snarl",
+          affect: 0.7,
+          rehearsal: true,
+          start: 0,
+        },
+      ),
+    );
+  const peaks = [10, 53, 96].map((i) => frames[i]);
+  assert.deepEqual(
+    peaks.map((f) => f.speech),
+    ["o", "a", "e"],
+  );
+  assert.ok(peaks.every((f) => f.params.open > 0.6));
+  for (const index of [34, 77, 120])
+    assert.ok(
+      frames[index].params.open < 0.004 && frames[index].params.jaw < 0.004,
+    );
+});
+
+test("existing exaggeration and mapped reaction controls still affect presentation without changing events", () => {
+  const subtle = addRigMotion(raw, { drama: 0.4 }),
+    normal = addRigMotion(raw, { drama: 1 });
+  assert.ok(
+    Math.max(...subtle.map((f) => f.anatomy.params.jaw)) <
+      Math.max(...normal.map((f) => f.anatomy.params.jaw)) * 0.6,
+  );
+  const snapped = addRigMotion(raw, {
+    motion: "smooth",
+    rules: [{ source: "lead", reaction: "snap" }],
+  });
+  assert.ok(snapped.some((f) => f.anatomy.reaction === "snap"));
+  assert.deepEqual(
+    snapped.map((f) => f.events),
+    raw.map((f) => f.events),
+  );
+});
+
+test("production shares the approved c9a99b6 anatomy and crown material data", async () => {
+  const { createHash } = await import("node:crypto"),
+    { readFile } = await import("node:fs/promises");
+  const rig = await import("../public/mouth-prototype/rig.js");
+  const expected = JSON.parse(
+    await readFile(
+      new URL(
+        "../docs/character-integration/geometry-verification.json",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  );
+  const vectors = (values) =>
+    values.map((v) => v.map((n) => Math.round(n * 1e6) / 1e6));
+  const data = {
+    teeth: rig.TEETH.map((t) => ({
+      id: t.id,
+      upper: t.upper,
+      vertices: vectors(t.mesh.vertices),
+      faces: t.mesh.faces,
+      colors: vectors(t.mesh.colors),
+    })),
+    faces: [...Object.entries(rig.POSES), ...Object.entries(rig.EMOTIONS)].map(
+      ([name, p]) => ({
+        name,
+        vertices: vectors(rig.faceMesh(p).vertices),
+        faces: rig.faceMesh(p).faces,
+      }),
+    ),
+  };
+  assert.equal(
+    createHash("sha256").update(JSON.stringify(data)).digest("hex"),
+    expected.geometrySHA256,
+    "shared anatomy changes require explicit character approval",
+  );
+});

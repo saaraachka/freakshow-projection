@@ -562,6 +562,7 @@ function moved(m, p) {
     s = Math.sin(p.jaw);
   return {
     ...m,
+    dynamic: true,
     vertices: m.vertices.map((v) => jawPoint(v, p.jaw)),
     normals: m.normals?.map(([x, y, z]) => [x, y * c + z * s, -y * s + z * c]),
   };
@@ -629,7 +630,13 @@ export function createRenderer(canvas) {
     program,
     shader(
       gl.FRAGMENT_SHADER,
-      `precision mediump float;varying vec3 vColor;varying vec3 vNormal;varying vec2 vUV;varying float vEnamel;varying float vFace;uniform float costume;uniform float wire;uniform float diagnostic;void main(){vec3 n=normalize(vNormal);if(n.z<0.)n=-n;float light=.55+.45*max(0.,dot(n,normalize(vec3(-.35,-.5,1.))));float grain=fract(sin(dot(floor(vUV*2.),vec2(12.9898,78.233)))*43758.5453);float hatch=step(.88,sin(vUV.x*.8+vUV.y*.65))*(1.-light)*.25;vec3 pigment=vColor;if(costume>.5&&vFace>.5){float y=vUV.y;float edge=16.*(1.-(y-285.)/155.);float mark=step(285.,y)*step(y,440.)*step(min(abs(vUV.x-(362.-(y-285.)*.1)),abs(vUV.x-(536.+(y-285.)*.1))),edge);pigment=mix(vColor*1.1,vec3(.025,.12,.19),mark);}vec3 c=pigment*(light-hatch)+(grain-.5)*.024;if(vEnamel>.5){float edge=smoothstep(.82,.98,abs(vUV.x));float shadow=max(abs(vUV.x)*.75,1.-light);float h1=step(.83,sin(vUV.x*68.+vUV.y*78.));float h2=step(.9,sin(vUV.x*73.-vUV.y*102.));float ink=(h1+h2*.65)*smoothstep(.28,.7,shadow)*.27+edge*.38;vec2 glint=vec2((vUV.x+.24)/.16,(vUV.y-.46)/.28);float shine=exp(-dot(glint,glint))*.09;c=c*(1.-ink)+shine*vec3(1.,.91,.68);}gl_FragColor=vec4(mix(mix(c,vec3(.25,.85,.75),wire),vColor,diagnostic),1.);}`,
+      `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+varying vec3 vColor;varying vec3 vNormal;varying vec2 vUV;varying float vEnamel;varying float vFace;uniform float costume;uniform float wire;uniform float diagnostic;void main(){vec3 n=normalize(vNormal);if(n.z<0.)n=-n;float light=.55+.45*max(0.,dot(n,normalize(vec3(-.35,-.5,1.))));vec2 grainUV=mod(floor(vUV*2.),128.);float grain=fract(sin(dot(grainUV,vec2(.129898,.78233)))*4375.85453);float hatch=step(.88,sin(vUV.x*.8+vUV.y*.65))*(1.-light)*.25;vec3 pigment=vColor;if(costume>.5&&vFace>.5){float y=vUV.y;float edge=16.*(1.-(y-285.)/155.);float mark=step(285.,y)*step(y,440.)*step(min(abs(vUV.x-(362.-(y-285.)*.1)),abs(vUV.x-(536.+(y-285.)*.1))),edge);float brow=step(205.,y)*step(y,265.)*step(min(abs(vUV.x-(362.+(265.-y)*.12)),abs(vUV.x-(536.-(265.-y)*.12))),18.*(y-205.)/60.);mark=max(mark,brow);pigment=mix(vColor*1.1,vec3(.025,.12,.19),mark);}vec3 c=pigment*(light-hatch)+(grain-.5)*.024;if(vEnamel>.5){float edge=smoothstep(.82,.98,abs(vUV.x));float shadow=max(abs(vUV.x)*.75,1.-light);float h1=step(.83,sin(vUV.x*68.+vUV.y*78.));float h2=step(.9,sin(vUV.x*73.-vUV.y*102.));float ink=(h1+h2*.65)*smoothstep(.28,.7,shadow)*.27+edge*.38;vec2 glint=vec2((vUV.x+.24)/.16,(vUV.y-.46)/.28);float shine=exp(-dot(glint,glint))*.09;c=c*(1.-ink)+shine*vec3(1.,.91,.68);}gl_FragColor=vec4(mix(mix(c,vec3(.25,.85,.75),wire),vColor,diagnostic),1.);}`,
     ),
   );
   gl.linkProgram(program);
@@ -659,7 +666,10 @@ export function createRenderer(canvas) {
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
   gl.clearColor(0.098, 0.129, 0.149, 1);
+  const staticPacked = new WeakMap();
   function packed(m, lines = false) {
+    const cacheable = !lines && !m.dynamic && m.id !== "face";
+    if (cacheable && staticPacked.has(m)) return staticPacked.get(m);
     const n = m.normals ?? normals(m),
       out = [];
     for (const face of m.faces) {
@@ -678,7 +688,9 @@ export function createRenderer(canvas) {
         );
       }
     }
-    return new Float32Array(out);
+    const result = new Float32Array(out);
+    if (cacheable) staticPacked.set(m, result);
+    return result;
   }
   let costumeBinding = null;
   return function render(

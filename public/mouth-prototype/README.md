@@ -1,6 +1,6 @@
 # Mouth and lower-face anatomy study · acting and illustrated dentition
 
-Isolated review prototype. The production renderer, clown artwork, audio analysis and Song Lab are not imported or changed. Open `public/mouth-prototype/index.html` through the development server or GitHub Pages. The existing build copies this directory. The page registers no worker and loads no external libraries; the existing prototype-only offline-worker exception remains unchanged.
+Independent character-development page. Production now imports the approved anatomy in this directory through `src/approved-character.js`; this page does not import production audio, Song Lab or its controller. The approved c9a99b6 geometry and crown color data are guarded by a production fingerprint test. Open `public/mouth-prototype/index.html` through the development server or GitHub Pages. The existing build copies this directory. The page registers no worker and loads no external libraries; the existing prototype-only offline-worker exception remains unchanged.
 
 ## Preserved foundation
 
@@ -56,4 +56,4 @@ node tests/mouth-prototype-browser.js
 
 The browser checks use the existing Playwright installation and `/usr/bin/chromium` (override with `CHROMIUM_PATH`). They validate shared topology, rigid crown distances and vertices, fixed upper and transformed lower arches, cheek/chin displacement, pixel-level dental visibility, independent speech/acting controls, the demonstration, inter-note closures, pause, mobile overflow and browser errors. Screenshots go to `artifacts/mouth-acting/` and `artifacts/mouth-prototype/`.
 
-This remains an anatomical/acting study awaiting human visual review, not a production replacement. Tissue deformation is authored rather than physically simulated, the hinge omits condylar translation, and the vintage material treatment is procedural. Passing automated checks does not certify artistic or anatomical approval.
+The c9a99b6 anatomy was approved and is now shared with production. This page remains available for further anatomical/acting development; new anatomy changes need explicit review before updating the production fingerprint. Tissue deformation is authored rather than physically simulated, the hinge omits condylar translation, and the vintage material treatment is procedural. Passing automated checks does not certify artistic or anatomical approval.

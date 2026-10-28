@@ -14,6 +14,7 @@ import {
 import { FeatureExtractor, SAMPLE_RATE } from "./analysis.js";
 import { SongEditor, validRules } from "./song-editor.js";
 import { drawScene } from "./renderer.js";
+import { approvedStatus } from "./approved-character.js";
 const $ = (id) => document.getElementById(id),
   preview = $("preview"),
   timeline = $("timeline");
@@ -39,6 +40,10 @@ function presentation(studio = mode === "studio") {
     affect: Number($("meshAffect").value),
     opening: studio ? Number($("meshOpening").value) : 1,
     strength: 1,
+    drama:
+      { subtle: 0.4, dramatic: 0.72, extreme: 1 }[options.exaggeration] ?? 1,
+    motion: options.motion,
+    rules: options.rules,
     rehearsal: studio && rehearsal,
     start: characterDemo ? characterDemoStart : rehearsalStart,
     demo: studio && characterDemo,
@@ -53,10 +58,38 @@ function sceneOptions() {
   if (isProjector) return options;
   return {
     ...options,
-    character: mode !== "live" ? $("character").value : "legacy",
+    character: $("character").value,
     characterQuality: $("characterQuality").value,
     characterWire: mode === "studio" && $("meshWire").checked,
   };
+}
+let lastPreviewRender = -Infinity;
+function renderPreview(now = performance.now()) {
+  const settings = sceneOptions(),
+    fps =
+      settings.character !== "mesh" || settings.characterQuality === "high"
+        ? 60
+        : settings.characterQuality === "economy" ||
+            (settings.characterQuality === "auto" &&
+              approvedStatus(preview)?.economy)
+          ? 24
+          : 30;
+  const period = 1000 / fps,
+    elapsed = now - lastPreviewRender;
+  if (elapsed + 0.2 < period) return;
+  fitPreview();
+  drawScene(preview, state, settings, studioTime);
+  if ($("rigBadge"))
+    $("rigBadge").textContent =
+      settings.scene !== "clown"
+        ? "SHARED STAGE ANIMATION"
+        : preview.dataset.characterRenderer === "approved-mesh"
+          ? "APPROVED CONNECTED MESH · 20 RIGID TEETH"
+          : "ORIGINAL CHARACTER · FALLBACK";
+  lastPreviewRender = Number.isFinite(lastPreviewRender)
+    ? lastPreviewRender +
+      Math.max(1, Math.floor((elapsed + 0.2) / period)) * period
+    : now;
 }
 function fitPreview() {
   const mesh = sceneOptions().character === "mesh";
@@ -236,6 +269,7 @@ for (const id of characterControls) {
   else if (Array.from(el.options || []).some((o) => o.value === v))
     el.value = v;
 }
+let characterRebuildTimer = null;
 for (const id of characterControls)
   $(id).addEventListener("input", () => {
     paused = false;
@@ -248,7 +282,12 @@ for (const id of characterControls)
       ]),
     );
     safeStorage.set("freakshow:character-v1", values);
-    frames = addRigMotion(frames, presentation(false));
+    if (id === "meshEmotion" || id === "meshAffect") {
+      clearTimeout(characterRebuildTimer);
+      characterRebuildTimer = setTimeout(() => {
+        frames = addRigMotion(frames, presentation(false));
+      }, 75);
+    }
   });
 $("meshDemo").onclick = () => {
   stopRehearsal();
@@ -535,8 +574,24 @@ $("pauseMotion").onclick = () => {
   paused = !paused;
   $("pauseMotion").textContent = paused ? "Resume motion" : "Pause motion";
 };
+function enterFullscreen(target, onFailure) {
+  const request = target.requestFullscreen || target.webkitRequestFullscreen;
+  if (!request) {
+    onFailure(
+      "Fullscreen is unavailable in this browser; the fitted preview remains usable.",
+    );
+    return;
+  }
+  try {
+    Promise.resolve(request.call(target)).catch((error) =>
+      onFailure(error.message),
+    );
+  } catch (error) {
+    onFailure(error.message);
+  }
+}
 $("fullPreview").onclick = () =>
-  preview.requestFullscreen().catch((e) => tell("Fullscreen: " + e.message));
+  enterFullscreen(preview, (message) => tell("Fullscreen: " + message));
 function validateSession(value) {
   if (
     value?.version !== 1 ||
@@ -748,6 +803,7 @@ async function startMic() {
       return;
     }
     engine = new Engine(options);
+    rigMotion.reset();
     const source = context.createMediaStreamSource(stream),
       worklet = new AudioWorkletNode(context, "pcm-frames"),
       mute = context.createGain();
@@ -814,7 +870,7 @@ if (isProjector) {
   hint.textContent =
     "Enter fullscreen · move this window to the projector first";
   hint.onclick = () =>
-    document.documentElement.requestFullscreen().catch(() => {
+    enterFullscreen(document.documentElement, () => {
       hint.textContent = "Use the browser fullscreen command.";
     });
   document.body.append(hint);
@@ -823,8 +879,7 @@ if (isProjector) {
       state = data.state;
       options = data.options;
       studioTime = data.time;
-      fitPreview();
-      drawScene(preview, state, sceneOptions(), studioTime);
+      renderPreview();
       const lastHeard =
         mode === "song" && frames.length
           ? frames
@@ -875,8 +930,7 @@ function tick(now) {
       );
     }
   }
-  fitPreview();
-  drawScene(preview, state, sceneOptions(), studioTime);
+  renderPreview(now);
   const lastHeard =
     mode === "song" && frames.length
       ? frames

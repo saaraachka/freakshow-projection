@@ -25,6 +25,7 @@ export class CharacterMotion {
     this.last = -Infinity;
     this.speech = "closed";
     this.strength = 1;
+    this.reaction = "smooth";
     this.pupil = 0;
     this.gaze = { x: 0, y: 0, idle: 1 };
     this.lastTime = null;
@@ -41,6 +42,11 @@ export class CharacterMotion {
         this.last = event.time;
         this.speech = ["o", "a", "e"][this.count++ % 3];
         this.strength = event.strength ?? 1;
+        this.reaction =
+          controls.rules?.find((rule) => rule.source === event.source)
+            ?.reaction ??
+          controls.motion ??
+          "smooth";
       }
     const age = time - this.last;
     // A brief release on retrigger and a short pulse leave silence between notes.
@@ -48,7 +54,7 @@ export class CharacterMotion {
       x = clamp(x);
       return x * x * (3 - 2 * x);
     };
-    const pulse =
+    let pulse =
       age < 0.025
         ? 0
         : age < 0.065
@@ -56,8 +62,19 @@ export class CharacterMotion {
           : age < 0.085
             ? 1
             : 1 - ease((age - 0.085) / 0.09);
+    if (this.reaction === "snap")
+      pulse =
+        age < 0.025
+          ? 0
+          : age < 0.045
+            ? ease((age - 0.025) / 0.02)
+            : age < 0.1
+              ? 1
+              : 1 - ease((age - 0.1) / 0.07);
+    else if (this.reaction === "spring")
+      pulse *= 0.88 + 0.12 * Math.sin(Math.max(0, age) * 48);
     let speech = this.speech,
-      opening = pulse * this.strength,
+      opening = pulse * this.strength * (controls.drama ?? 1),
       emotion = controls.emotion ?? "none",
       affect = controls.affect ?? 1;
     if (controls.speech && controls.speech !== "animated") {
@@ -103,6 +120,7 @@ export class CharacterMotion {
       gazeIdle: this.gaze.idle,
       source: APPROVED_RIG_SOURCE,
       note: this.count,
+      reaction: this.reaction,
     };
   }
 }

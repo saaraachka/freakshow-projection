@@ -749,3 +749,13 @@ body.projector #preview {
 body.projector #preview {
   height: 100vh;
 }
+
+@media (max-width: 900px), (max-height: 500px) {
+  body.mesh-character:not(.projector) #preview {
+    max-height: 75vh;
+    max-height: 75svh;
+  }
+}
+body.mesh-character #preview:fullscreen {
+  max-height: none;
+}

@@ -19,8 +19,9 @@ function canvas(w, h) {
   return c;
 }
 function hairPlate() {
-  const c = canvas(900, 1100),
+  const c = canvas(1800, 2200),
     x = c.getContext("2d");
+  x.scale(2, 2);
   x.drawImage(artwork, 74, 180, 752.4, 752.4);
   x.save();
   x.translate(74, 180);
@@ -98,6 +99,7 @@ export function approvedStatus(canvas) {
   return records.get(canvas)?.stats ?? null;
 }
 export function drawApprovedCharacter(ctx, state, options, time, stage) {
+  const totalStarted = performance.now();
   const destination = ctx.canvas;
   let r = records.get(destination);
   if (!r) {
@@ -105,7 +107,6 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
       const surface = canvas(900, 900);
       r = {
         surface,
-        portrait: canvas(900, 1100),
         render: createRenderer(surface),
         last: -Infinity,
         cost: 0,
@@ -122,12 +123,20 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
         r.render = createRenderer(surface);
         r.lost = false;
         r.last = -Infinity;
+        r.geometryKey = null;
+        r.stats = {};
       });
     } catch (error) {
+      records.set(destination, { failed: true, error: error.message });
       destination.dataset.characterRenderer = "legacy-fallback";
       destination.dataset.characterError = error.message;
       return false;
     }
+  }
+  if (r.failed) {
+    destination.dataset.characterRenderer = "legacy-fallback";
+    destination.dataset.characterError = r.error;
+    return false;
   }
   if (r.lost) {
     destination.dataset.characterRenderer = "legacy-fallback";
@@ -153,13 +162,19 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
     r.last = -Infinity;
     r.stats = {};
   }
-  const changed = state !== r.state || time !== r.time || quality !== r.quality;
-  if (
-    (changed && performance.now() - r.last > 1000 / targetFPS) ||
-    !r.stats.triangles
-  ) {
+  const pose = state.anatomy?.params ?? POSES.closed;
+  const geometryKey =
+    Object.values(pose)
+      .map((v) => Math.round(v * 10000))
+      .join(",") +
+    "|" +
+    quality +
+    "|" +
+    (options.characterWire ?? false);
+  const changed = geometryKey !== r.geometryKey;
+  if (changed || !r.stats.triangles) {
     const started = performance.now();
-    r.stats = r.render(state.anatomy?.params ?? POSES.closed, {
+    r.stats = r.render(pose, {
       transparent: true,
       wire: options.characterWire ?? false,
       costume: true,
@@ -171,34 +186,15 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
     r.state = state;
     r.time = time;
     r.quality = quality;
+    r.geometryKey = geometryKey;
   }
   if (artwork && !r.plate) r.plate = hairPlate();
-  const p = r.portrait.getContext("2d");
-  p.clearRect(0, 0, 900, 1100);
-  if (r.plate) p.drawImage(r.plate, 0, 0);
-  p.drawImage(r.surface, 50, 280, 800, 800);
-  // Original hair, ears and upper forehead are immutable ornaments. The masked
-  // lower face is completely absent; all oral tissue and teeth are the mesh.
-  if (r.plate) p.drawImage(r.plate, 0, 0);
   const idle =
     options.idle === "still" ? 0 : options.idle === "restless" ? 1.6 : 1;
   const gaze = gazeTarget(time, {
     ...(state.anatomy ?? {}),
     gazeIdle: (state.anatomy?.gazeIdle ?? 1) * idle,
   });
-  p.save();
-  p.translate(0, 180);
-  eye(p, 362, 270, gaze, state.anatomy?.pupil);
-  eye(p, 536, 270, gaze, state.anatomy?.pupil);
-  if (artwork) {
-    p.save();
-    p.beginPath();
-    p.ellipse(450, 330, 51, 48, 0, 0, Math.PI * 2);
-    p.clip();
-    p.drawImage(artwork, 74, -150, 752.4, 752.4);
-    p.restore();
-  }
-  p.restore();
   ctx.save();
   ctx.translate(
     stage.width / 2 + Math.sin(time * 0.31) * 7 * idle,
@@ -206,22 +202,47 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
   );
   ctx.rotate(Math.sin(time * 0.39) * 0.012 * idle);
   ctx.scale(scale, scale);
-  ctx.drawImage(r.portrait, 0, 100, 900, 1000, -450, -500, 900, 1000);
+  ctx.translate(-450, -600);
+  ctx.imageSmoothingQuality = "high";
+  if (r.plate) ctx.drawImage(r.plate, 0, 0, 900, 1100);
+  ctx.drawImage(r.surface, 50, 280, 800, 800);
+  if (r.plate) ctx.drawImage(r.plate, 0, 0, 900, 1100);
+  ctx.save();
+  ctx.translate(0, 180);
+  eye(ctx, 362, 270, gaze, state.anatomy?.pupil);
+  eye(ctx, 536, 270, gaze, state.anatomy?.pupil);
+  if (artwork) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(450, 330, 51, 48, 0, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(artwork, 74, -150, 752.4, 752.4);
+    ctx.restore();
+  }
+  ctx.restore();
   ctx.restore();
   destination.dataset.characterRenderer = "approved-mesh";
   destination.dataset.rigSource = "public/mouth-prototype/rig.js";
   destination.dataset.meshTriangles = String(r.stats.triangles);
   destination.dataset.characterQuality = economy ? "economy" : quality;
   destination.dataset.characterError = assetError ?? "";
+  const totalMs = performance.now() - totalStarted;
+  r.totalCost = (r.totalCost ?? 0) * 0.85 + totalMs * 0.15;
+  if (r.totalCost > 40) r.slow++;
+  r.outputFrames = (r.outputFrames ?? 0) + 1;
   r.stats = {
     ...r.stats,
+    outputFrames: r.outputFrames,
     source: "public/mouth-prototype/rig.js",
     params: r.state?.anatomy?.params,
     speech: r.state?.anatomy?.speech,
     note: r.state?.anatomy?.note,
+    time: r.state?.time,
+    emotion: r.state?.anatomy?.emotion,
     resolution,
     targetFPS,
     renderMs: r.cost,
+    totalMs: performance.now() - totalStarted,
     economy,
     gaze,
     pupil: state.anatomy?.pupil ?? 0,

@@ -92,14 +92,47 @@ After a successful deployment, the expected address is `https://saaraachka.githu
 
 The Codex cloud workspace and desktop browser panel do not necessarily share localhost. If the cloud server returns HTTP 200 but the panel reports connection refused, use a platform-provided forwarded URL when available or the Pages preview above. Restarting the healthy server does not create a tunnel.
 
-## Approved clown rig
+## Approved connected character
 
-`Vintage Horror Clown Model Sheet.png` is the user-approved source, retained unchanged at the repository root. The production build copies it to the same root-relative location and the service worker caches it for offline use. `src/clown-rig.js` builds transparent hair/face plates and the two canonical tooth arches directly from this sheet at runtime. The large portrait supplies hair, skull, green eyes, blue paint, red nose and ears; the closed study supplies the neutral lower face; the teeth detail supplies both arches. It is a front-facing 2D texture rig, not a 3D or multi-angle character model. The remaining v4 scenes and original baseline page remain available.
+The default clown in Visual Studio, Song Lab and Live Show imports the actual approved rig from `public/mouth-prototype/rig.js`. The 26,400-triangle connected face, hinged mandible, twenty rigid illustrated crowns, gums, tongue and depth-tested oral cavity are shared with the isolated prototype. This is not the old overlay mouth or a replacement SVG. The approved geometry and crown color data are fingerprinted against commit `c9a99b6`; a unit test protects that approval boundary.
 
-The uploaded `clown-head.png` is the neutral head plate. The model sheet remains the dental reference. Six mouth contours (Closed, O, A, E, Grin, Scream) vary lip curvature, corners, width and jaw position. Rigid upper and lower tooth textures retain their anatomical order and size. Lip and arch masks prevent teeth showing through closed lips or intersecting the opposing arch.
+`src/approved-character.js` is a production adapter. It composites immutable hair/ear/nose ornaments from `clown-head.png`, draws the real WebGL mesh, and adds stationary eye apertures with green irises and independently sized black pupils. Navy paint follows the mesh's neutral coordinates. No lower-face illustration is stretched to animate the mouth. The shared renderer's optional transparent/costume settings leave the isolated study independently usable.
 
-Visual Studio has six pose buttons, a manual opening slider, shared gaze controls, and a pupil dilation selector. Both green irises follow one slow gaze vector. Pupil radius responds to eye triggers independently; sockets and iris size stay fixed. “Three-note mouth rehearsal” repeats O → A → E with closure between notes, without audio. Pose selection stops rehearsal; Pause motion freezes it.
+**Visual Studio:** speech shapes Closed/O/A/E, six emotional expressions, acting intensity, mouth opening, the emotional demo, wireframe, three-note rehearsal, gaze and pupil controls. Existing haunt/still/restless motion remains available. Under **Stage appearance → Clown character**, choose **Original illustration fallback** to compare or keep using the previous character. It also appears automatically when WebGL is unavailable/lost and recovers when the context returns.
 
-`src/rig-motion.js` applies presentation-only continuous filtering at a fixed simulation rate, with the exact filter solution available for variable time steps. Song frames precompute it so seeking remains reproducible. Audio feature extraction, detection, event timestamps, mappings and Song Lab controls are unchanged.
+**Song Lab:** `src/character-motion.js` consumes existing mapped mouth events and cycles O/A/E with short opening/release phases. It changes presentation only. Source detection, feature extraction, event timestamps, sound mappings, annotations and session formats are unchanged. Mapped reaction shapes and exaggeration still influence articulation. Recorded frames precompute the same presentation state for deterministic replay/seeking. Kick-driven eye events change only pupil radius; mapped and ignored sounds retain their configured routing.
 
-Run `npm test` and `CHROMIUM_PATH=/usr/bin/chromium npm run test:rig`. Browser checks render all six expressions, a 30-frame mouth matrix (0/25/50/75/100% for every pose), shared gaze directions at resting/dilated pupil sizes, and the three-note rehearsal. Screenshots are saved under ignored `artifacts/`. The tests check immutable dental textures, closed-mouth occlusion, smooth transitions, nearly complete closure between rehearsed notes, independent gaze/dilation and offline asset loading under the Pages path.
+**Live Show/projector:** the microphone uses the same event-to-pose adapter. BroadcastChannel sends pose and presentation settings to the projector, which renders the same mesh at its own resolution. Standard/vendor fullscreen requests have an unsupported-browser fallback. The isolated page remains at `public/mouth-prototype/index.html` for future character development; changes to its shared anatomy require explicit approval and an updated geometry fingerprint.
+
+### Responsive rendering and cost
+
+The stage uses a fitted frame based on actual canvas dimensions, including the maximum jaw range. Small portrait screens use a taller preview; short landscape viewports cap preview height. High-density backing pixels follow devicePixelRatio up to 3, subject to a 3.68-million-pixel budget. Eyes and ornaments draw directly into that backing canvas. Shader grain is bounded and uses high fragment precision where supported to avoid Safari's half-precision overflow.
+
+Rendering cost is independent of anatomy:
+
+- **High detail:** up to a 1200-pixel square mesh buffer and 60 output draws/second.
+- **Automatic:** up to 1024 pixels, normally 30 draws/second, reducing draw cadence when measured cost is high.
+- **Lower cost:** up to 512 pixels and a 24-draw/second target. The same vertices, triangles, tooth identities and jaw transforms remain in use.
+
+Static mesh buffers and unchanged poses are cached. Acting preference rebakes are debounced; quality, fallback and wireframe controls do not reanalyze audio or rebake the recorded poses. Output cadence does not change the 60 Hz event/presentation simulation. The service worker caches the shared rig for production offline use while keeping the development page outside the production shell.
+
+### Verification and review evidence
+
+```sh
+npm test
+CHROMIUM_PATH=/usr/bin/chromium npm run test:browser
+npm run test:integration
+npm run test:rig
+npm run test:mobile
+# With Playwright WebKit and its host libraries installed:
+FREAKSHOW_TEST_WEBKIT=1 npm run test:mobile
+node tests/mouth-acting-browser.js
+```
+
+The integration test checks actual mesh provenance in all modes and fullscreen projection, O/A/E from detected notes, releases, acting demo, independent pupils/gaze, fallback/context recovery and offline reload. The original browser suite checks WAV/MP3 analysis, annotations, mappings, persistence/import/export, deterministic seek rendering and microphone operation. The legacy rig suite explicitly selects the retained original character.
+
+Chromium and WebKit were checked with an iPhone 13 viewport at DPR 3: portrait/landscape fit, sharp backing dimensions, visible skin shading (including the Safari regression), MP3 decoding and articulation, and identical anatomy across rendering-cost modes. These are cloud software-rendering checks, not physical-iPhone performance benchmarks; real device thermals, sustained frame rate, audio latency and hardware fullscreen still need on-device checking.
+
+Review evidence: [new Studio character](docs/character-integration/studio-mesh.png), [original fallback](docs/character-integration/studio-legacy.png), [projector](docs/character-integration/projector-mesh.png), [WebKit iPhone viewport](docs/character-integration/webkit-iphone-high.png), [rendering-cost report](docs/character-integration/mobile-performance.json), and [approved-geometry verification](docs/character-integration/geometry-verification.json). Full captures and generated three-note audio are under ignored `artifacts/integration/`.
+
+After deployment, the Studio status and stage badge identify **Approved connected mesh**. The canvas reports `data-character-renderer="approved-mesh"`, its shared source path and triangle count. If an already open offline-cached tab shows the previous application, reload after the new worker installs.

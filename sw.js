@@ -1,4 +1,4 @@
-const CACHE = "freakshow-v6-mesh-song-2";
+const CACHE = "freakshow-v6-mesh-live-4";
 const ASSETS = [
   "./",
   "./index.html",

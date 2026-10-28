@@ -1,0 +1,38 @@
+[
+  {
+    "engine": "chromium",
+    "environment": "Cloud software rendering; not a physical device benchmark",
+    "device": "iPhone 13 emulation",
+    "dpr": 3,
+    "high": {
+      "resolution": 1024,
+      "triangles": 26400,
+      "drawMs": 0.30000000074505806
+    },
+    "economy": {
+      "resolution": 512,
+      "triangles": 26400,
+      "drawMs": 0.19999999925494194,
+      "targetFPS": 24
+    },
+    "rafMedianMs": 66.70000000000073
+  },
+  {
+    "engine": "webkit",
+    "environment": "Cloud software rendering; not a physical device benchmark",
+    "device": "iPhone 13 emulation",
+    "dpr": 3,
+    "high": {
+      "resolution": 1024,
+      "triangles": 26400,
+      "drawMs": 1
+    },
+    "economy": {
+      "resolution": 512,
+      "triangles": 26400,
+      "drawMs": 0,
+      "targetFPS": 24
+    },
+    "rafMedianMs": 307
+  }
+]

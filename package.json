@@ -7,10 +7,12 @@
     "dev": "node scripts/serve.js",
     "build": "node scripts/build.js",
     "preview": "node scripts/serve.js dist",
-    "test": "node --test tests/engine.test.js tests/rig.test.js",
+    "test": "node --test tests/engine.test.js tests/rig.test.js tests/character.test.js",
     "test:browser": "npm run build && node tests/browser.js",
     "check-session": "node scripts/check-session.js",
     "format": "prettier --write index.html styles.css src scripts tests README.md package.json manifest.webmanifest sw.js",
+    "test:integration": "npm run build && node tests/integration-browser.js",
+    "test:mobile": "npm run build && node tests/mobile-character-browser.js",
     "test:rig": "npm run build && node tests/rig-browser.js"
   },
   "engines": {
