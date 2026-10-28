@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { mouthPose, DENTITION, eyeGeometry } from "../src/clown-rig.js";
-import { RigMotion, addRigMotion, RIG_POSES } from "../src/rig-motion.js";
+import {
+  RigMotion,
+  addRigMotion,
+  RIG_POSES,
+  rehearsalPreview,
+} from "../src/rig-motion.js";
 const state = (mouth = 0) => ({
   mouthAccent: mouth,
   eyeAccent: 0,
@@ -80,4 +85,31 @@ test("shared gaze does not depend on pupil dilation, and the iris never grows", 
   for (let i = 0; i < 60; i++) rig.step(state(), { pupil: 1 });
   for (let i = 0; i < 60; i++) rig.step(state(), { pupil: 0 });
   assert.ok(rig.smooth.eye < 0.001);
+});
+
+test("three rehearsed notes have different contours and nearly close between notes", () => {
+  const rig = new RigMotion(),
+    peaks = [],
+    closures = [];
+  for (let i = 0; i < 180; i++) {
+    const t = i / 60,
+      pose = rig.step(state(), rehearsalPreview(t)).rig;
+    if ([12, 66, 120].includes(i)) peaks.push(pose);
+    if ([45, 99, 153].includes(i)) closures.push(pose);
+  }
+  assert.equal(peaks.length, 3);
+  assert.equal(closures.length, 3);
+  for (const pose of closures) assert.ok(pose.bottom - pose.top < 0.02);
+  assert.ok(peaks[0].span < peaks[1].span && peaks[1].span < peaks[2].span);
+  assert.ok(peaks[1].bottom - peaks[1].top > peaks[2].bottom - peaks[2].top);
+});
+test("transition filtering is consistent at 30, 60, and 120 Hz", () => {
+  const outputs = [30, 60, 120].map((hz) => {
+    const rig = new RigMotion();
+    for (let i = 0; i < hz / 5; i++) rig.step(state(1), null, 1 / hz);
+    return rig.smooth;
+  });
+  for (const key of Object.keys(outputs[0]))
+    for (const other of outputs.slice(1))
+      assert.ok(Math.abs(outputs[0][key] - other[key]) < 1e-10);
 });

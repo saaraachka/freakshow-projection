@@ -79,6 +79,23 @@ export function interpolatePose(a, b, t) {
     Object.keys(a).map((k) => [k, a[k] + (b[k] - a[k]) * t]),
   );
 }
+// Three visual notes with deliberate silence; this never enters the audio engine.
+export function rehearsalPreview(elapsed) {
+  const t = ((elapsed % 3.6) + 3.6) % 3.6;
+  const note = Math.min(2, Math.floor(t / 0.9)),
+    local = t - note * 0.9;
+  const ease = (x) => {
+    x = Math.max(0, Math.min(1, x));
+    return x * x * (3 - 2 * x);
+  };
+  const strength =
+    local < 0.12
+      ? ease(local / 0.12)
+      : local < 0.24
+        ? 1
+        : 1 - ease((local - 0.24) / 0.18);
+  return { pose: ["o", "a", "e"][note], strength };
+}
 export class RigMotion {
   constructor() {
     this.reset();
@@ -93,23 +110,28 @@ export class RigMotion {
     };
     this.smooth = { ...this.fast };
   }
-  step(state, preview = null) {
+  step(state, preview = null, dt = 1 / 60) {
     const pose =
       preview?.pose === "custom"
         ? interpolatePose(RIG_POSES.closed, RIG_POSES.a, preview.amount)
         : RIG_POSES[preview?.pose];
     const target = {
-      ...(pose ??
-        interpolatePose(RIG_POSES.closed, RIG_POSES.a, state.mouthAccent)),
+      ...(pose
+        ? interpolatePose(RIG_POSES.closed, pose, preview?.strength ?? 1)
+        : interpolatePose(RIG_POSES.closed, RIG_POSES.a, state.mouthAccent)),
       eye: preview?.pupil == null ? state.eyeAccent : preview.pupil,
       gazeX: preview?.gazeX ?? 0,
       gazeY: preview?.gazeY ?? 0,
       gazeIdle: preview?.gazeIdle ?? 1,
     };
-    const alpha = 1 - Math.exp(-(1 / 60) / 0.025);
+    // Exact solution for two cascaded filters: smooth and independent of display rate.
+    const h = Math.max(0, Math.min(0.1, dt)) / 0.025,
+      decay = Math.exp(-h);
     for (const key of Object.keys(target)) {
-      this.fast[key] += (target[key] - this.fast[key]) * alpha;
-      this.smooth[key] += (this.fast[key] - this.smooth[key]) * alpha;
+      const previous = this.fast[key] - target[key];
+      this.fast[key] = target[key] + previous * decay;
+      this.smooth[key] =
+        target[key] + (this.smooth[key] - target[key] + previous * h) * decay;
     }
     return { ...state, rig: { ...this.smooth } };
   }

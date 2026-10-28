@@ -1,4 +1,9 @@
-import { RigMotion, addRigMotion, RIG_POSES } from "./rig-motion.js";
+import {
+  RigMotion,
+  addRigMotion,
+  RIG_POSES,
+  rehearsalPreview,
+} from "./rig-motion.js";
 import {
   Engine,
   DEFAULTS,
@@ -20,6 +25,7 @@ const rigPreview = () =>
     ? {
         pose: $("rigPose").value,
         amount: Number($("rigMouth").value),
+        ...(rehearsal ? rehearsalPreview(studioTime - rehearsalStart) : {}),
         ...{
           idle: { gazeIdle: 1 },
           center: { gazeIdle: 0 },
@@ -57,6 +63,7 @@ let audioUrl = null,
   lastFrame = 0,
   paused = false,
   rehearsal = false,
+  rehearsalStart = 0,
   manual = [],
   projection = null;
 const channel =
@@ -377,24 +384,42 @@ $("triggerEye").onclick = () => {
   manual.push("eye");
 };
 $("triggerMouth").onclick = () => {
+  stopRehearsal();
   $("rigPose").value = "animated";
   manual.push("mouth");
 };
 $("rigMouth").oninput = () => {
+  stopRehearsal();
   $("rigPose").value = "custom";
   paused = false;
   $("pauseMotion").textContent = "Pause motion";
 };
 $("rigPose").onchange = () => {
+  stopRehearsal();
   if (RIG_POSES[$("rigPose").value])
     $("rigMouth").value = RIG_POSES[$("rigPose").value].mouth;
   paused = false;
   $("pauseMotion").textContent = "Pause motion";
 };
+function stopRehearsal() {
+  rehearsal = false;
+  $("rehearse").textContent = "Three-note mouth rehearsal";
+}
+for (const button of document.querySelectorAll("[data-rig-pose]"))
+  button.onclick = () => {
+    stopRehearsal();
+    $("rigPose").value = button.dataset.rigPose;
+    $("rigPose").onchange();
+  };
 $("rehearse").onclick = () => {
-  $("rigPose").value = "animated";
   rehearsal = !rehearsal;
-  $("rehearse").textContent = rehearsal ? "Stop rehearsal" : "Start rehearsal";
+  rehearsalStart = studioTime;
+  $("rigPose").value = rehearsal ? "animated" : "closed";
+  paused = false;
+  $("pauseMotion").textContent = "Pause motion";
+  $("rehearse").textContent = rehearsal
+    ? "Stop rehearsal"
+    : "Three-note mouth rehearsal";
 };
 $("pauseMotion").onclick = () => {
   if (mode === "song" && song) {
@@ -737,10 +762,6 @@ function tick(now) {
       accumulator -= STEP;
       studioTime += STEP;
       const commands = manual.splice(0);
-      if (mode === "studio" && rehearsal) {
-        if (Math.floor(studioTime / STEP) % 90 === 0) commands.push("eye");
-        if (Math.floor(studioTime / STEP) % 130 === 0) commands.push("mouth");
-      }
       state = rigMotion.step(
         engine.step({ bass: 0, mid: 0, high: 0 }, studioTime, commands),
         rigPreview(),

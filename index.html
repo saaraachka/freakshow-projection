@@ -81,16 +81,26 @@
           </section>
           <section data-for="studio" hidden>
             <p>
-              Explore the original movement without audio. Trigger a single
-              expression or rehearse a repeating sequence.
+              Inspect expressions without audio. The three-note rehearsal
+              articulates O, A, and E, closing between notes.
             </p>
             <div class="buttons">
               <button id="triggerEye">Trigger eyes</button
               ><button id="triggerMouth">Trigger jaw</button
-              ><button id="rehearse" class="secondary">Start rehearsal</button>
+              ><button id="rehearse" class="secondary">
+                Three-note mouth rehearsal
+              </button>
             </div>
             <fieldset class="rig-inspector">
               <legend>Approved character rig</legend>
+              <div class="buttons" aria-label="Mouth poses">
+                <button data-rig-pose="closed">Closed</button
+                ><button data-rig-pose="o">O</button>
+                <button data-rig-pose="a">A</button
+                ><button data-rig-pose="e">E</button>
+                <button data-rig-pose="grin">Grin</button
+                ><button data-rig-pose="scream">Scream</button>
+              </div>
               <label for="rigPose">Inspect expression</label
               ><select id="rigPose">
                 <option value="animated">Animated / follow triggers</option>

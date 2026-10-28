@@ -252,6 +252,72 @@ try {
   assert.equal(await page.locator("#rigPose").inputValue(), "custom");
   await page.locator("#triggerMouth").click();
   assert.equal(await page.locator("#rigPose").inputValue(), "animated");
+  await page.locator('[data-rig-pose="grin"]').click();
+  assert.equal(await page.locator("#rigPose").inputValue(), "grin");
+  await page.locator("#rehearse").click();
+  assert.equal(await page.locator("#rehearse").textContent(), "Stop rehearsal");
+  await page.waitForTimeout(1200);
+  await page.screenshot({
+    path: "artifacts/final-visual-studio.png",
+    fullPage: true,
+  });
+  await page.locator("#rehearse").click();
+  assert.equal(await page.locator("#rigPose").inputValue(), "closed");
+  const closureGaps = await page.evaluate(async () => {
+    const { drawClownRig } = await import("./src/clown-rig.js");
+    const { RigMotion, rehearsalPreview } = await import("./src/rig-motion.js");
+    const c = document.createElement("canvas");
+    c.id = "rehearsalContact";
+    c.width = 1200;
+    c.height = 650;
+    Object.assign(c.style, { position: "fixed", inset: 0, zIndex: 9999 });
+    document.body.append(c);
+    const x = c.getContext("2d");
+    x.fillStyle = "#e9d9bf";
+    x.fillRect(0, 0, c.width, c.height);
+    const rig = new RigMotion(),
+      gaps = [];
+    for (let i = 0; i < 180; i++) {
+      const p = rig.step(
+        { mouthAccent: 0, eyeAccent: 0 },
+        rehearsalPreview(i / 60),
+      ).rig;
+      const peak = [12, 66, 120].indexOf(i),
+        rest = [45, 99, 153].indexOf(i);
+      if (peak < 0 && rest < 0) continue;
+      if (rest >= 0) gaps.push(p.bottom - p.top);
+      const stage = document.createElement("canvas");
+      stage.width = 1280;
+      stage.height = 720;
+      drawClownRig(stage.getContext("2d"), { rig: p }, { idle: "still" }, 0);
+      const col = peak >= 0 ? peak : rest,
+        row = peak >= 0 ? 0 : 1;
+      x.drawImage(
+        stage,
+        370,
+        20,
+        540,
+        600,
+        col * 400,
+        row * 325 + 25,
+        400,
+        300,
+      );
+      x.font = "18px Georgia";
+      x.fillStyle = "#211b18";
+      x.fillText(
+        peak >= 0 ? ["O", "A", "E"][peak] : "Closed between notes",
+        col * 400 + 10,
+        row * 325 + 20,
+      );
+    }
+    return gaps;
+  });
+  for (const gap of closureGaps) assert.ok(gap < 0.02);
+  await page
+    .locator("#rehearsalContact")
+    .screenshot({ path: "artifacts/rehearsal-contact.png" });
+  await page.locator("#rehearsalContact").evaluate((c) => c.remove());
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   await context.setOffline(true);
   await page.reload();
