@@ -1,8 +1,9 @@
-const CACHE = "freakshow-v5-3";
+const CACHE = "freakshow-v5-head-1";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
+  "./clown-head.png",
   "./manifest.webmanifest",
   "./src/app.js",
   "./src/engine.js",

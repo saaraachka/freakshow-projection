@@ -170,100 +170,25 @@ function plate(image) {
   ctx.putImageData(pixels, 0, 0);
   return out;
 }
-function prepare(image) {
-  const master = plate(image),
-    hair = surface(),
-    face = surface(),
-    hc = hair.getContext("2d"),
-    fc = face.getContext("2d");
-  hc.drawImage(master, 0, 0);
-  hc.globalCompositeOperation = "destination-out";
-  polygon(hc, faceOutline);
-  hc.fill();
-  hc.fillRect(112, 399, 210, 207);
-  hc.globalCompositeOperation = "source-over";
-  fc.save();
-  polygon(fc, closedOutline);
-  fc.clip();
-  fc.drawImage(master, 0, 0);
-  // Closed study supplies the neutral lower face: no baked-in tongue or changing teeth.
-  const lower = surface(220, 158),
-    lc = lower.getContext("2d");
-  lc.drawImage(image, 431, 257, 107, 77, 0, 0, 220, 158);
-  lc.globalCompositeOperation = "destination-in";
-  const blend = lc.createLinearGradient(0, 0, 0, 16);
-  blend.addColorStop(0, "#0000");
-  blend.addColorStop(1, "#000");
-  lc.fillStyle = blend;
-  lc.fillRect(0, 0, 220, 158);
-  fc.drawImage(lower, 105, 399);
-  // Remove the baked closed lip before articulation; the live lip is a continuous path.
-  const skin = surface(180, 42),
-    sc = skin.getContext("2d");
-  sc.drawImage(image, 188, 192, 42, 40, 0, 0, 180, 42);
-  sc.globalCompositeOperation = "destination-in";
-  const soft = sc.createLinearGradient(0, 0, 0, 42);
-  soft.addColorStop(0, "#0000");
-  soft.addColorStop(0.22, "#000");
-  soft.addColorStop(0.78, "#000");
-  soft.addColorStop(1, "#0000");
-  sc.fillStyle = soft;
-  sc.fillRect(0, 0, 180, 42);
-  fc.drawImage(skin, 120, 408);
-  fc.restore();
+function prepare(image, head) {
   return {
-    image,
-    hair,
-    face,
+    image, head,
     upperTeeth: teethSprite(image, DENTITION.upper.source),
     lowerTeeth: teethSprite(image, DENTITION.lower.source),
   };
 }
 export function loadClownRig() {
   if (loading) return loading;
-  loading = new Promise((resolve, reject) => {
+  const load = (url) => new Promise((resolve, reject) => {
     const image = new Image();
-    image.onload = () => {
-      try {
-        assets = prepare(image);
-        resolve(assets);
-      } catch (error) {
-        loadError = error.message;
-        reject(error);
-      }
-    };
-    image.onerror = () => {
-      loadError = "Approved character sheet could not load.";
-      reject(Error(loadError));
-    };
-    image.src = REFERENCE_URL;
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(Error("Approved clown artwork could not load."));
+    image.src = url;
   });
+  loading = Promise.all([load(REFERENCE_URL), load(new URL("../clown-head.png", import.meta.url).href)])
+    .then(([image, head]) => (assets = prepare(image, head)))
+    .catch(error => { loadError = error.message; throw error; });
   return loading;
-}
-function drawFace(ctx, face, pose) {
-  ctx.drawImage(face, 0, 0, WIDTH, UPPER, 0, 0, WIDTH, UPPER);
-  ctx.drawImage(
-    face,
-    0,
-    UPPER,
-    WIDTH,
-    LOWER - UPPER,
-    0,
-    UPPER,
-    WIDTH,
-    LOWER - UPPER + pose.extra,
-  );
-  ctx.drawImage(
-    face,
-    0,
-    LOWER,
-    WIDTH,
-    HEIGHT - LOWER,
-    0,
-    LOWER + pose.extra,
-    WIDTH,
-    HEIGHT - LOWER,
-  );
 }
 function cavity(ctx, extra, width = 1) {
   const x = (v) => 210 + (v - 210) * width;
@@ -510,46 +435,15 @@ export function drawClownRig(ctx, state, options, time) {
   );
   ctx.rotate(idle * Math.sin(t * 0.39) * 0.015);
   ctx.translate(-212, 0);
-  // Hair is its own plate; breathing is small and independent of jaw articulation.
+  // Use the uploaded neutral plate intact: no reconstructed skin panels.
+  ctx.translate(-70, 0);
+  ctx.scale(1.34, 1.34);
+  ctx.drawImage(assets.head, 0, 0, 423, 423);
   ctx.save();
-  ctx.translate(212, 230);
-  ctx.scale(
-    1 + idle * Math.sin(t * 0.7) * 0.007,
-    1 + idle * Math.sin(t * 0.61) * 0.006,
-  );
-  ctx.rotate(idle * Math.sin(t * 0.45) * 0.009);
-  ctx.translate(-212, -230);
-  ctx.drawImage(assets.hair, 0, 0);
+  ctx.translate(212, 325);
+  ctx.scale(0.85, 0.85);
+  ctx.translate(-210, -429);
+  drawTeeth(ctx, assets.image, pose.extra, state.rig?.width ?? 1, state.rig?.tongue ?? 0);
   ctx.restore();
-  drawFace(ctx, assets.face, pose);
-  drawTeeth(
-    ctx,
-    assets.image,
-    pose.extra,
-    state.rig?.width ?? 1,
-    state.rig?.tongue ?? 0,
-  );
-  eye(
-    ctx,
-    assets.image,
-    145,
-    320,
-    [109, 293, 72, 54],
-    state.rig?.eye ?? state.eyeAccent,
-    t,
-    idle,
-    -1,
-  );
-  eye(
-    ctx,
-    assets.image,
-    274,
-    320,
-    [238, 293, 72, 54],
-    state.rig?.eye ?? state.eyeAccent,
-    t,
-    idle,
-    1,
-  );
   ctx.restore();
 }

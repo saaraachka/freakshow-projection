@@ -7,6 +7,7 @@ for (const file of [
   "sw.js",
   "manifest.webmanifest",
   "Vintage Horror Clown Model Sheet.png",
+  "clown-head.png",
 ])
   await copyFile(file, "dist/" + file);
 await cp("src", "dist/src", { recursive: true });
