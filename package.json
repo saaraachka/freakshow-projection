@@ -13,7 +13,8 @@
     "format": "prettier --write index.html styles.css src scripts tests README.md package.json manifest.webmanifest sw.js",
     "test:integration": "npm run build && node tests/integration-browser.js",
     "test:mobile": "npm run build && node tests/mobile-character-browser.js",
-    "test:rig": "npm run build && node tests/rig-browser.js"
+    "test:rig": "npm run build && node tests/rig-browser.js",
+    "test:pages": "PAGES_BASE=/freakshow-projection/ npm run build && node tests/pages-browser.js"
   },
   "engines": {
     "node": ">=20"

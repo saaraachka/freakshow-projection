@@ -1,4 +1,5 @@
-const CACHE = "freakshow-v6-mesh-live-4";
+const CACHE = "freakshow-v7-pages-recovery-1";
+const ROOT = new URL("./", self.location.href);
 const ASSETS = [
   "./",
   "./index.html",
@@ -20,56 +21,104 @@ const ASSETS = [
   "./src/mic-worklet.js",
   "./public/baseline-v4.html",
 ];
+function valid(response, url) {
+  if (!response?.ok) return false;
+  const type = response.headers.get("content-type") || "";
+  if (url.pathname.endsWith(".css")) return /text\/css/i.test(type);
+  if (url.pathname.endsWith(".js")) return /(?:java|ecma)script/i.test(type);
+  if (url.pathname.endsWith(".png")) return /image\/png/i.test(type);
+  return true;
+}
 self.addEventListener("install", (event) =>
   event.waitUntil(
-    caches
-      .open(CACHE)
-      .then((cache) => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting()),
+    (async () => {
+      const cache = await caches.open(CACHE);
+      // Validate before caching: a host's HTML fallback must never become a stylesheet/module.
+      await Promise.all(
+        ASSETS.map(async (path) => {
+          const url = new URL(path, ROOT);
+          const response = await fetch(new Request(url, { cache: "reload" }));
+          if (!valid(response, url))
+            throw new Error(`Invalid offline asset: ${url.pathname}`);
+          await cache.put(url, response);
+        }),
+      );
+      await self.skipWaiting();
+    })(),
   ),
 );
 self.addEventListener("activate", (event) =>
   event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys
-            .filter((k) => k.startsWith("freakshow-") && k !== CACHE)
-            .map((k) => caches.delete(k)),
-        ),
-      )
-      .then(() => self.clients.claim()),
+    (async () => {
+      await Promise.all(
+        (await caches.keys())
+          .filter((k) => k.startsWith("freakshow-") && k !== CACHE)
+          .map((k) => caches.delete(k)),
+      );
+      await self.clients.claim();
+    })(),
   ),
 );
 self.addEventListener("fetch", (event) => {
-  // Development studies are independent pages, never the cached production shell.
-  const prototypePath = new URL("./public/mouth-prototype/", self.location.href)
-    .pathname;
-  if (new URL(event.request.url).pathname === prototypePath + "rig.js") {
-    // The same approved source powers the independent study and production.
-    // Keep it fresh online, with the production cache available offline.
-    event.respondWith(
-      fetch(event.request).catch(() =>
-        caches.match(event.request, { ignoreSearch: true }),
-      ),
-    );
-    return;
-  }
-  if (new URL(event.request.url).pathname.startsWith(prototypePath)) return;
+  const request = event.request,
+    url = new URL(request.url);
   if (
-    event.request.method === "GET" &&
-    new URL(event.request.url).origin === self.location.origin
+    request.method !== "GET" ||
+    url.origin !== ROOT.origin ||
+    !url.pathname.startsWith(ROOT.pathname)
   )
-    event.respondWith(
-      caches.match(event.request).then(async (hit) => {
-        if (hit) return hit;
-        // Projector navigation has a query string but uses the same offline shell.
-        if (event.request.mode === "navigate") {
-          const shell = await caches.match("./index.html");
-          if (shell) return shell;
+    return;
+  const relative = url.pathname.slice(ROOT.pathname.length);
+  // Independent development views must never receive the production HTML shell.
+  if (
+    relative.startsWith("public/") &&
+    relative !== "public/mouth-prototype/rig.js" &&
+    relative !== "public/baseline-v4.html"
+  )
+    return;
+  const appNavigation =
+    request.mode === "navigate" &&
+    (relative === "" || relative === "index.html");
+  if (
+    request.mode === "navigate" &&
+    !appNavigation &&
+    relative !== "public/baseline-v4.html"
+  )
+    return;
+  const known = ASSETS.some(
+    (path) => new URL(path, ROOT).pathname === url.pathname,
+  );
+  if (!known && !appNavigation) return;
+  event.respondWith(
+    (async () => {
+      const cache = await caches.open(CACHE);
+      try {
+        // Prefer the deployed resource; recover from stale or invalid older caches online.
+        const response = await fetch(
+          new Request(request, { cache: "no-cache" }),
+        );
+        if (valid(response, url)) {
+          await cache.put(
+            appNavigation
+              ? new URL("index.html", ROOT)
+              : new URL(url.pathname, ROOT.origin),
+            response.clone(),
+          );
+          return response;
         }
-        return fetch(event.request);
-      }),
-    );
+        const cached = await cache.match(
+          appNavigation ? new URL("index.html", ROOT) : url,
+          { ignoreSearch: true },
+        );
+        return valid(cached, url) ? cached : response;
+      } catch (error) {
+        const cached = await cache.match(
+          appNavigation ? new URL("index.html", ROOT) : url,
+          { ignoreSearch: true },
+        );
+        if (valid(cached, url)) return cached;
+        throw error;
+      }
+    })(),
+  );
 });

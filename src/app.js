@@ -994,7 +994,7 @@ if (
   document.querySelector('meta[name="freakshow-build"]')
 )
   navigator.serviceWorker
-    .register("./sw.js")
+    .register(new URL("sw.js", document.baseURI), { updateViaCache: "none" })
     .then(() => navigator.serviceWorker.ready)
     .then(
       () =>

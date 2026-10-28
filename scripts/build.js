@@ -1,4 +1,7 @@
 import { rm, mkdir, cp, copyFile, readFile, writeFile } from "node:fs/promises";
+const base = process.env.PAGES_BASE || "/";
+if (!/^\/(?:[A-Za-z0-9_-]+\/)*$/.test(base))
+  throw new Error("PAGES_BASE must be an absolute directory path ending in /");
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist");
 for (const file of [
@@ -16,7 +19,7 @@ await writeFile(
   "dist/index.html",
   (await readFile("dist/index.html", "utf8")).replace(
     "<head>",
-    '<head><meta name="freakshow-build" content="production">',
+    `<head><base href="${base}"><meta name="freakshow-build" content="production">`,
   ),
 );
 console.log("Offline production build written to dist/");

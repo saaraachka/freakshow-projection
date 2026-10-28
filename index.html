@@ -7,6 +7,39 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles.css" />
     <title>FREAKSHOW · Projection workshop</title>
+    <script>
+      // Start update recovery even when a stale cached module cannot boot the app.
+      window.addEventListener("load", () => {
+        if (
+          document.querySelector('meta[name="freakshow-build"]') &&
+          "serviceWorker" in navigator
+        ) {
+          navigator.serviceWorker
+            .register(new URL("sw.js", document.baseURI), {
+              updateViaCache: "none",
+            })
+            .then((registration) => registration.update())
+            .catch(() => {});
+        }
+      });
+      window.addEventListener(
+        "error",
+        (event) => {
+          const asset = event.target;
+          if (
+            asset instanceof HTMLLinkElement &&
+            asset.rel === "stylesheet" &&
+            !asset.dataset.retried
+          ) {
+            asset.dataset.retried = "true";
+            const retry = new URL(asset.href);
+            retry.searchParams.set("recovery", Date.now());
+            asset.href = retry.href;
+          }
+        },
+        true,
+      );
+    </script>
   </head>
   <body>
     <header>
