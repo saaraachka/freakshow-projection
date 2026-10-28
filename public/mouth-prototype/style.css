@@ -1,0 +1,253 @@
+:root {
+  color-scheme: dark;
+  font-family: system-ui, sans-serif;
+  color: #eee5d5;
+  background: #111519;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 32px 40px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  max-width: 1600px;
+  margin: auto auto 28px;
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #d9b575;
+}
+h1 {
+  font:
+    38px Georgia,
+    serif;
+  margin: 12px 0;
+}
+header p {
+  font-size: 14px;
+  color: #b4b7b7;
+  max-width: 740px;
+  line-height: 1.6;
+  margin: 0;
+}
+.badge {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  border: 1px solid #655235;
+  padding: 12px;
+  color: #d9b575;
+  white-space: nowrap;
+}
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  max-width: 1600px;
+  margin: auto;
+}
+.stage {
+  border: 1px solid #3a4145;
+  background: #192126;
+  align-self: start;
+  position: sticky;
+  top: 20px;
+}
+.stage-head,
+.stage-foot {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  color: #c0c7c8;
+  font-size: 12px;
+  gap: 15px;
+}
+.stage-head {
+  border-bottom: 1px solid #3a4145;
+}
+.stage-head span:first-child {
+  color: #ead1a7;
+  font: 20px Georgia;
+}
+.stage-foot {
+  border-top: 1px solid #3a4145;
+  font-size: 10px;
+}
+canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: calc(100vh - 250px);
+  min-height: 450px;
+  object-fit: contain;
+  background: #192126;
+}
+aside section {
+  border: 1px solid #3a4145;
+  padding: 22px;
+  margin-bottom: 16px;
+}
+h2 {
+  font: 21px Georgia;
+  margin: 10px 0 20px;
+}
+.poses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+button {
+  font: inherit;
+  font-size: 13px;
+  padding: 13px 10px;
+  border: 1px solid #566067;
+  background: #252f36;
+  color: #eee5d5;
+  cursor: pointer;
+}
+button:hover {
+  border-color: #d9b575;
+}
+button[aria-pressed="true"] {
+  background: #dbb779;
+  color: #191d20;
+  border-color: #dbb779;
+}
+.wide {
+  width: 100%;
+  margin-top: 12px;
+  background: #dbb779;
+  color: #171c20;
+}
+.secondary {
+  background: transparent;
+  color: #d8d7cb;
+}
+label {
+  display: block;
+  font-size: 12px;
+  color: #c6c9c7;
+  margin: 16px 0 8px;
+}
+output {
+  float: right;
+  color: #dbb779;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: #dbb779;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.6;
+}
+input[type="checkbox"] {
+  accent-color: #dbb779;
+}
+.hint {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #a2acb0;
+  margin-bottom: 0;
+}
+ol {
+  padding-left: 18px;
+  margin-bottom: 0;
+}
+li {
+  padding: 0 0 14px 4px;
+  font-size: 12px;
+}
+li span {
+  display: block;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #a2acb0;
+  margin-top: 5px;
+}
+footer {
+  font-size: 11px;
+  color: #8e999f;
+  max-width: 1600px;
+  margin: 26px auto;
+  line-height: 1.7;
+}
+@media (min-width: 1800px) {
+  canvas {
+    max-height: 1000px;
+  }
+}
+@media (max-width: 900px) {
+  body {
+    padding: 18px;
+  }
+  header {
+    display: block;
+  }
+  .badge {
+    display: inline-block;
+    margin-top: 18px;
+  }
+  main {
+    grid-template-columns: 1fr;
+  }
+  .stage {
+    position: static;
+  }
+  canvas {
+    min-height: 0;
+    max-height: none;
+  }
+  aside {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  aside section {
+    margin: 0;
+  }
+  .layers {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 540px) {
+  h1 {
+    font-size: 30px;
+  }
+  aside {
+    grid-template-columns: 1fr;
+  }
+  .stage-foot {
+    font-size: 9px;
+  }
+}
+.viewport {
+  position: relative;
+}
+.viewport svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.viewport text {
+  font: 10px monospace;
+  fill: #fff4da;
+  paint-order: stroke;
+  stroke: #182026;
+  stroke-width: 3px;
+}
+.viewport line {
+  stroke: #dfbd80;
+  stroke-width: 1;
+}
