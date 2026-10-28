@@ -1,6 +1,7 @@
 import { chromium } from "playwright";
 import { spawn } from "node:child_process";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
+import { synthesize, wav } from "./helpers.js";
 import assert from "node:assert/strict";
 const server = spawn(process.execPath, ["scripts/serve.js", "dist"], {
   env: { ...process.env, PORT: "5192" },
@@ -74,6 +75,62 @@ try {
     ),
     false,
   );
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.locator('[data-mode="song"]').click();
+  const melody = {
+    duration: 1.7,
+    sampleRate: 44100,
+    tones: [0.3, 0.6, 0.9].map((start, i) => ({
+      start,
+      end: start + 0.13,
+      frequency: [440, 554, 659][i],
+      amplitude: 0.65,
+    })),
+  };
+  await writeFile(
+    "artifacts/integration/three-notes.wav",
+    wav(synthesize(melody), 44100),
+  );
+  await page
+    .locator("#audioFile")
+    .setInputFiles("artifacts/integration/three-notes.wav");
+  await page.waitForFunction(() => !document.querySelector("#play").disabled);
+  for (let i = 0; i < 3; i++) {
+    await page.locator("#seek").evaluate(
+      (el, t) => {
+        el.value = t;
+        el.dispatchEvent(new Event("input"));
+      },
+      0.4 + i * 0.3,
+    );
+    await page.waitForFunction(async (note) => {
+      const { approvedStatus } = await import("./src/approved-character.js");
+      const s = approvedStatus(document.querySelector("#preview"));
+      return s?.note === note && s.params.open > 0.25;
+    }, i + 1);
+    await page
+      .locator("#preview")
+      .screenshot({ path: `artifacts/integration/song-note-${i + 1}.png` });
+    const status = await page.evaluate(async () => {
+      const { approvedStatus } = await import("./src/approved-character.js");
+      return approvedStatus(document.querySelector("#preview"));
+    });
+    assert.equal(status.speech, ["o", "a", "e"][i]);
+    assert.equal(status.teeth, 20);
+    await page.locator("#seek").evaluate(
+      (el, t) => {
+        el.value = t;
+        el.dispatchEvent(new Event("input"));
+      },
+      0.57 + i * 0.3,
+    );
+    await page.waitForFunction(async () => {
+      const { approvedStatus } = await import("./src/approved-character.js");
+      return (
+        approvedStatus(document.querySelector("#preview"))?.params.open < 0.025
+      );
+    });
+  }
   assert.deepEqual(errors, []);
   console.log(
     "Stage 1: actual approved mesh, legacy fallback, full expression controls and narrow viewport render without runtime errors.",

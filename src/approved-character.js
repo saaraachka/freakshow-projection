@@ -142,12 +142,16 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
   const requested = Math.ceil((800 * scale * ctx.getTransform().a) / 128) * 128;
   const resolution = Math.max(
     384,
-    Math.min(economy ? 512 : quality === "high" ? 1200 : 1024, requested),
+    Math.min(
+      quality === "economy" ? 512 : quality === "high" ? 1200 : 1024,
+      requested,
+    ),
   );
   if (r.surface.width !== resolution) {
     r.surface.width = resolution;
     r.surface.height = resolution;
     r.last = -Infinity;
+    r.stats = {};
   }
   const changed = state !== r.state || time !== r.time || quality !== r.quality;
   if (
@@ -212,6 +216,9 @@ export function drawApprovedCharacter(ctx, state, options, time, stage) {
   r.stats = {
     ...r.stats,
     source: "public/mouth-prototype/rig.js",
+    params: r.state?.anatomy?.params,
+    speech: r.state?.anatomy?.speech,
+    note: r.state?.anatomy?.note,
     resolution,
     targetFPS,
     renderMs: r.cost,

@@ -53,7 +53,7 @@ function sceneOptions() {
   if (isProjector) return options;
   return {
     ...options,
-    character: mode === "studio" ? $("character").value : "legacy",
+    character: mode !== "live" ? $("character").value : "legacy",
     characterQuality: $("characterQuality").value,
     characterWire: mode === "studio" && $("meshWire").checked,
   };

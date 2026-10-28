@@ -20,10 +20,10 @@ export class CharacterMotion {
     this.reset();
   }
   reset() {
-    this.params = { ...POSES.closed };
+    this.params = { ...POSES.closed, open: 0 };
     this.count = 0;
     this.last = -Infinity;
-    this.speech = "o";
+    this.speech = "closed";
     this.strength = 1;
     this.pupil = 0;
     this.lastTime = null;

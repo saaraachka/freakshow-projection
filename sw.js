@@ -1,4 +1,4 @@
-const CACHE = "freakshow-v6-mesh-studio-1";
+const CACHE = "freakshow-v6-mesh-song-2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -46,6 +46,16 @@ self.addEventListener("fetch", (event) => {
   // Development studies are independent pages, never the cached production shell.
   const prototypePath = new URL("./public/mouth-prototype/", self.location.href)
     .pathname;
+  if (new URL(event.request.url).pathname === prototypePath + "rig.js") {
+    // The same approved source powers the independent study and production.
+    // Keep it fresh online, with the production cache available offline.
+    event.respondWith(
+      fetch(event.request).catch(() =>
+        caches.match(event.request, { ignoreSearch: true }),
+      ),
+    );
+    return;
+  }
   if (new URL(event.request.url).pathname.startsWith(prototypePath)) return;
   if (
     event.request.method === "GET" &&
