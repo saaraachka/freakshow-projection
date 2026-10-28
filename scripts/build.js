@@ -15,11 +15,15 @@ for (const file of [
   await copyFile(file, "dist/" + file);
 await cp("src", "dist/src", { recursive: true });
 await cp("public", "dist/public", { recursive: true });
-await writeFile(
-  "dist/index.html",
-  (await readFile("dist/index.html", "utf8")).replace(
-    "<head>",
-    `<head><base href="${base}"><meta name="freakshow-build" content="production">`,
-  ),
-);
+// Preserve the current self-contained production upload byte for byte. The
+// retained modular baseline still needs its original Pages base when restored.
+const html = await readFile("dist/index.html", "utf8");
+if (html.includes("src/app.js"))
+  await writeFile(
+    "dist/index.html",
+    html.replace(
+      "<head>",
+      `<head><base href="${base}"><meta name="freakshow-build" content="production">`,
+    ),
+  );
 console.log("Offline production build written to dist/");

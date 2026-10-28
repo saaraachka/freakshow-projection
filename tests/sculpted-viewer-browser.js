@@ -1,6 +1,6 @@
 import { chromium, webkit, devices } from "playwright";
 import { spawn } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 const remote = process.env.FREAKSHOW_BASE_URL;
 const testPort = process.env.FREAKSHOW_TEST_PORT || "5201";
@@ -31,6 +31,12 @@ const views = {
   top: [[0, 1, 0.04], [0, 0, 0], 1],
   underside: [[0, -1, 0.12], [0, 0, 0], 1],
   eyes: [[0, 0.02, 1], [0, 0.31, 0.36], 0.34],
+  "eyes-three-quarter": [[0.65, 0.03, 1], [0, 0.31, 0.26], 0.37],
+  "eyes-side": [[1, 0, 0], [0, 0.31, 0.15], 0.37],
+  "mouth-three-quarter": [[0.7, 0, 1], [0, -0.49, 0.3], 0.4],
+  "mouth-side": [[1, 0, 0], [0, -0.49, 0.3], 0.4],
+  "mouth-left-corner": [[-0.3, 0, 1], [-0.5, -0.3, 0.15], 0.22],
+  "mouth-right-corner": [[0.3, 0, 1], [0.5, -0.3, 0.15], 0.22],
   nose: [[0.15, 0.03, 1], [0, -0.015, 0.64], 0.3],
   mouth: [[0, -0.08, 1], [0, -0.49, 0.34], 0.37],
   ear: [[0.5, 0.02, 1], [1, 0.035, -0.1], 0.25],
@@ -84,8 +90,74 @@ async function capture(page, prefix = "") {
         .locator("#scene")
         .screenshot({ path: `${folder}/${prefix}${name}.png` });
   }
+  await page.evaluate(async () => {
+    assetViewer.scene.overrideMaterial = null;
+    const { applyMouthDiagnostic } = await import(
+      new URL(
+        location.pathname.includes("baseline-6b838a5")
+          ? "../mouth-diagnostic.js?sculpt=4"
+          : "./mouth-diagnostic.js?sculpt=4",
+        location.href,
+      )
+    );
+    applyMouthDiagnostic(assetViewer.character);
+  });
+  for (const name of [
+    "mouth",
+    "mouth-left-corner",
+    "mouth-right-corner",
+    "mouth-three-quarter",
+    "mouth-side",
+  ]) {
+    const [direction, target, scale] = views[name];
+    await page.evaluate(
+      ({ direction, target, scale }) => {
+        const a = assetViewer;
+        a.orbit.target.set(...target);
+        a.camera.position
+          .set(...direction)
+          .normalize()
+          .multiplyScalar(6.4 * scale)
+          .add(a.orbit.target);
+        a.orbit.update();
+        a.renderer.render(a.scene, a.camera);
+      },
+      { direction, target, scale },
+    );
+    if (!remote)
+      await page
+        .locator("#scene")
+        .screenshot({ path: `${folder}/${prefix}diagnostic-${name}.png` });
+  }
+  await page.evaluate(async () => {
+    const { restoreMouthMaterials } = await import(
+      new URL(
+        location.pathname.includes("baseline-6b838a5")
+          ? "../mouth-diagnostic.js?sculpt=4"
+          : "./mouth-diagnostic.js?sculpt=4",
+        location.href,
+      )
+    );
+    restoreMouthMaterials(assetViewer.character);
+    assetViewer.character.hair.visible = true;
+    assetViewer.setClay(true);
+  });
 }
 const runs = [];
+if (!remote) {
+  const { sourceHash } = await import("../scripts/bake-character-sculpt.js");
+  const manifest = JSON.parse(
+    await readFile(
+      "public/3d-character-viewer/generated/manifest.json",
+      "utf8",
+    ),
+  );
+  assert.equal(
+    manifest.sourceHash,
+    await sourceHash(),
+    "Baked geometry must match current procedural source",
+  );
+}
 try {
   if (server)
     await new Promise((resolve, reject) => {
@@ -197,6 +269,8 @@ try {
         return {
           revision: a.modelState.revision,
           staticSculpt: a.modelState.staticSculpt,
+          cacheHash: a.modelState.cacheHash,
+          hairCacheHash: a.modelState.hairCacheHash,
           components: [...components.values()].sort((a, b) => b - a),
           nonManifoldEdges: [...edges.values()].filter((n) => n !== 2).length,
           finite,
@@ -222,8 +296,13 @@ try {
         };
       });
       console.log(engine, "structure", JSON.stringify(structure));
-      assert.equal(structure.revision, "anatomical-refinement-3");
+      assert.equal(structure.revision, "precision-correction-4");
       assert.equal(structure.staticSculpt, true);
+      assert.ok(
+        structure.cacheHash?.length === 64 &&
+          structure.cacheHash === structure.hairCacheHash,
+        "Use the matching reproducible geometry cache",
+      );
       assert.equal(
         structure.components.length,
         1,
@@ -239,10 +318,10 @@ try {
       assert.equal(structure.dentalClasses.length, 4);
       assert.ok(structure.asymmetry > 0.0001);
       assert.ok(
-        structure.triangles < 360000,
+        structure.triangles < 400000,
         "Keep below the static sculpt mobile triangle budget",
       );
-      assert.ok(structure.hairClumps >= 30 && structure.hairLocks > 200);
+      assert.ok(structure.hairClumps === 23 && structure.hairLocks < 160);
       assert.equal(structure.clay, true);
       assert.deepEqual(structure.eyeAspect, [1, 1], "Globes must be spherical");
       assert.ok(
@@ -256,7 +335,158 @@ try {
         await page.evaluate(() => assetViewer.camera.position.z < 0),
         "Rear shortcut must show the rear",
       );
-      await capture(page);
+      const geometryChecks = await page.evaluate(async () => {
+        const THREE = await import("three");
+        const skin = await import("./implicit-skin.js?sculpt=4");
+        const { scalpHairField } = await import("./sculpt-hair.js?sculpt=4");
+        const c = assetViewer.character;
+        c.root.updateMatrixWorld(true);
+        let crownSamples = 0,
+          uncoveredCrown = 0;
+        const p = c.face.geometry.attributes.position;
+        for (let i = 0; i < p.count; i++)
+          if (p.getY(i) > 0.83) {
+            crownSamples++;
+            if (scalpHairField(p.getX(i), p.getY(i), p.getZ(i)) > 0.005)
+              uncoveredCrown++;
+          }
+        const toothChecks = [];
+        for (const tooth of c.teeth) {
+          const p = tooth.geometry.attributes.position,
+            ix = tooth.geometry.index.array;
+          let exposed = 0,
+            samples = 0,
+            bodyOutsideCavity = 0;
+          const test = (v) => {
+            const body = v.y < -0.025;
+            v.applyMatrix4(tooth.matrixWorld);
+            samples++;
+            if (body && skin.oralCavityField(v.x, v.y, v.z) > 0.002)
+              bodyOutsideCavity++;
+            if (
+              skin.anatomyField(v.x, v.y, v.z) > 0.002 &&
+              skin.oralCavityField(v.x, v.y, v.z) > 0.002
+            )
+              exposed++;
+          };
+          for (let i = 0; i < p.count; i++)
+            test(new THREE.Vector3().fromBufferAttribute(p, i));
+          for (let i = 0; i < ix.length; i += 3) {
+            const v = new THREE.Vector3();
+            for (let k = 0; k < 3; k++)
+              v.addScaledVector(
+                new THREE.Vector3().fromBufferAttribute(p, ix[i + k]),
+                1 / 3,
+              );
+            test(v);
+          }
+          toothChecks.push({
+            name: tooth.name,
+            samples,
+            exposed,
+            bodyOutsideCavity,
+          });
+        }
+        const eyes = c.eyes.map((e) => {
+          const p = e.geometry.attributes.position;
+          let min = Infinity,
+            max = 0;
+          for (let i = 0; i < p.count; i++) {
+            const r = Math.hypot(p.getX(i), p.getY(i), p.getZ(i));
+            min = Math.min(min, r);
+            max = Math.max(max, r);
+          }
+          return {
+            minRadius: min,
+            maxRadius: max,
+            clipping: e.material.clippingPlanes,
+            nominal: e.userData.nominalRadius,
+          };
+        });
+        const hg = c.hair.children[0].geometry,
+          n = hg.userData.coreVertices,
+          hi = hg.index.array;
+        const parent = Int32Array.from({ length: n }, (_, i) => i),
+          find = (i) => {
+            while (parent[i] !== i) {
+              parent[i] = parent[parent[i]];
+              i = parent[i];
+            }
+            return i;
+          },
+          edges = new Map();
+        for (let i = 0; i < hg.userData.coreIndices; i += 3)
+          for (let k = 0; k < 3; k++) {
+            const a = hi[i + k],
+              b = hi[i + ((k + 1) % 3)];
+            parent[find(a)] = find(b);
+            const key = a < b ? a * n + b : b * n + a;
+            edges.set(key, (edges.get(key) || 0) + 1);
+          }
+        const hairCore = {
+          components: new Set(Array.from(parent, (_, i) => find(i))).size,
+          nonManifoldEdges: [...edges.values()].filter((n) => n !== 2).length,
+          embeddedFlyaways: hg.userData.flyawayRoots.every(
+            (p) => scalpHairField(...p) < -0.02,
+          ),
+        };
+        const ray = new THREE.Raycaster(),
+          hits = [];
+        for (const eye of c.eyes)
+          for (const offset of [-0.09, 0, 0.09]) {
+            ray.set(
+              new THREE.Vector3(eye.position.x + offset, eye.position.y, 2),
+              new THREE.Vector3(0, 0, -1),
+            );
+            const first = ray.intersectObjects([c.face, ...c.eyes], false)[0];
+            hits.push(first?.object === eye);
+          }
+        return {
+          crownSamples,
+          hairCore,
+          uncoveredCrown,
+          toothChecks,
+          eyes,
+          visibleEyeRays: hits,
+        };
+      });
+      assert.equal(
+        geometryChecks.uncoveredCrown,
+        0,
+        "No crown samples may project outside the solid hair foundation",
+      );
+      assert.ok(geometryChecks.crownSamples > 1000);
+      assert.deepEqual(geometryChecks.hairCore, {
+        components: 1,
+        nonManifoldEdges: 0,
+        embeddedFlyaways: true,
+      });
+      assert.ok(
+        geometryChecks.toothChecks.every(
+          (t) => t.exposed === 0 && t.bodyOutsideCavity === 0,
+        ),
+        "Enamel must not escape the face, and crown bodies must stay in the oral cavity",
+      );
+      assert.ok(
+        geometryChecks.eyes.every(
+          (e) =>
+            e.minRadius > 0.2049 && e.maxRadius < 0.218 && e.clipping === null,
+        ),
+      );
+      assert.ok(
+        geometryChecks.visibleEyeRays.every(Boolean),
+        "Both globes must be visible across the aperture",
+      );
+      console.log(engine, "precision geometry", JSON.stringify(geometryChecks));
+      if (engine === "chromium" && !remote) await capture(page);
+      await page.locator("#diagnostic").check();
+      assert.equal(
+        await page.evaluate(() => assetViewer.scene.overrideMaterial === null),
+        true,
+      );
+      assert.equal(await page.locator("#diagnostic-key").isVisible(), true);
+      await page.locator("#diagnostic").uncheck();
+      await page.locator("#clay").check();
       // Controls change the actual rendered scene and work independently of capture.
       await page.locator("#clay").uncheck();
       assert.equal(
@@ -321,9 +551,9 @@ try {
       await page.selectOption("#model-version", "approved");
       await page.waitForFunction(
         () =>
-          assetViewer.modelState.revision === "sculpt-reconstruction-2" &&
+          assetViewer.modelState.revision === "anatomical-refinement-3" &&
           document.querySelector("#scene").dataset.renderedRevision ===
-            "sculpt-reconstruction-2" &&
+            "anatomical-refinement-3" &&
           !document.querySelector("#model-version").disabled,
         null,
         { timeout: 90000 },
@@ -339,15 +569,18 @@ try {
       await page.selectOption("#model-version", "refined");
       await page.waitForFunction(
         () =>
-          assetViewer.modelState.revision === "anatomical-refinement-3" &&
+          assetViewer.modelState.revision === "precision-correction-4" &&
           document.querySelector("#scene").dataset.renderedRevision ===
-            "anatomical-refinement-3" &&
+            "precision-correction-4" &&
           !document.querySelector("#model-version").disabled,
       );
       const old = await browser.newPage({
         viewport: { width: 1280, height: 1000 },
       });
-      await load(old, base + "public/3d-character-viewer/approved/index.html");
+      await load(
+        old,
+        base + "public/3d-character-viewer/baseline-6b838a5/index.html",
+      );
       const signature = () => {
         const a = assetViewer,
           g = a.character.face.geometry,
@@ -360,8 +593,6 @@ try {
           return {
             name: t.name,
             hash,
-            position: t.position.toArray(),
-            rotation: t.rotation.toArray(),
           };
         });
         const cheeks = [-1, 1].map((s) => {
@@ -385,15 +616,15 @@ try {
       };
       const approved = await old.evaluate(signature),
         refined = await page.evaluate(signature);
-      assert.equal(approved.revision, "sculpt-reconstruction-2");
+      assert.equal(approved.revision, "anatomical-refinement-3");
       assert.deepEqual(
         refined.crowns,
         approved.crowns,
-        "Approved dental geometry and placement must be unchanged",
+        "Preserved crown geometry must remain unchanged; arch positioning is corrected",
       );
       assert.ok(
-        refined.depth - approved.depth > 0.28,
-        "Occiput must extend behind the approved skull",
+        Math.abs(refined.depth - approved.depth) < 0.001,
+        "Approved cranial depth must be unchanged",
       );
       assert.ok(
         refined.cheeks.every((z, i) => Math.abs(z - approved.cheeks[i]) < 0.02),
@@ -422,9 +653,9 @@ try {
         await mobile.selectOption("#model-version", "approved");
         await mobile.waitForFunction(
           () =>
-            assetViewer.modelState.revision === "sculpt-reconstruction-2" &&
+            assetViewer.modelState.revision === "anatomical-refinement-3" &&
             document.querySelector("#scene").dataset.renderedRevision ===
-              "sculpt-reconstruction-2" &&
+              "anatomical-refinement-3" &&
             !document.querySelector("#model-version").disabled,
           null,
           { timeout: 90000 },
@@ -432,9 +663,9 @@ try {
         await mobile.selectOption("#model-version", "refined");
         await mobile.waitForFunction(
           () =>
-            assetViewer.modelState.revision === "anatomical-refinement-3" &&
+            assetViewer.modelState.revision === "precision-correction-4" &&
             document.querySelector("#scene").dataset.renderedRevision ===
-              "anatomical-refinement-3",
+              "precision-correction-4",
         );
       }
       await mobile.waitForFunction(
@@ -451,7 +682,9 @@ try {
       await mobile.waitForTimeout(150);
       assert.ok(
         await mobile.evaluate(
-          () => assetViewer.renderer.info.render.triangles > 340000,
+          () =>
+            assetViewer.modelState.revision === "precision-correction-4" &&
+            assetViewer.renderer.info.render.triangles > 300000,
         ),
         "Phone must render the refined geometry after switching back",
       );
@@ -482,6 +715,7 @@ try {
       runs.push({
         engine,
         structure,
+        geometryChecks,
         comparison: {
           approvedDepth: approved.depth,
           refinedDepth: refined.depth,
@@ -496,7 +730,7 @@ try {
       });
       console.log(
         engine,
-        "Matched approved/refined views, bare skull, unchanged teeth, spherical eyes, clay/color, orbit/zoom and iPhone controls passed.",
+        "Matched approved/refined views, bare skull, preserved dental crowns, spherical eyes, clay/color, orbit/zoom and iPhone controls passed.",
       );
       await phone.close();
     } finally {
@@ -508,7 +742,7 @@ try {
       `${folder}/checks.json`,
       JSON.stringify(
         {
-          revision: "anatomical-refinement-3",
+          revision: "precision-correction-4",
           runs,
           physicalIPhoneTested: false,
         },

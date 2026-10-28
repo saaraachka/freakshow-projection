@@ -1,13 +1,15 @@
 {
-  "revision": "anatomical-refinement-3",
+  "revision": "precision-correction-4",
   "runs": [
     {
       "engine": "chromium",
       "structure": {
-        "revision": "anatomical-refinement-3",
+        "revision": "precision-correction-4",
         "staticSculpt": true,
+        "cacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
+        "hairCacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
         "components": [
-          58965
+          77855
         ],
         "nonManifoldEdges": 0,
         "finite": true,
@@ -52,11 +54,11 @@
           "RightSeatedGlobe",
           "CurvedAcidGreenIris",
           "CurvedPupil",
-          "PrimaryClumpsSecondaryLocksFlyaways"
+          "UnifiedCurlMassesAndRootedFlyaways"
         ],
-        "faceVertices": 58965,
-        "triangles": 346078,
-        "generationMs": 8165.20000000298,
+        "faceVertices": 77855,
+        "triangles": 398378,
+        "generationMs": 387.80000000447035,
         "teeth": 28,
         "dentalClasses": [
           "incisor",
@@ -64,9 +66,9 @@
           "premolar",
           "molar"
         ],
-        "hairClumps": 47,
-        "hairLocks": 336,
-        "asymmetry": 0.0053186163267339714,
+        "hairClumps": 23,
+        "hairLocks": 80,
+        "asymmetry": 0.0028086449842403827,
         "clay": true,
         "posteriorExtent": 1.292527675628662,
         "eyeAspect": [
@@ -74,23 +76,224 @@
           1
         ]
       },
+      "geometryChecks": {
+        "crownSamples": 8755,
+        "hairCore": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "embeddedFlyaways": true
+        },
+        "uncoveredCrown": 0,
+        "toothChecks": [
+          {
+            "name": "Upper_L_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          }
+        ],
+        "eyes": [
+          {
+            "minRadius": 0.20499998831946395,
+            "maxRadius": 0.21699999272823334,
+            "clipping": null,
+            "nominal": 0.205
+          },
+          {
+            "minRadius": 0.20499998831946395,
+            "maxRadius": 0.21699999272823334,
+            "clipping": null,
+            "nominal": 0.205
+          }
+        ],
+        "visibleEyeRays": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
       "comparison": {
-        "approvedDepth": 0.8799433708190918,
+        "approvedDepth": 1.292527675628662,
         "refinedDepth": 1.292527675628662,
         "approvedCheeks": [
-          0.44293004274368286,
-          0.4283698797225952
-        ],
-        "refinedCheeks": [
           0.4440121054649353,
           0.4296782314777374
+        ],
+        "refinedCheeks": [
+          0.44400644302368164,
+          0.4293525516986847
         ],
         "dentitionUnchanged": true
       },
       "mobile": {
         "fits": true,
         "dpr": 1,
-        "triangles": 346078,
+        "triangles": 398378,
         "webgl2": true
       },
       "errors": [],
@@ -100,10 +303,12 @@
     {
       "engine": "webkit",
       "structure": {
-        "revision": "anatomical-refinement-3",
+        "revision": "precision-correction-4",
         "staticSculpt": true,
+        "cacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
+        "hairCacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
         "components": [
-          58965
+          77855
         ],
         "nonManifoldEdges": 0,
         "finite": true,
@@ -148,11 +353,11 @@
           "RightSeatedGlobe",
           "CurvedAcidGreenIris",
           "CurvedPupil",
-          "PrimaryClumpsSecondaryLocksFlyaways"
+          "UnifiedCurlMassesAndRootedFlyaways"
         ],
-        "faceVertices": 58965,
-        "triangles": 346078,
-        "generationMs": 7343,
+        "faceVertices": 77855,
+        "triangles": 398378,
+        "generationMs": 445,
         "teeth": 28,
         "dentalClasses": [
           "incisor",
@@ -160,9 +365,9 @@
           "premolar",
           "molar"
         ],
-        "hairClumps": 47,
-        "hairLocks": 336,
-        "asymmetry": 0.0053186163267339714,
+        "hairClumps": 23,
+        "hairLocks": 80,
+        "asymmetry": 0.0028086449842403827,
         "clay": true,
         "posteriorExtent": 1.292527675628662,
         "eyeAspect": [
@@ -170,23 +375,224 @@
           1
         ]
       },
+      "geometryChecks": {
+        "crownSamples": 8755,
+        "hairCore": {
+          "components": 1,
+          "nonManifoldEdges": 0,
+          "embeddedFlyaways": true
+        },
+        "uncoveredCrown": 0,
+        "toothChecks": [
+          {
+            "name": "Upper_L_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_L_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Upper_R_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_L_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_incisor_0",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_incisor_1",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_canine_2",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_premolar_3",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_premolar_4",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_molar_5",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          },
+          {
+            "name": "Lower_R_molar_6",
+            "samples": 1592,
+            "exposed": 0,
+            "bodyOutsideCavity": 0
+          }
+        ],
+        "eyes": [
+          {
+            "minRadius": 0.20499998831946395,
+            "maxRadius": 0.21699999272823334,
+            "clipping": null,
+            "nominal": 0.205
+          },
+          {
+            "minRadius": 0.20499998831946395,
+            "maxRadius": 0.21699999272823334,
+            "clipping": null,
+            "nominal": 0.205
+          }
+        ],
+        "visibleEyeRays": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
       "comparison": {
-        "approvedDepth": 0.8799433708190918,
+        "approvedDepth": 1.292527675628662,
         "refinedDepth": 1.292527675628662,
         "approvedCheeks": [
-          0.44293004274368286,
-          0.4283698797225952
-        ],
-        "refinedCheeks": [
           0.4440121054649353,
           0.4296782314777374
+        ],
+        "refinedCheeks": [
+          0.44400644302368164,
+          0.4293525516986847
         ],
         "dentitionUnchanged": true
       },
       "mobile": {
         "fits": true,
         "dpr": 1,
-        "triangles": 346078,
+        "triangles": 398378,
         "webgl2": true
       },
       "errors": [],

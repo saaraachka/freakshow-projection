@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { mergeVertices } from "./vendor/BufferGeometryUtils.js";
-import { mouthLine } from "./implicit-skin.js?sculpt=3";
+import { mouthLine } from "./implicit-skin.js?sculpt=4";
 // Closed crown lofts with enamel lobes, neck taper, labial plane and occlusal
 // relief. The crown classes have genuinely different surfaces, not scaled blocks.
 function crownGeometry(kind, width, height, depth, variant) {
@@ -92,6 +92,25 @@ function patchGeometry(fn, nu, nv) {
   g.computeVertexNormals();
   return g;
 }
+export function dentalArch(theta, lower = false) {
+  const t = Math.abs(theta),
+    posterior = Math.max(0, (t - 0.45) / 0.76);
+  const x =
+    Math.sin(theta) * 0.561 - Math.sign(theta) * 0.08 * posterior ** 1.3;
+  const z =
+    0.075 +
+    Math.cos(theta) * 0.346 -
+    (lower ? 0.023 : 0) -
+    0.115 * posterior ** 1.2;
+  const root =
+    mouthLine(x) +
+    (lower ? -0.115 : 0.125) +
+    (lower ? 0.005 : -0.045) * posterior;
+  const dx = 0.561 * Math.cos(t) - ((0.08 * 1.3) / 0.76) * posterior ** 0.3,
+    dz = 0.346 * Math.sin(t) + ((0.115 * 1.2) / 0.76) * posterior ** 0.2;
+  const yaw = Math.sign(theta) * Math.atan2(dz, dx);
+  return { x, z, root, yaw };
+}
 export function createDentition() {
   const group = new THREE.Group(),
     teeth = [],
@@ -120,17 +139,13 @@ export function createDentition() {
     for (const sign of [-1, 1])
       for (let i = 0; i < 7; i++) {
         const theta = sign * angles[i],
-          x = Math.sin(theta) * 0.561,
-          z = 0.075 + Math.cos(theta) * 0.346 - (lower ? 0.023 : 0),
+          { x, z, root, yaw } = dentalArch(theta, lower),
           kind = kinds[i];
         const h =
           (lower ? 0.093 : i === 0 ? 0.154 : 0.136) *
           (kind === "canine" ? 1.34 : 1) *
           (1 + 0.035 * Math.sin(i * 4 + sign));
-        const y =
-          mouthLine(x) +
-          (lower ? -0.115 : 0.125) +
-          0.005 * Math.sin(i * 3 + sign);
+        const y = root + 0.005 * Math.sin(i * 3 + sign);
         const depth =
           kind === "incisor"
             ? 0.074
@@ -149,7 +164,7 @@ export function createDentition() {
         const o = new THREE.Mesh(g, enamel);
         o.name = `${lower ? "Lower" : "Upper"}_${sign < 0 ? "L" : "R"}_${kind}_${i}`;
         o.position.set(x, y, z);
-        o.rotation.y = theta + 0.025 * Math.sin(i * 2 + sign);
+        o.rotation.y = yaw + 0.025 * Math.sin(i * 2 + sign);
         o.rotation.z =
           (lower ? Math.PI : 0) + 0.026 * Math.sin(i * 3 + sign * 0.8);
         group.add(o);
@@ -167,11 +182,12 @@ export function createDentition() {
       for (let j = 0; j <= radial; j++) {
         const a = (i / segments - 0.5) * 2.62,
           b = (j / radial) * Math.PI * 2,
-          x = Math.sin(a) * 0.555;
+          { x: archX, z: archZ, root } = dentalArch(a, lower),
+          x = archX;
         const scallop = 0.008 * Math.cos(a * 34);
-        const cy = mouthLine(x) + (lower ? -0.147 : 0.155);
+        const cy = root + (lower ? -0.045 : 0.043);
         const offset = Math.sin(b) * 0.051;
-        const z = 0.064 + Math.cos(a) * 0.332 + Math.cos(b) * 0.054;
+        const z = archZ - 0.04 + Math.cos(b) * 0.055;
         verts.push(
           x + Math.sin(a) * Math.cos(b) * 0.031,
           cy + offset + scallop,
@@ -207,16 +223,17 @@ export function createDentition() {
   // relief sit inside that volume; neither is a flat black mouth card.
   const palate = patchGeometry(
     (u, v) => {
-      const a = (u - 0.5) * Math.PI,
-        x = Math.sin(a) * 0.43 * (0.2 + 0.8 * v),
-        z = -0.07 + v * 0.47;
+      const x = (u * 2 - 1) * 0.425,
+        front = 0.3 * Math.sqrt(Math.max(0, 1 - (x / 0.44) ** 2)) - 0.035;
+      const z = THREE.MathUtils.lerp(-0.14, front, v);
       const y =
-        -0.33 -
-        0.065 * (x / 0.43) ** 2 +
-        0.014 * Math.sin(v * 34) * Math.sin(Math.PI * v);
+        -0.285 -
+        0.08 * (x / 0.425) ** 2 -
+        0.015 * v +
+        0.006 * Math.sin(v * 34) * Math.sin(Math.PI * v);
       return [x, y, z];
     },
-    40,
+    44,
     28,
   );
   const pm = new THREE.Mesh(palate, gingiva);

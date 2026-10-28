@@ -1,5 +1,5 @@
 import * as THREE from "../character-3d/vendor/three.module.js";
-import { surfaceNets } from "./surface-nets.js?sculpt=3";
+import { surfaceNets } from "./surface-nets.js?sculpt=4";
 // A landmark loft, not a union of primitive facial balls. Each section specifies
 // mandibular/frontal/occipital breadth and depth independently.
 const sections = [
@@ -27,16 +27,16 @@ export const mouthLine = (x) => -0.49 + 0.23 * (x / 0.65) ** 2 + 0.035 * x;
 export function lipLandmarks(x) {
   const u = x / 0.665,
     c = mouthLine(x),
-    h = 0.145 * Math.sqrt(Math.max(0, 1 - u * u));
+    h = 0.125 * Math.sqrt(Math.max(0, 1 - u * u));
   return { upper: c + h, lower: c - h, span: Math.max(0, 1 - u * u) ** 0.58 };
 }
 export function eyeLandmark(s) {
   return {
     x: s * 0.393,
     y: s < 0 ? 0.292 : 0.316,
-    z: 0.145,
+    z: 0.175,
     tilt: s < 0 ? -0.075 : 0.12,
-    width: s < 0 ? 0.203 : 0.196,
+    width: s < 0 ? 0.183 : 0.18,
     height: s < 0 ? 0.067 : 0.058,
   };
 }
@@ -100,7 +100,7 @@ function facialRelief(x, y) {
     f += 0.06 * bump(x, y, s * 0.29, -0.25, 0.23, 0.19); // maxillary muzzle
     f += 0.036 * bump(x, y, s * 0.48, -0.78, 0.17, 0.2); // mandibular body
     const foldX = 0.23 + 0.88 * clamp(-y - 0.1, 0, 0.5);
-    f -= 0.023 * bump(x, y, s * foldX, -0.28, 0.026, 0.18); // nasolabial crease
+    f -= 0.018 * bump(x, y, s * foldX, -0.28, 0.042, 0.18); // nasolabial crease
     f += 0.025 * bump(x, y, s * (foldX + 0.054), -0.27, 0.048, 0.18);
     f -= 0.04 * bump(x, y, s * 0.633, mouthLine(s * 0.633), 0.035, 0.058); // commissure dimple
   }
@@ -156,7 +156,7 @@ function auricleField(x, y, z) {
     (0.27 + (sign < 0 ? 0.025 : 0)) * gauss((Math.atan2(v, u) - 0.75) / 0.27);
   const q = Math.hypot(u, v) / outline,
     base = -0.155 - 0.085 * u;
-  const helix = 0.049 * gauss((q - 0.86) / 0.11);
+  const helix = 0.034 * gauss((q - 0.87) / 0.09);
   const stem =
     0.066 * gauss((u - (0.22 + 0.13 * v)) / 0.16) * gauss((v + 0.02) / 0.58);
   const forkGate = smooth(v, 0.15, 0.35) * (1 - smooth(v, 0.65, 0.85));
@@ -182,7 +182,7 @@ function auricleField(x, y, z) {
     concha +
     tragus +
     antitragus;
-  const back = base - 0.024 - 0.012 * gauss(q / 0.8);
+  const back = base - 0.017 - 0.01 * gauss(q / 0.8);
   let d = smax((q - 1) * 0.21, smax(z - front, back - z, 0.012), 0.014);
   // A fleshy attached lobule; the tragus/antitragus are relief in this surface,
   // rather than isolated spherical additions floating around a through-hole.
@@ -211,7 +211,7 @@ export const sampleColumn = (x, y) => ({
   rear: section(y, 4),
   relief: facialRelief(x, y),
 });
-export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
+export function facialSolidField(x, y, z, column = sampleColumn(x, y)) {
   const { w, front, back } = column,
     cz = (front + back) / 2,
     rz = (front - back) / 2;
@@ -247,12 +247,24 @@ export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
     const e = eyeLandmark(sign),
       dx = x - e.x,
       dy = y - e.y - e.tilt * dx;
+    // Continuous lid tissue follows the complete globe. The old external
+    // facial sheet fell behind its outer hemisphere, exposing a false cut edge.
+    const lidEnvelope = ellipsoid(x, y, z, e.x, e.y, e.z, 0.226, 0.222, 0.226);
+    d = smin(d, lidEnvelope, 0.055);
     // An almond aperture with tapered canthi, cut through a sculpted lid shelf.
-    const h =
-      e.height *
-      (0.78 + 0.22 * Math.sqrt(Math.max(0, 1 - (dx / e.width) ** 2)));
-    const socket = ellipsoid(dx, dy, z, 0, 0, 0.52, e.width, h, 0.38);
-    d = smax(d, -socket, 0.009);
+    // A swept orbital vestibule widens behind the lid, rather than letting
+    // a spherical cutter break through the external canthus and lid surface.
+    const h = e.height,
+      w = e.width;
+    const aperture = (Math.hypot(dx / w, dy / h) - 1) * h;
+    const channel = smax(aperture, -0.1 - z, 0.025);
+    const rear = smax(
+      Math.hypot(dx, y - e.y, z - e.z) - 0.22,
+      z - 0.255,
+      0.015,
+    );
+    const socket = smin(channel, rear, 0.015);
+    d = smax(d, -socket, 0.02);
     // The nostrils pass backwards and upwards into the integrated nasal alae.
     const nostril = ellipsoid(
       x,
@@ -267,7 +279,10 @@ export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
     );
     d = smax(d, -nostril, 0.022);
   }
-  const oral = ellipsoid(
+  return d;
+}
+export function oralCavityField(x, y, z, solid = facialSolidField(x, y, z)) {
+  const opening = ellipsoid(
     x,
     y - mouthLine(x),
     z,
@@ -275,12 +290,18 @@ export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
     0,
     0.69,
     0.665,
-    0.145,
+    0.12,
     0.79,
   );
-  d = smax(d, -oral, 0.01);
-  d = smin(d, auricleField(x, y, z), 0.055);
-  return d;
+  // The internal vestibule expands behind the lips but retains a cheek wall.
+  const chamber = ellipsoid(x, y, z, 0, -0.44, 0.045, 0.605, 0.305, 0.445);
+  const inside = smax(chamber, solid + 0.058, 0.01);
+  return smin(opening, inside, 0.018);
+}
+export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
+  let d = facialSolidField(x, y, z, column);
+  d = smax(d, -oralCavityField(x, y, z, d), 0.01);
+  return smin(d, auricleField(x, y, z), 0.055);
 }
 export function skinColor(x, y, z) {
   const c = new THREE.Color(0xcfc2aa);
@@ -296,7 +317,12 @@ export function skinColor(x, y, z) {
 
 export function createSkinGeometry() {
   return surfaceNets(anatomyField, sampleColumn, skinColor, {
+    step: 0.02,
     refine: (x, y, z) =>
-      Math.abs(x) < 0.225 && y > -0.21 && y < 0.025 && z > 0.53,
+      (Math.abs(x) < 0.225 && y > -0.21 && y < 0.025 && z > 0.53) ||
+      (Math.abs(Math.abs(x) - 0.393) < 0.25 &&
+        y > 0.15 &&
+        y < 0.48 &&
+        z > 0.12),
   });
 }

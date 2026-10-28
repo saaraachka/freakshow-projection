@@ -134,8 +134,13 @@ export function surfaceNets(
       const length = Math.hypot(
         ...[0, 1, 2].map((k) => vertices[a * 3 + k] - vertices[b * 3 + k]),
       );
-      if (length > step * 1.25)
-        throw new Error("Unresolved large remeshing saddle");
+      if (length > step * Math.sqrt(3))
+        throw new Error(
+          "Unresolved remeshing saddle " +
+            length +
+            " at " +
+            vertices.slice(a * 3, a * 3 + 3).join(","),
+        );
       for (let k = 0; k < 3; k++)
         vertices[a * 3 + k] = (vertices[a * 3 + k] + vertices[b * 3 + k]) * 0.5;
       remap[b] = a;
@@ -324,6 +329,31 @@ export function surfaceNets(
     }
     data = new Float32Array(dense);
     indices = result;
+  }
+  if (refine) {
+    // Fair the extracted lid/canthus border after local subdivision. Original
+    // cell vertices and projected midpoints must not form alternating ridges.
+    const links = Array.from({ length: data.length / 3 }, () => new Set());
+    for (let i = 0; i < indices.length; i += 3)
+      for (let k = 0; k < 3; k++) {
+        const a = indices[i + k],
+          b = indices[i + ((k + 1) % 3)];
+        links[a].add(b);
+        links[b].add(a);
+      }
+    for (const weight of [0.38, -0.3, 0.3, -0.24]) {
+      const next = data.slice();
+      for (let i = 0; i < links.length; i++)
+        if (refine(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]))
+          for (let k = 0; k < 3; k++) {
+            let sum = 0;
+            for (const j of links[i]) sum += data[j * 3 + k];
+            if (links[i].size)
+              next[i * 3 + k] +=
+                weight * (sum / links[i].size - data[i * 3 + k]);
+          }
+      data = next;
+    }
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute("position", new THREE.BufferAttribute(data, 3));

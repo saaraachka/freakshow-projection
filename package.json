@@ -14,12 +14,15 @@
     "test:integration": "npm run build && node tests/integration-browser.js",
     "test:mobile": "npm run build && node tests/mobile-character-browser.js",
     "test:rig": "npm run build && node tests/rig-browser.js",
-    "test:pages": "PAGES_BASE=/freakshow-projection/ npm run build && node tests/pages-browser.js"
+    "test:pages": "PAGES_BASE=/freakshow-projection/ npm run build && node tests/pages-browser.js",
+    "sculpt:bake": "node scripts/bake-character-sculpt.js",
+    "sculpt:check": "node scripts/check-character-sculpt-cache.js"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "meshoptimizer": "^1.0.1",
     "playwright": "1.58.2",
     "prettier": "3.6.2"
   }

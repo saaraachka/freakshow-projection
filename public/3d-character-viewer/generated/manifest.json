@@ -1,0 +1,18 @@
+{
+  "revision": "precision-correction-4",
+  "sourceHash": "1ab2daf95b2a26dc3e17ce44db2bc941d0256667432f8356df4382c9e9f31993",
+  "parts": {
+    "skin": {
+      "file": "skin-1ab2daf95b2a.bin.gz",
+      "triangles": 155710,
+      "vertices": 77855,
+      "bytes": 2348509
+    },
+    "hair": {
+      "file": "hair-1ab2daf95b2a.bin.gz",
+      "triangles": 184112,
+      "vertices": 92080,
+      "bytes": 2770888
+    }
+  }
+}

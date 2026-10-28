@@ -8,6 +8,9 @@
     />
     <title>FREAKSHOW · Procedural 3D clown</title>
     <style>
+      [hidden] {
+        display: none !important;
+      }
       :root {
         color-scheme: dark;
       }
@@ -174,18 +177,20 @@
         <div id="metrics">Initializing WebGL…</div>
       </section>
       <aside>
-        <h2>Anatomical refinement</h2>
+        <h2>Precision correction</h2>
         <label for="model-version">Compare sculpt</label
         ><select id="model-version" disabled>
-          <option value="refined">Refined anatomy</option>
-          <option value="approved">Approved foundation · 28900d9</option>
+          <option value="refined">Current correction</option>
+          <option value="approved">Before correction · 6b838a5</option>
         </select>
         <small
           >Switch versions without changing your viewing angle, zoom or
           lighting.</small
         >
         <p>
-          <a href="./approved/index.html">Open the preserved approved viewer</a>
+          <a href="./baseline-6b838a5/index.html"
+            >Open the preserved pre-correction viewer</a
+          >
         </p>
         <p>
           Drag to orbit through 360°. Pinch or scroll to zoom. Use the underside
@@ -194,6 +199,13 @@
         <p id="status" role="status">Generating 3D geometry…</p>
         <button id="reset">Reset camera</button>
         <label><input id="clay" type="checkbox" checked /> Neutral clay</label>
+        <label
+          ><input id="diagnostic" type="checkbox" /> Mouth tissue colors</label
+        >
+        <small id="diagnostic-key" hidden
+          >Skin gray · Lips coral · Gums blue · Teeth ivory · Cavity purple.
+          Geometry stays opaque.</small
+        >
         <div id="views">
           <button data-view="front">Front</button>
           <button data-view="left-three-quarter">Left ¾</button
@@ -206,8 +218,14 @@
           ><button data-view="top">Top</button
           ><button data-view="underside">Underside</button>
           <button data-view="eyes">Eyes</button
+          ><button data-view="eyes-three-quarter">Eyes ¾</button
+          ><button data-view="eyes-side">Eyes profile</button
           ><button data-view="nose">Nose</button
           ><button data-view="mouth">Mouth</button
+          ><button data-view="mouth-three-quarter">Mouth ¾</button
+          ><button data-view="mouth-side">Mouth profile</button
+          ><button data-view="mouth-left-corner">Left corner</button
+          ><button data-view="mouth-right-corner">Right corner</button
           ><button data-view="ears">Ear</button
           ><button data-view="hair">Hair</button>
         </div>
@@ -242,6 +260,6 @@
         </p>
       </aside>
     </main>
-    <script type="module" src="./viewer.js?sculpt=3-frame"></script>
+    <script type="module" src="./viewer.js?sculpt=4"></script>
   </body>
 </html>

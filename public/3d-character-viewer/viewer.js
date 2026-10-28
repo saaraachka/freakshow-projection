@@ -1,6 +1,10 @@
 import * as THREE from "three";
+import {
+  applyMouthDiagnostic,
+  restoreMouthMaterials,
+} from "./mouth-diagnostic.js?sculpt=4";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js?sculpt=3";
+import { createProceduralHead } from "./procedural-head.js?sculpt=4";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -53,6 +57,12 @@ function setCamera(view = "front") {
     top: [0, 1, 0.04],
     underside: [0, -1, 0.12],
     eyes: [0, 0.02, 1],
+    "eyes-three-quarter": [0.65, 0.03, 1],
+    "eyes-side": [1, 0, 0],
+    "mouth-three-quarter": [0.7, 0, 1],
+    "mouth-side": [1, 0, 0],
+    "mouth-left-corner": [-0.3, 0, 1],
+    "mouth-right-corner": [0.3, 0, 1],
     nose: [0.15, 0.03, 1],
     mouth: [0, -0.08, 1],
     ears: [0.5, 0.02, 1],
@@ -60,6 +70,12 @@ function setCamera(view = "front") {
   };
   const details = {
     eyes: [[0, 0.31, 0.36], 0.34],
+    "eyes-three-quarter": [[0, 0.31, 0.26], 0.37],
+    "eyes-side": [[0, 0.31, 0.15], 0.37],
+    "mouth-three-quarter": [[0, -0.49, 0.3], 0.4],
+    "mouth-side": [[0, -0.49, 0.3], 0.4],
+    "mouth-left-corner": [[-0.5, -0.3, 0.15], 0.22],
+    "mouth-right-corner": [[0.5, -0.3, 0.15], 0.22],
     nose: [[0, -0.015, 0.64], 0.3],
     mouth: [[0, -0.49, 0.34], 0.37],
     ears: [[1, 0.035, -0.1], 0.25],
@@ -89,9 +105,25 @@ const reviewClay = new THREE.MeshStandardMaterial({
   roughness: 0.9,
 });
 function setClay(enabled) {
+  if (enabled) {
+    $("diagnostic").checked = false;
+    $("diagnostic-key").hidden = true;
+    restoreMouthMaterials(character);
+  }
   scene.overrideMaterial = enabled ? reviewClay : null;
   dirty = true;
 }
+function setDiagnostic(enabled) {
+  $("diagnostic").checked = enabled;
+  $("diagnostic-key").hidden = !enabled;
+  if (enabled) {
+    $("clay").checked = false;
+    scene.overrideMaterial = null;
+    applyMouthDiagnostic(character);
+  } else restoreMouthMaterials(character);
+  dirty = true;
+}
+$("diagnostic").onchange = (e) => setDiagnostic(e.target.checked);
 $("clay").onchange = (e) => setClay(e.target.checked);
 setClay(true);
 $("reset").onclick = () => setCamera();
@@ -151,16 +183,18 @@ canvas.dataset.modelSource = "procedural-code";
 const headCache = new Map([["refined", character]]);
 function modelStatus() {
   $("status").textContent =
-    character.state.revision === "anatomical-refinement-3"
-      ? "Refined anatomy · deeper skull, sculpted lips, folded ears and seated eyes. Static review."
-      : "Approved foundation · 28900d9. Original geometry for comparison.";
+    character.state.revision === "precision-correction-4"
+      ? "Precision correction · full crown, complete eyes and fitted dental arches. Static review."
+      : "Before correction · 6b838a5. Preserved geometry.";
 }
 async function setModel(version) {
   $("model-version").disabled = true;
   $("status").textContent = "Loading comparison sculpt…";
   try {
     if (!headCache.has(version)) {
-      const module = await import("./approved/procedural-head.js?sculpt=2");
+      const module = await import(
+        "./baseline-6b838a5/procedural-head.js?sculpt=3"
+      );
       headCache.set(version, await module.createProceduralHead());
     }
     scene.remove(character.root);
@@ -171,6 +205,8 @@ async function setModel(version) {
     character.root.traverse((o) => {
       if (o.isMesh) o.material.wireframe = $("wire").checked;
     });
+    if ($("diagnostic").checked) applyMouthDiagnostic(character);
+    else restoreMouthMaterials(character);
     $("model-version").value = version;
     dirty = true;
     modelStatus();
@@ -195,6 +231,7 @@ window.assetViewer = {
   setModel,
   setCamera,
   setClay,
+  setDiagnostic,
   get model() {
     return character.root;
   },
