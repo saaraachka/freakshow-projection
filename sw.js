@@ -1,4 +1,4 @@
-const CACHE = "freakshow-v5-rehearsal-4";
+const CACHE = "freakshow-v6-mesh-studio-1";
 const ASSETS = [
   "./",
   "./index.html",
@@ -12,6 +12,9 @@ const ASSETS = [
   "./src/renderer.js",
   "./src/clown-rig.js",
   "./src/rig-motion.js",
+  "./src/character-motion.js",
+  "./src/approved-character.js",
+  "./public/mouth-prototype/rig.js",
   "./Vintage%20Horror%20Clown%20Model%20Sheet.png",
   "./src/song-editor.js",
   "./src/mic-worklet.js",

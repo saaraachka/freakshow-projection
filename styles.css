@@ -723,3 +723,29 @@ body.projector #preview {
 .rig-inspector label {
   margin-top: 12px;
 }
+
+#preview {
+  height: auto;
+}
+.mesh-rig-controls {
+  display: none;
+}
+.mesh-character .mesh-rig-controls {
+  display: block;
+}
+.mesh-character .legacy-rig-controls {
+  display: none;
+}
+@media (max-width: 720px) {
+  body.mesh-character:not(.projector) #preview {
+    aspect-ratio: 4/5;
+  }
+}
+#preview:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto;
+}
+body.projector #preview {
+  height: 100vh;
+}

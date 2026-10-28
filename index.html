@@ -91,7 +91,66 @@
                 Three-note mouth rehearsal
               </button>
             </div>
-            <fieldset class="rig-inspector">
+            <fieldset class="rig-inspector mesh-rig-controls">
+              <legend>Approved connected character</legend>
+              <p id="characterStatus" class="muted" aria-live="polite">
+                Loading connected mesh…
+              </p>
+              <label for="meshSpeech">Speech shape</label>
+              <select id="meshSpeech">
+                <option value="animated">Follow triggers</option>
+                <option value="closed">Closed</option>
+                <option value="o">Rounded O</option>
+                <option value="a">Wide A</option>
+                <option value="e">Stretched E</option>
+              </select>
+              <label for="meshEmotion">Emotional expression</label>
+              <select id="meshEmotion">
+                <option value="none">Neutral</option>
+                <option value="grin">Sinister grin</option>
+                <option value="snarl">Angry snarl</option>
+                <option value="laughter">Manic laughter</option>
+                <option value="smirk">Evil smirk</option>
+                <option value="scream">Unhinged scream</option>
+                <option value="whisper">Creepy whisper</option>
+              </select>
+              <label for="meshAffect">Acting intensity</label
+              ><input
+                id="meshAffect"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="1"
+              />
+              <label for="meshOpening">Mouth opening</label
+              ><input
+                id="meshOpening"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="1"
+              />
+              <label
+                ><input id="meshWire" type="checkbox" /> Show connected
+                mesh</label
+              >
+              <button id="meshDemo" class="wide secondary">
+                Demonstrate six emotions
+              </button>
+              <p class="muted">
+                Speech and acting blend independently. The jaw and illustrated
+                teeth use the approved prototype rig.
+              </p>
+              <a
+                href="public/mouth-prototype/index.html"
+                target="_blank"
+                rel="noopener"
+                >Open isolated development prototype</a
+              >
+            </fieldset>
+            <fieldset class="rig-inspector legacy-rig-controls">
               <legend>Approved character rig</legend>
               <div class="buttons" aria-label="Mouth poses">
                 <button data-rig-pose="closed">Closed</button
@@ -203,6 +262,17 @@
             </div>
             <details>
               <summary>Stage appearance</summary>
+              <label for="character">Clown character</label
+              ><select id="character">
+                <option value="mesh">Approved connected mesh</option>
+                <option value="legacy">Original illustration fallback</option>
+              </select>
+              <label for="characterQuality">Rendering cost</label
+              ><select id="characterQuality">
+                <option value="auto">Automatic</option>
+                <option value="high">High detail</option>
+                <option value="economy">Lower cost · same anatomy</option>
+              </select>
               <label for="scene">Scene</label
               ><select id="scene">
                 <option value="clown">Clown apparition</option>

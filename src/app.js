@@ -20,9 +20,66 @@ const $ = (id) => document.getElementById(id),
 
 let timelineDirty = true;
 const rigMotion = new RigMotion();
+let characterDemo = false,
+  characterDemoStart = 0;
+function presentation(studio = mode === "studio") {
+  const gaze = studio
+    ? {
+        idle: { gazeIdle: 1 },
+        center: { gazeIdle: 0 },
+        left: { gazeX: -1, gazeIdle: 0 },
+        right: { gazeX: 1, gazeIdle: 0 },
+        up: { gazeY: -1, gazeIdle: 0 },
+        down: { gazeY: 1, gazeIdle: 0 },
+      }[$("rigGaze").value]
+    : { gazeIdle: 1 };
+  return {
+    speech: studio ? $("meshSpeech").value : "animated",
+    emotion: $("meshEmotion").value,
+    affect: Number($("meshAffect").value),
+    opening: studio ? Number($("meshOpening").value) : 1,
+    strength: 1,
+    rehearsal: studio && rehearsal,
+    start: characterDemo ? characterDemoStart : rehearsalStart,
+    demo: studio && characterDemo,
+    ...gaze,
+    pupil:
+      studio && $("rigPupil").value !== "animated"
+        ? Number($("rigPupil").value)
+        : null,
+  };
+}
+function sceneOptions() {
+  if (isProjector) return options;
+  return {
+    ...options,
+    character: mode === "studio" ? $("character").value : "legacy",
+    characterQuality: $("characterQuality").value,
+    characterWire: mode === "studio" && $("meshWire").checked,
+  };
+}
+function fitPreview() {
+  const mesh = sceneOptions().character === "mesh";
+  document.body.classList.toggle("mesh-character", mesh);
+  const box = preview.getBoundingClientRect(),
+    dpr = Math.min(3, window.devicePixelRatio || 1),
+    budget = 3686400;
+  const ratio = Math.min(
+    dpr,
+    Math.sqrt(budget / Math.max(1, box.width * box.height)),
+  );
+  const w = Math.max(1, Math.round(box.width * ratio)),
+    h = Math.max(1, Math.round(box.height * ratio));
+  if (preview.width !== w || preview.height !== h) {
+    preview.width = w;
+    preview.height = h;
+  }
+}
+
 const rigPreview = () =>
   mode === "studio"
     ? {
+        anatomy: presentation(),
         pose: $("rigPose").value,
         amount: Number($("rigMouth").value),
         ...(rehearsal ? rehearsalPreview(studioTime - rehearsalStart) : {}),
@@ -39,7 +96,7 @@ const rigPreview = () =>
             ? null
             : Number($("rigPupil").value),
       }
-    : null;
+    : { anatomy: presentation() };
 const audio = new Audio();
 audio.preload = "auto";
 let mode = "song",
@@ -126,7 +183,7 @@ function allEvents() {
 }
 function rebuild() {
   timelineDirty = true;
-  frames = addRigMotion(simulate(features, options));
+  frames = addRigMotion(simulate(features, options), presentation(false));
   results = [];
   renderNotes();
   drawTimeline();
@@ -159,6 +216,49 @@ for (const [key, value] of Object.entries(preferences || {})) {
   )
     options[key] = value;
 }
+const characterControls = [
+  "character",
+  "characterQuality",
+  "meshSpeech",
+  "meshEmotion",
+  "meshAffect",
+  "meshOpening",
+  "meshWire",
+];
+const characterSaved = safeStorage.get("freakshow:character-v1") || {};
+for (const id of characterControls) {
+  const el = $(id),
+    v = characterSaved[id];
+  if (v == null) continue;
+  if (el.type === "checkbox") el.checked = v === true;
+  else if (el.type === "range" && Number.isFinite(Number(v)))
+    el.value = Math.max(0, Math.min(1, Number(v)));
+  else if (Array.from(el.options || []).some((o) => o.value === v))
+    el.value = v;
+}
+for (const id of characterControls)
+  $(id).addEventListener("input", () => {
+    paused = false;
+    characterDemo = false;
+    $("meshDemo").textContent = "Demonstrate six emotions";
+    const values = Object.fromEntries(
+      characterControls.map((k) => [
+        k,
+        $(k).type === "checkbox" ? $(k).checked : $(k).value,
+      ]),
+    );
+    safeStorage.set("freakshow:character-v1", values);
+    frames = addRigMotion(frames, presentation(false));
+  });
+$("meshDemo").onclick = () => {
+  stopRehearsal();
+  characterDemo = !characterDemo;
+  characterDemoStart = studioTime;
+  paused = false;
+  $("meshDemo").textContent = characterDemo
+    ? "Stop emotional demo"
+    : "Demonstrate six emotions";
+};
 syncSettings();
 engine = new Engine(options);
 for (const key of Object.keys(DEFAULTS).filter((k) => $(k)))
@@ -173,6 +273,7 @@ function setMode(next) {
   audio.pause();
   stopMic();
   mode = next;
+  rigMotion.reset();
   paused = false;
   $("pauseMotion").textContent = "Pause motion";
   engine = new Engine(options);
@@ -384,6 +485,8 @@ $("triggerEye").onclick = () => {
   manual.push("eye");
 };
 $("triggerMouth").onclick = () => {
+  $("meshSpeech").value = "animated";
+  characterDemo = false;
   stopRehearsal();
   $("rigPose").value = "animated";
   manual.push("mouth");
@@ -412,6 +515,8 @@ for (const button of document.querySelectorAll("[data-rig-pose]"))
     $("rigPose").onchange();
   };
 $("rehearse").onclick = () => {
+  characterDemo = false;
+  $("meshSpeech").value = "animated";
   rehearsal = !rehearsal;
   rehearsalStart = studioTime;
   $("rigPose").value = rehearsal ? "animated" : "closed";
@@ -654,6 +759,7 @@ async function startMic() {
       if (!mic) return;
       state = rigMotion.step(
         engine.step(extractor.process(data.pcm), data.time),
+        { anatomy: presentation(false) },
       );
       studioTime = data.time;
     };
@@ -717,7 +823,8 @@ if (isProjector) {
       state = data.state;
       options = data.options;
       studioTime = data.time;
-      drawScene(preview, state, options, studioTime);
+      fitPreview();
+      drawScene(preview, state, sceneOptions(), studioTime);
       const lastHeard =
         mode === "song" && frames.length
           ? frames
@@ -768,7 +875,8 @@ function tick(now) {
       );
     }
   }
-  drawScene(preview, state, options, studioTime);
+  fitPreview();
+  drawScene(preview, state, sceneOptions(), studioTime);
   const lastHeard =
     mode === "song" && frames.length
       ? frames
@@ -782,6 +890,16 @@ function tick(now) {
   $("detectionMonitor").textContent = recent
     ? `Heard: ${recent.source === "kick" ? "low thump" : recent.source === "lead" ? "tonal note" : "bright tick"} → ${recent.ignored ? "ignored" : recent.kind === "eye" ? "eye trigger" : "mouth trigger"} | Eyes ${Math.round((state.rig?.eye ?? state.eyeAccent) * 100)}% · Mouth ${Math.round((state.rig?.mouth ?? state.mouthAccent) * 100)}%`
     : `No recent onset | Eyes ${Math.round((state.rig?.eye ?? state.eyeAccent) * 100)}% · Mouth ${Math.round((state.rig?.mouth ?? state.mouthAccent) * 100)}% · idle motion continues`;
+  $("characterStatus").textContent =
+    preview.dataset.characterRenderer === "approved-mesh"
+      ? "Approved connected mesh · " +
+        preview.dataset.meshTriangles +
+        " triangles · " +
+        preview.dataset.characterQuality
+      : preview.dataset.characterRenderer === "legacy-fallback"
+        ? "Original fallback: " +
+          (preview.dataset.characterError || "WebGL unavailable")
+        : "Original illustration fallback";
   $("stateLabel").textContent =
     mode === "studio" && $("rigPose").value !== "animated"
       ? "INSPECTING / " + $("rigPose").value.toUpperCase()
@@ -805,7 +923,12 @@ function tick(now) {
     lastDraw = now;
   }
   if (channel && now - lastBroadcast > 32) {
-    channel.postMessage({ type: "frame", state, options, time: studioTime });
+    channel.postMessage({
+      type: "frame",
+      state,
+      options: sceneOptions(),
+      time: studioTime,
+    });
     lastBroadcast = now;
   }
 }

@@ -1,3 +1,4 @@
+import { CharacterMotion } from "./character-motion.js";
 // Presentation only: no audio detection or scheduling changes.
 export const RIG_POSES = Object.freeze({
   closed: {
@@ -101,6 +102,7 @@ export class RigMotion {
     this.reset();
   }
   reset() {
+    this.character = new CharacterMotion();
     this.fast = {
       ...RIG_POSES.closed,
       eye: 0,
@@ -133,10 +135,16 @@ export class RigMotion {
       this.smooth[key] =
         target[key] + (this.smooth[key] - target[key] + previous * h) * decay;
     }
-    return { ...state, rig: { ...this.smooth } };
+    return {
+      ...state,
+      rig: { ...this.smooth },
+      anatomy: this.character.step(state, preview?.anatomy ?? {}),
+    };
   }
 }
-export function addRigMotion(frames) {
+export function addRigMotion(frames, presentation = null) {
   const rig = new RigMotion();
-  return frames.map((frame) => rig.step(frame));
+  return frames.map((frame) =>
+    rig.step(frame, presentation ? { anatomy: presentation } : null),
+  );
 }

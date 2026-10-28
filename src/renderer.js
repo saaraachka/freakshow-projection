@@ -1,10 +1,12 @@
+import { drawApprovedCharacter } from "./approved-character.js";
 import { drawClownRig } from "./clown-rig.js";
 // Shared stage renderer; the clown uses the approved model-sheet rig.
 export function drawScene(canvas, state, options, time) {
   const ctx = canvas.getContext("2d"),
     W = 1280,
-    H = 720,
+    H = (canvas.height / canvas.width) * 1280,
     t = options.idle === "still" ? 0 : time;
+  ctx.setTransform(canvas.width / W, 0, 0, canvas.width / W, 0, 0);
   const { levels, bassDrive, midDrive, eyeAccent, mouthAccent, clownHair } =
     state;
   const idle =
@@ -61,7 +63,17 @@ export function drawScene(canvas, state, options, time) {
     );
   }
   function clown(p, t) {
+    if (
+      options.character === "mesh" &&
+      drawApprovedCharacter(ctx, state, options, t, { width: W, height: H })
+    )
+      return;
+    canvas.dataset.characterRenderer =
+      options.character === "mesh" ? "legacy-fallback" : "legacy";
+    ctx.save();
+    ctx.translate(0, (H - 720) / 2);
     drawClownRig(ctx, state, options, t);
+    ctx.restore();
   }
   function hand(x, y, scale, angle, p, t, flip = 1) {
     ctx.save();

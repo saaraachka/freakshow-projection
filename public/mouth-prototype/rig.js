@@ -622,14 +622,14 @@ export function createRenderer(canvas) {
     program,
     shader(
       gl.VERTEX_SHADER,
-      `attribute vec3 position;attribute vec3 normal;attribute vec3 color;attribute vec2 uv;attribute float enamel;uniform float yaw;uniform float zoom;uniform float focus;varying float vEnamel;varying vec3 vColor;varying vec3 vNormal;varying vec2 vUV;void main(){float c=cos(yaw),s=sin(yaw);vec3 p=position;p.x-=450.;p=vec3(p.x*c+p.z*s,p.y,-p.x*s+p.z*c);gl_Position=vec4(p.x/400.*zoom,(focus-p.y)/400.*zoom,-p.z/500.,1.);vEnamel=enamel;vNormal=vec3(normal.x*c+normal.z*s,normal.y,-normal.x*s+normal.z*c);vColor=color;vUV=uv;}`,
+      `attribute vec3 position;attribute vec3 normal;attribute vec3 color;attribute vec2 uv;attribute float enamel;attribute float facepaint;uniform float yaw;uniform float zoom;uniform float focus;varying float vEnamel;varying float vFace;varying vec3 vColor;varying vec3 vNormal;varying vec2 vUV;void main(){float c=cos(yaw),s=sin(yaw);vec3 p=position;p.x-=450.;p=vec3(p.x*c+p.z*s,p.y,-p.x*s+p.z*c);gl_Position=vec4(p.x/400.*zoom,(focus-p.y)/400.*zoom,-p.z/500.,1.);vEnamel=enamel;vFace=facepaint;vNormal=vec3(normal.x*c+normal.z*s,normal.y,-normal.x*s+normal.z*c);vColor=color;vUV=uv;}`,
     ),
   );
   gl.attachShader(
     program,
     shader(
       gl.FRAGMENT_SHADER,
-      `precision mediump float;varying vec3 vColor;varying vec3 vNormal;varying vec2 vUV;varying float vEnamel;uniform float wire;uniform float diagnostic;void main(){vec3 n=normalize(vNormal);if(n.z<0.)n=-n;float light=.55+.45*max(0.,dot(n,normalize(vec3(-.35,-.5,1.))));float grain=fract(sin(dot(floor(vUV*2.),vec2(12.9898,78.233)))*43758.5453);float hatch=step(.88,sin(vUV.x*.8+vUV.y*.65))*(1.-light)*.25;vec3 c=vColor*(light-hatch)+(grain-.5)*.024;if(vEnamel>.5){float edge=smoothstep(.82,.98,abs(vUV.x));float shadow=max(abs(vUV.x)*.75,1.-light);float h1=step(.83,sin(vUV.x*68.+vUV.y*78.));float h2=step(.9,sin(vUV.x*73.-vUV.y*102.));float ink=(h1+h2*.65)*smoothstep(.28,.7,shadow)*.27+edge*.38;vec2 glint=vec2((vUV.x+.24)/.16,(vUV.y-.46)/.28);float shine=exp(-dot(glint,glint))*.09;c=c*(1.-ink)+shine*vec3(1.,.91,.68);}gl_FragColor=vec4(mix(mix(c,vec3(.25,.85,.75),wire),vColor,diagnostic),1.);}`,
+      `precision mediump float;varying vec3 vColor;varying vec3 vNormal;varying vec2 vUV;varying float vEnamel;varying float vFace;uniform float costume;uniform float wire;uniform float diagnostic;void main(){vec3 n=normalize(vNormal);if(n.z<0.)n=-n;float light=.55+.45*max(0.,dot(n,normalize(vec3(-.35,-.5,1.))));float grain=fract(sin(dot(floor(vUV*2.),vec2(12.9898,78.233)))*43758.5453);float hatch=step(.88,sin(vUV.x*.8+vUV.y*.65))*(1.-light)*.25;vec3 pigment=vColor;if(costume>.5&&vFace>.5){float y=vUV.y;float edge=16.*(1.-(y-285.)/155.);float mark=step(285.,y)*step(y,440.)*step(min(abs(vUV.x-(362.-(y-285.)*.1)),abs(vUV.x-(536.+(y-285.)*.1))),edge);pigment=mix(vColor*1.1,vec3(.025,.12,.19),mark);}vec3 c=pigment*(light-hatch)+(grain-.5)*.024;if(vEnamel>.5){float edge=smoothstep(.82,.98,abs(vUV.x));float shadow=max(abs(vUV.x)*.75,1.-light);float h1=step(.83,sin(vUV.x*68.+vUV.y*78.));float h2=step(.9,sin(vUV.x*73.-vUV.y*102.));float ink=(h1+h2*.65)*smoothstep(.28,.7,shadow)*.27+edge*.38;vec2 glint=vec2((vUV.x+.24)/.16,(vUV.y-.46)/.28);float shine=exp(-dot(glint,glint))*.09;c=c*(1.-ink)+shine*vec3(1.,.91,.68);}gl_FragColor=vec4(mix(mix(c,vec3(.25,.85,.75),wire),vColor,diagnostic),1.);}`,
     ),
   );
   gl.linkProgram(program);
@@ -644,16 +644,18 @@ export function createRenderer(canvas) {
     ["color", 3, 6],
     ["uv", 2, 9],
     ["enamel", 1, 11],
+    ["facepaint", 1, 12],
   ]) {
     const loc = gl.getAttribLocation(program, name);
     gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 48, offset * 4);
+    gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 52, offset * 4);
   }
   const yawLoc = gl.getUniformLocation(program, "yaw"),
     wireLoc = gl.getUniformLocation(program, "wire"),
     diagnosticLoc = gl.getUniformLocation(program, "diagnostic"),
     zoomLoc = gl.getUniformLocation(program, "zoom"),
-    focusLoc = gl.getUniformLocation(program, "focus");
+    focusLoc = gl.getUniformLocation(program, "focus"),
+    costumeLoc = gl.getUniformLocation(program, "costume");
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
   gl.clearColor(0.098, 0.129, 0.149, 1);
@@ -672,11 +674,13 @@ export function createRenderer(canvas) {
           ...(m.colors?.[i] ?? m.color),
           ...(m.uvs?.[i] ?? [v[0], v[1]]),
           m.enamel ? 1 : 0,
+          m.id === "face" ? 1 : 0,
         );
       }
     }
     return new Float32Array(out);
   }
+  let costumeBinding = null;
   return function render(
     p,
     {
@@ -685,11 +689,20 @@ export function createRenderer(canvas) {
       yaw = 0,
       diagnostic = false,
       zoom = 1,
+      transparent = false,
+      costume = false,
     } = {},
   ) {
     gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(
+      transparent ? 0 : 0.098,
+      transparent ? 0 : 0.129,
+      transparent ? 0 : 0.149,
+      transparent ? 0 : 1,
+    );
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniform1f(yawLoc, (yaw * Math.PI) / 180);
+    gl.uniform1f(costumeLoc, costume ? 1 : 0);
     gl.uniform1f(zoomLoc, zoom);
     gl.uniform1f(
       focusLoc,
@@ -698,6 +711,11 @@ export function createRenderer(canvas) {
     gl.uniform1f(wireLoc, 0);
     gl.uniform1f(diagnosticLoc, diagnostic ? 1 : 0);
     const meshes = scene(p, cutaway);
+    if (costume && !cutaway) {
+      const neutral =
+        costumeBinding ?? (costumeBinding = faceMesh(POSES.closed));
+      meshes.at(-1).uvs = neutral.vertices.map(([x, y]) => [x, y]);
+    }
     let triangles = 0;
     for (const m of meshes) {
       const data = packed(
@@ -717,7 +735,7 @@ export function createRenderer(canvas) {
           : m,
       );
       gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
-      gl.drawArrays(gl.TRIANGLES, 0, data.length / 12);
+      gl.drawArrays(gl.TRIANGLES, 0, data.length / 13);
       triangles += m.faces.length;
     }
     if (wire && !cutaway) {
@@ -728,7 +746,7 @@ export function createRenderer(canvas) {
         true,
       );
       gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
-      gl.drawArrays(gl.LINES, 0, data.length / 12);
+      gl.drawArrays(gl.LINES, 0, data.length / 13);
     }
     return {
       triangles,
