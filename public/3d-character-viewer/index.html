@@ -174,7 +174,19 @@
         <div id="metrics">Initializing WebGL…</div>
       </section>
       <aside>
-        <h2>Static sculpt review</h2>
+        <h2>Anatomical refinement</h2>
+        <label for="model-version">Compare sculpt</label
+        ><select id="model-version" disabled>
+          <option value="refined">Refined anatomy</option>
+          <option value="approved">Approved foundation · 28900d9</option>
+        </select>
+        <small
+          >Switch versions without changing your viewing angle, zoom or
+          lighting.</small
+        >
+        <p>
+          <a href="./approved/index.html">Open the preserved approved viewer</a>
+        </p>
         <p>
           Drag to orbit through 360°. Pinch or scroll to zoom. Use the underside
           and back views to inspect volume.
@@ -217,8 +229,8 @@
           acid-green eyes and navy-black groom.</small
         >
         <small
-          >Static anatomy study awaiting artistic review. No facial animation,
-          audio reactions or NPR shading. Production FREAKSHOW is
+          >Refinement of the approved sculpt, awaiting review. No facial
+          animation, audio reactions or NPR shading. Production FREAKSHOW is
           unchanged.</small
         >
         <p>
@@ -228,6 +240,6 @@
         </p>
       </aside>
     </main>
-    <script type="module" src="./viewer.js?sculpt=2"></script>
+    <script type="module" src="./viewer.js?sculpt=3"></script>
   </body>
 </html>

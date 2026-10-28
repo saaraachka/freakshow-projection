@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js?sculpt=2";
+import { createProceduralHead } from "./procedural-head.js?sculpt=3";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -46,6 +46,8 @@ function setCamera(view = "front") {
     "left-three-quarter": [-0.75, 0.12, 1],
     side: [1, 0, 0],
     "left-side": [-1, 0, 0],
+    "rear-three-quarter": [0.8, 0.12, -1],
+    "left-rear-three-quarter": [-0.8, 0.12, -1],
     back: [0, 0, -1],
     top: [0, 1, 0.04],
     underside: [0, -1, 0.12],
@@ -139,14 +141,50 @@ function draw(now) {
 requestAnimationFrame(draw);
 canvas.dataset.modelLoaded = "true";
 canvas.dataset.modelSource = "procedural-code";
-$("status").textContent =
-  "Static sculpt reconstruction · landmark loft and surface nets · integrated ears · 28 anatomical crowns · authored curl clumps. No animation or audio.";
+const headCache = new Map([["refined", character]]);
+function modelStatus() {
+  $("status").textContent =
+    character.state.revision === "anatomical-refinement-3"
+      ? "Refined anatomy · deeper skull, sculpted lips, folded ears and seated eyes. Static review."
+      : "Approved foundation · 28900d9. Original geometry for comparison.";
+}
+async function setModel(version) {
+  $("model-version").disabled = true;
+  $("status").textContent = "Loading comparison sculpt…";
+  try {
+    if (!headCache.has(version)) {
+      const module = await import("./approved/procedural-head.js?sculpt=2");
+      headCache.set(version, await module.createProceduralHead());
+    }
+    scene.remove(character.root);
+    character = headCache.get(version);
+    scene.add(character.root);
+    character.hair.visible = $("hair").checked;
+    character.root.traverse((o) => {
+      if (o.isMesh) o.material.wireframe = $("wire").checked;
+    });
+    $("model-version").value = version;
+    dirty = true;
+    modelStatus();
+  } catch (error) {
+    $("status").textContent = "Comparison could not load: " + error.message;
+    throw error;
+  } finally {
+    $("model-version").disabled = false;
+  }
+}
+$("model-version").onchange = (e) => setModel(e.target.value);
+$("model-version").disabled = false;
+modelStatus();
 window.assetViewer = {
   renderer,
   scene,
   camera,
   orbit,
-  character,
+  get character() {
+    return character;
+  },
+  setModel,
   setCamera,
   setClay,
   get model() {

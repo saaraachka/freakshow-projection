@@ -1,22 +1,22 @@
 import * as THREE from "../character-3d/vendor/three.module.js";
-import { surfaceNets } from "./surface-nets.js?sculpt=2";
+import { surfaceNets } from "./surface-nets.js?sculpt=3";
 // A landmark loft, not a union of primitive facial balls. Each section specifies
 // mandibular/frontal/occipital breadth and depth independently.
 const sections = [
-  [-1.2, 0.015, 0.13, 0.02],
-  [-1.13, 0.23, 0.39, -0.13],
-  [-1.02, 0.39, 0.47, -0.27],
-  [-0.84, 0.54, 0.45, -0.4],
-  [-0.64, 0.67, 0.48, -0.51],
-  [-0.4, 0.73, 0.47, -0.64],
-  [-0.14, 0.83, 0.44, -0.77],
-  [0.1, 0.87, 0.43, -0.86],
-  [0.36, 0.84, 0.47, -0.88],
-  [0.6, 0.8, 0.51, -0.86],
-  [0.83, 0.73, 0.49, -0.77],
-  [1.02, 0.59, 0.39, -0.59],
-  [1.14, 0.36, 0.22, -0.36],
-  [1.2, 0.015, -0.04, -0.05],
+  [-1.2, 0.015, 0.13, 0.02, 0.02],
+  [-1.13, 0.23, 0.39, -0.13, -0.13],
+  [-1.02, 0.39, 0.43, -0.27, -0.3],
+  [-0.84, 0.54, 0.43, -0.4, -0.49],
+  [-0.64, 0.67, 0.48, -0.51, -0.69],
+  [-0.4, 0.73, 0.47, -0.64, -0.94],
+  [-0.14, 0.83, 0.44, -0.77, -1.15],
+  [0.1, 0.87, 0.43, -0.86, -1.27],
+  [0.36, 0.84, 0.47, -0.88, -1.29],
+  [0.6, 0.8, 0.51, -0.86, -1.24],
+  [0.83, 0.73, 0.49, -0.77, -1.1],
+  [1.02, 0.59, 0.39, -0.59, -0.86],
+  [1.14, 0.36, 0.22, -0.36, -0.53],
+  [1.2, 0.015, -0.04, -0.05, -0.05],
 ];
 const clamp = THREE.MathUtils.clamp,
   smooth = THREE.MathUtils.smoothstep;
@@ -24,13 +24,19 @@ const gauss = (v) => Math.exp(-v * v);
 export const bump = (x, y, cx, cy, sx, sy) =>
   gauss((x - cx) / sx) * gauss((y - cy) / sy);
 export const mouthLine = (x) => -0.49 + 0.23 * (x / 0.65) ** 2 + 0.035 * x;
+export function lipLandmarks(x) {
+  const u = x / 0.665,
+    c = mouthLine(x),
+    h = 0.145 * Math.sqrt(Math.max(0, 1 - u * u));
+  return { upper: c + h, lower: c - h, span: Math.max(0, 1 - u * u) ** 0.58 };
+}
 export function eyeLandmark(s) {
   return {
     x: s * 0.393,
     y: s < 0 ? 0.292 : 0.316,
-    z: 0.135,
+    z: 0.145,
     tilt: s < 0 ? -0.075 : 0.12,
-    width: s < 0 ? 0.222 : 0.211,
+    width: s < 0 ? 0.203 : 0.196,
     height: s < 0 ? 0.067 : 0.058,
   };
 }
@@ -64,6 +70,8 @@ function section(y, k) {
     (t ** 3 - t * t) * m1
   );
 }
+export const posteriorExtension = (y) =>
+  Math.max(0, section(y, 3) - section(y, 4));
 function facialRelief(x, y) {
   let f = 0;
   // Frontal eminences with a central glabellar keel and swept temporal planes.
@@ -80,12 +88,12 @@ function facialRelief(x, y) {
     const ex = x - e.x,
       ey = y - e.y - e.tilt * ex,
       eq = Math.hypot(ex / e.width, ey / e.height);
-    f += 0.044 * gauss((eq - 1.13) / 0.36) * (0.9 + 0.1 * Math.sin(ex * 7));
+    f += 0.038 * gauss((eq - 1.13) / 0.47) * (0.9 + 0.1 * Math.sin(ex * 7));
     f +=
       0.022 * bump(x, y, e.x - Math.sign(e.x) * 0.19, e.y - 0.01, 0.031, 0.027);
     f -= 0.05 * bump(x, y, e.x, e.y, 0.27, 0.13); // orbital depression, not protruding globes
     f += 0.052 * bump(x, y, e.x, e.y - 0.112, 0.25, 0.062); // orbicularis lower shelf
-    f -= 0.018 * bump(x, y, e.x, e.y - 0.173, 0.24, 0.022); // under-eye fold
+    f -= 0.014 * bump(x, y, e.x, e.y - 0.173, 0.24, 0.035); // under-eye fold
     f +=
       0.183 * bump(x, y, s * 0.64, -0.025 + (s < 0 ? 0.022 : 0), 0.185, 0.16); // zygomatic body
     f -= 0.095 * bump(x, y, s * 0.61, -0.3, 0.145, 0.15); // buccal hollow
@@ -102,24 +110,36 @@ function facialRelief(x, y) {
   f +=
     0.16 * bump(x, y, -0.158, -0.082, 0.081, 0.07) +
     0.14 * bump(x, y, 0.153, -0.075, 0.077, 0.067);
-  f += 0.16 * bump(x, y, 0.004, -0.137, 0.043, 0.065);
-  // Philtral columns, cupid's bow, vermilion and labiomental transition.
+  f += 0.13 * bump(x, y, 0.004, -0.137, 0.05, 0.07);
+  // Philtrum and four fleshy vermilion regions blend into the maxillary skin.
   f +=
-    0.026 * bump(x, y, -0.047, -0.239, 0.024, 0.079) +
-    0.021 * bump(x, y, 0.045, -0.235, 0.023, 0.075);
-  f -= 0.019 * bump(x, y, 0, -0.245, 0.025, 0.07);
-  const u = x / 0.665,
-    c = mouthLine(x),
-    h = 0.145 * Math.sqrt(Math.max(0, 1 - u * u));
-  if (Math.abs(u) < 1.08) {
-    const cupid =
-      0.022 * gauss(x / 0.07) -
-      0.014 * (gauss((x - 0.1) / 0.05) + gauss((x + 0.1) / 0.05));
-    f += 0.036 * gauss((y - (c + h + 0.025 + cupid)) / 0.061) * gauss(x / 0.6);
-    f += 0.043 * gauss((y - (c - h - 0.028)) / 0.065) * gauss(x / 0.57);
+    0.042 * bump(x, y, -0.05, -0.235, 0.032, 0.085) +
+    0.037 * bump(x, y, 0.047, -0.231, 0.031, 0.08);
+  f -= 0.021 * bump(x, y, 0, -0.237, 0.024, 0.07);
+  const { upper, lower, span } = lipLandmarks(x);
+  if (span > 0) {
+    // Cupid's bow: paired peaks with a central notch, not a uniform lip tube.
+    const bow =
+      0.014 * (gauss((x - 0.095) / 0.06) + gauss((x + 0.095) / 0.06)) -
+      0.006 * gauss(x / 0.046);
+    const upperY = upper + 0.024 + bow;
+    const upperBorder = upper + 0.075 + bow;
+    const body =
+      0.06 * gauss((x - 0.17) / 0.29) + 0.052 * gauss((x + 0.19) / 0.28);
+    f += body * gauss((y - upperY) / 0.052) * span;
+    f -= 0.012 * gauss((y - upperBorder) / 0.023) * span * gauss(x / 0.55);
+    f += 0.008 * gauss((y - (upperBorder + 0.021)) / 0.032) * span;
+    f += 0.016 * bump(x, y, -0.008, upper + 0.009, 0.075, 0.032) * span; // tubercle
+    f +=
+      0.068 *
+      gauss((y - (lower - 0.04)) / 0.063) *
+      span *
+      (0.9 + 0.1 * Math.sin(x * 5 + 0.3));
+    f -= 0.015 * gauss((y - (lower - 0.108)) / 0.028) * gauss(x / 0.5); // lower vermilion border
+    f += 0.023 * gauss((y - (upper + 0.09)) / 0.065) * gauss(x / 0.45); // upper white lip
   }
-  f -= 0.039 * bump(x, y, 0.005, -0.795, 0.28, 0.041);
-  f += 0.075 * bump(x, y, 0.025, -0.975, 0.28, 0.13); // mental eminence
+  f -= 0.024 * bump(x, y, 0.005, -0.805, 0.29, 0.06);
+  f += 0.043 * bump(x, y, 0.025, -0.975, 0.28, 0.14); // retain the approved chin, reduce pogonion
   // Restrained broad asymmetry, no random surface noise.
   f +=
     0.02 * bump(x, y, -0.48, -0.12, 0.3, 0.3) -
@@ -128,57 +148,67 @@ function facialRelief(x, y) {
 }
 function auricleField(x, y, z) {
   const sign = x < 0 ? -1 : 1,
-    ax = Math.abs(x),
     side = sign < 0 ? -0.018 : 0.016;
-  const v = (y - 0.045 - side) / 0.335;
-  const u = (ax - (0.988 + 0.048 * v + 0.03 * v * v)) / 0.228;
+  const v = (y - 0.045 - side) / 0.313;
+  const u = (Math.abs(x) - (0.969 + 0.04 * v + 0.026 * v * v)) / 0.207;
   const outline =
     1 +
-    (0.29 + (sign < 0 ? 0.035 : 0)) * gauss((Math.atan2(v, u) - 0.75) / 0.25);
+    (0.27 + (sign < 0 ? 0.025 : 0)) * gauss((Math.atan2(v, u) - 0.75) / 0.27);
   const q = Math.hypot(u, v) / outline,
-    base = -0.135 - 0.1 * u;
-  const helix = 0.056 * gauss((q - 0.85) / 0.105);
-  const fork = 0.43 + 0.12 * v - 0.18 * v * v;
-  const anti =
-    0.036 * gauss((u - fork) / 0.12) * gauss((v - 0.15) / 0.65) +
-    0.025 * gauss((u + 0.1 + 0.45 * v) / 0.13) * gauss((v - 0.48) / 0.27);
-  const concha = -0.046 * gauss((u + 0.3) / 0.37) * gauss((v + 0.04) / 0.43);
-  const front = base + 0.07 + helix + anti + concha;
-  const back = base - 0.02 - 0.013 * gauss(q / 0.7);
-  let d = smax((q - 1) * 0.22, smax(z - front, back - z, 0.008), 0.012);
-  // Lobule, tragus and antitragus emerge from the root, not decorative tubes.
+    base = -0.155 - 0.085 * u;
+  const helix = 0.049 * gauss((q - 0.86) / 0.11);
+  const stem =
+    0.066 * gauss((u - (0.22 + 0.13 * v)) / 0.16) * gauss((v + 0.02) / 0.58);
+  const forkGate = smooth(v, 0.15, 0.35) * (1 - smooth(v, 0.65, 0.85));
+  const fork =
+    0.044 * gauss((u - (0.18 - 0.56 * (v - 0.2))) / 0.15) * forkGate +
+    0.037 * gauss((u - (0.3 + 0.68 * (v - 0.2))) / 0.15) * forkGate;
+  const scapha =
+    -0.017 * gauss((q - 0.67) / 0.095) * (1 - smooth(-u, 0.2, 0.6));
+  const concha =
+    -0.032 * bump(u, v, -0.29, -0.12, 0.31, 0.38) -
+    0.017 * bump(u, v, -0.15, 0.34, 0.3, 0.22);
+  const tragus = 0.049 * bump(u, v, -0.53, -0.12, 0.18, 0.2);
+  const antitragus = 0.039 * bump(u, v, -0.19, -0.47, 0.22, 0.16);
+  const antiBody = 0.03 * bump(u, v, 0.18, 0.04, 0.4, 0.64);
+  const front =
+    base +
+    0.068 +
+    helix +
+    stem +
+    fork +
+    antiBody +
+    scapha +
+    concha +
+    tragus +
+    antitragus;
+  const back = base - 0.024 - 0.012 * gauss(q / 0.8);
+  let d = smax((q - 1) * 0.21, smax(z - front, back - z, 0.012), 0.014);
+  // A fleshy attached lobule; the tragus/antitragus are relief in this surface,
+  // rather than isolated spherical additions floating around a through-hole.
   d = smin(
     d,
-    ellipsoid(x, y, z, sign * 0.912, -0.194 + side, -0.11, 0.1, 0.105, 0.074),
-    0.036,
-  );
-  d = smin(
-    d,
-    ellipsoid(x, y, z, sign * 0.901, 0.006 + side, -0.02, 0.055, 0.06, 0.055),
-    0.028,
-  );
-  d = smin(
-    d,
-    ellipsoid(x, y, z, sign * 0.958, -0.079 + side, -0.02, 0.05, 0.031, 0.039),
-    0.02,
+    ellipsoid(x, y, z, sign * 0.904, -0.192 + side, -0.145, 0.087, 0.09, 0.067),
+    0.043,
   );
   const canal = ellipsoid(
     x,
     y,
     z,
-    sign * 0.955,
-    -0.012 + side,
-    -0.038,
-    0.026,
-    0.034,
-    0.085,
+    sign * 0.903,
+    -0.023 + side,
+    -0.064,
+    0.024,
+    0.03,
+    0.053,
   );
-  return smax(d, -canal, 0.006);
+  return smax(d, -canal, 0.01);
 }
 export const sampleColumn = (x, y) => ({
   w: Math.max(0.012, section(y, 1)),
   front: section(y, 2),
   back: section(y, 3),
+  rear: section(y, 4),
   relief: facialRelief(x, y),
 });
 export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
@@ -189,9 +219,12 @@ export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
   // Expand the anterior radial half; translating a z-gated field can fold
   // back over itself beneath strong nasal/cheek relief. This map is monotonic.
   const sideFactor = Math.sqrt(Math.max(0.16, 1 - (ax / w) ** 2));
+  const frontWeight = smooth(z, cz - 0.075, cz + 0.075);
+  const posteriorRadius = Math.max(0.015, cz - column.rear);
   const radius = Math.max(
     0.015,
-    rz + (column.relief / sideFactor) * smooth(z, cz - 0.06, cz + 0.06),
+    THREE.MathUtils.lerp(posteriorRadius, rz, frontWeight) +
+      (column.relief / sideFactor) * frontWeight,
   );
   const q = Math.hypot(ax / w, (z - cz) / radius);
   let d = (q - 1) * Math.min(w, Math.max(0.015, rz));
@@ -209,7 +242,7 @@ export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
     0.163,
     0.188,
   );
-  d = smin(d, tip, 0.075);
+  d = smin(d, tip, 0.095);
   for (const sign of [-1, 1]) {
     const e = eyeLandmark(sign),
       dx = x - e.x,
@@ -223,16 +256,16 @@ export function anatomyField(x, y, z, column = sampleColumn(x, y)) {
     // The nostrils pass backwards and upwards into the integrated nasal alae.
     const nostril = ellipsoid(
       x,
-      y,
+      y + 0.2 * (z - 0.7),
       z,
       sign * 0.103,
-      -0.142,
-      0.726,
-      0.036,
-      0.026,
-      0.12,
+      -0.15,
+      0.7,
+      0.04,
+      0.032,
+      0.09,
     );
-    d = smax(d, -nostril, 0.008);
+    d = smax(d, -nostril, 0.022);
   }
   const oral = ellipsoid(
     x,
@@ -262,5 +295,8 @@ export function skinColor(x, y, z) {
 }
 
 export function createSkinGeometry() {
-  return surfaceNets(anatomyField, sampleColumn, skinColor);
+  return surfaceNets(anatomyField, sampleColumn, skinColor, {
+    refine: (x, y, z) =>
+      Math.abs(x) < 0.225 && y > -0.21 && y < 0.025 && z > 0.53,
+  });
 }

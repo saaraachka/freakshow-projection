@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { posteriorExtension } from "./implicit-skin.js?sculpt=3";
 import {
   mergeGeometries,
   mergeVertices,
@@ -49,6 +50,7 @@ export function createSculptHair() {
   undercoat.computeVertexNormals();
   geometries.push(undercoat);
   function lock(points, width, depth, seed, kind = "secondary") {
+    depth = Math.max(depth, width * 0.93);
     const curve = new THREE.CatmullRomCurve3(
         points.map((a) => {
           const p = V(a);
@@ -62,7 +64,7 @@ export function createSculptHair() {
           return p;
         }),
       ),
-      steps = kind === "flyaway" ? 20 : 34,
+      steps = kind === "flyaway" ? 20 : 32,
       radial = kind === "flyaway" ? 5 : kind === "primary" ? 10 : 8;
     const frames = curve.computeFrenetFrames(steps, false),
       positions = [],
@@ -109,8 +111,8 @@ export function createSculptHair() {
         // Grooved, flattened clumps rather than round hoses. Lobe ridges follow root flow.
         const ridge =
           1 +
-          0.12 * Math.cos(a * 3 + t * 5 + seed) +
-          0.04 * Math.sin(a * 5 - t * 3);
+          0.06 * Math.cos(a * 3 + t * 5 + seed) +
+          0.018 * Math.sin(a * 5 - t * 3);
         const q = p
           .clone()
           .addScaledVector(frames.normals[i], Math.cos(b) * safeWidth * ridge)
@@ -394,6 +396,18 @@ export function createSculptHair() {
   }
   const geometry = mergeGeometries(geometries);
   geometries.forEach((g) => g.dispose());
+  // Preserve the approved guide design while seating its rear mass on the
+  // deeper occiput. Positive-z forelocks and the front silhouette are retained.
+  const gp = geometry.attributes.position;
+  for (let i = 0; i < gp.count; i++) {
+    const z = gp.getZ(i),
+      y = gp.getY(i);
+    gp.setZ(
+      i,
+      z - posteriorExtension(y) * THREE.MathUtils.smoothstep(-z, 0.15, 0.8),
+    );
+  }
+  geometry.computeVertexNormals();
   const group = new THREE.Group();
   group.name = "AuthoredAsymmetricGroom";
   const mesh = new THREE.Mesh(

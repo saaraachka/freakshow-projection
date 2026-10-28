@@ -1,13 +1,13 @@
 {
-  "revision": "sculpt-reconstruction-2",
+  "revision": "anatomical-refinement-3",
   "runs": [
     {
       "engine": "chromium",
       "structure": {
-        "revision": "sculpt-reconstruction-2",
+        "revision": "anatomical-refinement-3",
         "staticSculpt": true,
         "components": [
-          50596
+          58965
         ],
         "nonManifoldEdges": 0,
         "finite": true,
@@ -54,9 +54,9 @@
           "CurvedPupil",
           "PrimaryClumpsSecondaryLocksFlyaways"
         ],
-        "faceVertices": 50596,
-        "triangles": 339388,
-        "generationMs": 5915.80000000447,
+        "faceVertices": 58965,
+        "triangles": 346078,
+        "generationMs": 9297.5,
         "teeth": 28,
         "dentalClasses": [
           "incisor",
@@ -66,13 +66,31 @@
         ],
         "hairClumps": 47,
         "hairLocks": 336,
-        "asymmetry": 0.002951848527687262,
-        "clay": true
+        "asymmetry": 0.0053186163267339714,
+        "clay": true,
+        "posteriorExtent": 1.292527675628662,
+        "eyeAspect": [
+          1,
+          1
+        ]
+      },
+      "comparison": {
+        "approvedDepth": 0.8799433708190918,
+        "refinedDepth": 1.292527675628662,
+        "approvedCheeks": [
+          0.44293004274368286,
+          0.4283698797225952
+        ],
+        "refinedCheeks": [
+          0.4440121054649353,
+          0.4296782314777374
+        ],
+        "dentitionUnchanged": true
       },
       "mobile": {
         "fits": true,
         "dpr": 1,
-        "triangles": 339388,
+        "triangles": 346078,
         "webgl2": true
       },
       "errors": [],
@@ -82,10 +100,10 @@
     {
       "engine": "webkit",
       "structure": {
-        "revision": "sculpt-reconstruction-2",
+        "revision": "anatomical-refinement-3",
         "staticSculpt": true,
         "components": [
-          50596
+          58965
         ],
         "nonManifoldEdges": 0,
         "finite": true,
@@ -132,9 +150,9 @@
           "CurvedPupil",
           "PrimaryClumpsSecondaryLocksFlyaways"
         ],
-        "faceVertices": 50596,
-        "triangles": 339388,
-        "generationMs": 10661,
+        "faceVertices": 58965,
+        "triangles": 346078,
+        "generationMs": 7331,
         "teeth": 28,
         "dentalClasses": [
           "incisor",
@@ -144,13 +162,31 @@
         ],
         "hairClumps": 47,
         "hairLocks": 336,
-        "asymmetry": 0.002951848527687262,
-        "clay": true
+        "asymmetry": 0.0053186163267339714,
+        "clay": true,
+        "posteriorExtent": 1.292527675628662,
+        "eyeAspect": [
+          1,
+          1
+        ]
+      },
+      "comparison": {
+        "approvedDepth": 0.8799433708190918,
+        "refinedDepth": 1.292527675628662,
+        "approvedCheeks": [
+          0.44293004274368286,
+          0.4283698797225952
+        ],
+        "refinedCheeks": [
+          0.4440121054649353,
+          0.4296782314777374
+        ],
+        "dentitionUnchanged": true
       },
       "mobile": {
         "fits": true,
         "dpr": 1,
-        "triangles": 339388,
+        "triangles": 346078,
         "webgl2": true
       },
       "errors": [],

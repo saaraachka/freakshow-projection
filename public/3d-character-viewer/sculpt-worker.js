@@ -1,4 +1,4 @@
-import { createSkinGeometry } from "./implicit-skin.js?sculpt=2";
+import { createSkinGeometry } from "./implicit-skin.js?sculpt=3";
 // Transfer only generated buffers; no serialized model asset is loaded.
 try {
   const geometry = createSkinGeometry(),

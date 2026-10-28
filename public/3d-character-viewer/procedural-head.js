@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { eyeLandmark } from "./implicit-skin.js?sculpt=2";
-import { createSculptHair } from "./sculpt-hair.js";
-import { createDentition } from "./sculpt-dentition.js";
+import { eyeLandmark } from "./implicit-skin.js?sculpt=3";
+import { createSculptHair } from "./sculpt-hair.js?sculpt=3";
+import { createDentition } from "./sculpt-dentition.js?sculpt=3";
 // Static sculpt only. No pose blending, jaw rig, audio coupling or animation loop.
 export async function createProceduralHead() {
   const started = performance.now(),
@@ -9,7 +9,7 @@ export async function createProceduralHead() {
   root.name = "VictorianClownStaticSculpt";
   const geometry = await new Promise((resolve, reject) => {
     const worker = new Worker(
-      new URL("./sculpt-worker.js?sculpt=2", import.meta.url),
+      new URL("./sculpt-worker.js?sculpt=3", import.meta.url),
       { type: "module" },
     );
     worker.onerror = (e) => {
@@ -43,8 +43,8 @@ export async function createProceduralHead() {
   const eyes = [];
   for (const sign of [-1, 1]) {
     const { x, y, z } = eyeLandmark(sign),
-      rx = 0.195,
-      ry = 0.16,
+      rx = 0.19,
+      ry = 0.19,
       rz = 0.19;
     const globe = new THREE.Mesh(
       new THREE.SphereGeometry(1, 32, 24),
@@ -100,7 +100,7 @@ export async function createProceduralHead() {
     get state() {
       return {
         source: "procedural-code",
-        revision: "sculpt-reconstruction-2",
+        revision: "anatomical-refinement-3",
         staticSculpt: true,
         generationMs,
         faceVertices: geometry.attributes.position.count,

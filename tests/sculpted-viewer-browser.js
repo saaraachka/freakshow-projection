@@ -3,13 +3,14 @@ import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 const remote = process.env.FREAKSHOW_BASE_URL;
-const base = remote || "http://localhost:5201/freakshow-projection/";
+const testPort = process.env.FREAKSHOW_TEST_PORT || "5201";
+const base = remote || `http://localhost:${testPort}/freakshow-projection/`;
 const server = remote
   ? null
   : spawn(process.execPath, ["scripts/serve.js", "dist"], {
       env: {
         ...process.env,
-        PORT: "5201",
+        PORT: testPort,
         BASE_PATH: "/freakshow-projection/",
       },
       stdio: "pipe",
@@ -21,7 +22,12 @@ const views = {
   "right-three-quarter": [[0.75, 0.12, 1], [0, 0, 0], 1],
   "left-profile": [[-1, 0, 0], [0, 0, 0], 1],
   "right-profile": [[1, 0, 0], [0, 0, 0], 1],
+  "rear-three-quarter": [[0.8, 0.12, -1], [0, 0, 0], 1],
+  "left-rear-three-quarter": [[-0.8, 0.12, -1], [0, 0, 0], 1],
   back: [[0, 0, -1], [0, 0, 0], 1],
+  "bare-profile": [[1, 0, 0], [0, 0, 0], 1],
+  "bare-rear-three-quarter": [[0.8, 0.12, -1], [0, 0, 0], 1],
+  "bare-back": [[0, 0, -1], [0, 0, 0], 1],
   top: [[0, 1, 0.04], [0, 0, 0], 1],
   underside: [[0, -1, 0.12], [0, 0, 0], 1],
   eyes: [[0, 0.02, 1], [0, 0.31, 0.36], 0.34],
@@ -57,9 +63,10 @@ async function capture(page, prefix = "") {
   });
   for (const [name, [direction, target, scale]] of Object.entries(views)) {
     await page.evaluate(
-      ({ direction, target, scale }) => {
+      ({ direction, target, scale, name }) => {
         const a = assetViewer,
           aim = a.orbit.target;
+        a.character.hair.visible = !name.startsWith("bare-");
         aim.set(...target);
         a.camera.position
           .set(...direction)
@@ -69,7 +76,7 @@ async function capture(page, prefix = "") {
         a.orbit.update();
         a.renderer.render(a.scene, a.camera);
       },
-      { direction, target, scale },
+      { direction, target, scale, name },
     );
     await page.waitForTimeout(80);
     if (!remote)
@@ -80,7 +87,14 @@ async function capture(page, prefix = "") {
 }
 const runs = [];
 try {
-  if (server) await new Promise((r) => server.stdout.once("data", r));
+  if (server)
+    await new Promise((resolve, reject) => {
+      server.stdout.once("data", resolve);
+      server.once("error", reject);
+      server.once("exit", (code) =>
+        reject(new Error("Test server exited before listening: " + code)),
+      );
+    });
   await mkdir(folder, { recursive: true });
   await mkdir("artifacts/sculpted-viewer", { recursive: true });
   for (const engine of [
@@ -199,10 +213,16 @@ try {
           hairLocks: a.modelState.hairLocks,
           asymmetry: Math.abs(leftY / leftN - rightY / rightN),
           clay: !!a.scene.overrideMaterial,
+          posteriorExtent: -g.boundingBox.min.z,
+          eyeAspect: a.character.eyes.map(
+            (e) =>
+              Math.max(e.scale.x, e.scale.y, e.scale.z) /
+              Math.min(e.scale.x, e.scale.y, e.scale.z),
+          ),
         };
       });
       console.log(engine, "structure", JSON.stringify(structure));
-      assert.equal(structure.revision, "sculpt-reconstruction-2");
+      assert.equal(structure.revision, "anatomical-refinement-3");
       assert.equal(structure.staticSculpt, true);
       assert.equal(
         structure.components.length,
@@ -224,6 +244,7 @@ try {
       );
       assert.ok(structure.hairClumps >= 30 && structure.hairLocks > 200);
       assert.equal(structure.clay, true);
+      assert.deepEqual(structure.eyeAspect, [1, 1], "Globes must be spherical");
       assert.ok(
         !structure.names.some((n) =>
           /Torus|Tube|Pinna|LipMesh|LidMesh/.test(n),
@@ -288,18 +309,89 @@ try {
         )) < distance,
         "Wheel zoom changes distance",
       );
-      if (
-        engine === "chromium" &&
-        process.env.FREAKSHOW_SCULPT_BASELINE &&
-        !remote
-      ) {
-        const old = await browser.newPage({
-          viewport: { width: 1280, height: 1000 },
+      const compareCamera = await page.evaluate(() => ({
+        position: assetViewer.camera.position.toArray(),
+        target: assetViewer.orbit.target.toArray(),
+      }));
+      await page.selectOption("#model-version", "approved");
+      await page.waitForFunction(
+        () =>
+          assetViewer.modelState.revision === "sculpt-reconstruction-2" &&
+          !document.querySelector("#model-version").disabled,
+        null,
+        { timeout: 90000 },
+      );
+      assert.deepEqual(
+        await page.evaluate(() => ({
+          position: assetViewer.camera.position.toArray(),
+          target: assetViewer.orbit.target.toArray(),
+        })),
+        compareCamera,
+        "Comparison must keep the viewing angle and zoom",
+      );
+      await page.selectOption("#model-version", "refined");
+      await page.waitForFunction(
+        () =>
+          assetViewer.modelState.revision === "anatomical-refinement-3" &&
+          !document.querySelector("#model-version").disabled,
+      );
+      const old = await browser.newPage({
+        viewport: { width: 1280, height: 1000 },
+      });
+      await load(old, base + "public/3d-character-viewer/approved/index.html");
+      const signature = () => {
+        const a = assetViewer,
+          g = a.character.face.geometry,
+          p = g.attributes.position;
+        const crowns = a.character.teeth.map((t) => {
+          let hash = 2166136261;
+          for (const v of t.geometry.attributes.position.array) {
+            hash = Math.imul(hash ^ Math.round(v * 1e7), 16777619);
+          }
+          return {
+            name: t.name,
+            hash,
+            position: t.position.toArray(),
+            rotation: t.rotation.toArray(),
+          };
         });
-        await load(old, process.env.FREAKSHOW_SCULPT_BASELINE);
-        await capture(old, "before-");
-        await old.close();
-      }
+        const cheeks = [-1, 1].map((s) => {
+          let z = -Infinity;
+          for (let i = 0; i < p.count; i++)
+            if (
+              s * p.getX(i) > 0.55 &&
+              s * p.getX(i) < 0.72 &&
+              p.getY(i) > -0.1 &&
+              p.getY(i) < 0.03
+            )
+              z = Math.max(z, p.getZ(i));
+          return z;
+        });
+        return {
+          revision: a.modelState.revision,
+          depth: -g.boundingBox.min.z,
+          crowns,
+          cheeks,
+        };
+      };
+      const approved = await old.evaluate(signature),
+        refined = await page.evaluate(signature);
+      assert.equal(approved.revision, "sculpt-reconstruction-2");
+      assert.deepEqual(
+        refined.crowns,
+        approved.crowns,
+        "Approved dental geometry and placement must be unchanged",
+      );
+      assert.ok(
+        refined.depth - approved.depth > 0.28,
+        "Occiput must extend behind the approved skull",
+      );
+      assert.ok(
+        refined.cheeks.every((z, i) => Math.abs(z - approved.cheeks[i]) < 0.02),
+        "Approved cheek projection must remain stable",
+      );
+      if (engine === "chromium" && !remote) await capture(old, "before-");
+      await old.close();
       const phone = await browser.newContext({ ...devices["iPhone 13"] });
       const mobile = await phone.newPage();
       await load(mobile, base + "public/3d-character-viewer/index.html");
@@ -317,6 +409,20 @@ try {
       await mobile.locator("#reset").tap();
       await mobile.locator("#scene").scrollIntoViewIfNeeded();
       await mobile.waitForTimeout(200);
+      if (engine === "webkit") {
+        await mobile.selectOption("#model-version", "approved");
+        await mobile.waitForFunction(
+          () =>
+            assetViewer.modelState.revision === "sculpt-reconstruction-2" &&
+            !document.querySelector("#model-version").disabled,
+          null,
+          { timeout: 90000 },
+        );
+        await mobile.selectOption("#model-version", "refined");
+        await mobile.waitForFunction(
+          () => assetViewer.modelState.revision === "anatomical-refinement-3",
+        );
+      }
       await mobile.screenshot({
         path: remote
           ? `artifacts/sculpted-viewer/deployed-${engine}-phone.png`
@@ -335,7 +441,7 @@ try {
         return images.length;
       });
       assert.ok(
-        galleryImages >= 29,
+        galleryImages >= 39,
         "Clay comparison gallery must decode all current/baseline renders",
       );
       await gallery.close();
@@ -344,6 +450,13 @@ try {
       runs.push({
         engine,
         structure,
+        comparison: {
+          approvedDepth: approved.depth,
+          refinedDepth: refined.depth,
+          approvedCheeks: approved.cheeks,
+          refinedCheeks: refined.cheeks,
+          dentitionUnchanged: true,
+        },
         mobile: layout,
         errors,
         assetFailures: assets,
@@ -351,7 +464,7 @@ try {
       });
       console.log(
         engine,
-        "eight views, five feature close-ups, clay/color, hair visibility, orbit/zoom and iPhone controls passed.",
+        "Matched approved/refined views, bare skull, unchanged teeth, spherical eyes, clay/color, orbit/zoom and iPhone controls passed.",
       );
       await phone.close();
     } finally {
@@ -363,7 +476,7 @@ try {
       `${folder}/checks.json`,
       JSON.stringify(
         {
-          revision: "sculpt-reconstruction-2",
+          revision: "anatomical-refinement-3",
           runs,
           physicalIPhoneTested: false,
         },
