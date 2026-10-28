@@ -1,85 +1,257 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FREAKSHOW · Projection Engine</title><style>
-:root{color-scheme:dark;font-family:Inter,system-ui,Arial,sans-serif;background:#100d12;color:#f4e8d8}*{box-sizing:border-box}body{margin:0}header{padding:20px 24px;background:#21151b;border-bottom:1px solid #53313b;display:flex;justify-content:space-between;align-items:center}h1{margin:0;letter-spacing:.17em;font-family:Georgia,serif;color:#eec99a}small,.muted{color:#bba9a5}main{display:grid;grid-template-columns:minmax(290px,400px) 1fr;gap:18px;padding:18px;max-width:1500px;margin:auto}.panel{background:#20171e;border:1px solid #55343e;border-radius:13px;padding:19px}h2{margin:0 0 13px;font-size:18px}h3{margin:18px 0 8px;font-size:14px;color:#efc79b}label{display:block;margin:12px 0 5px;font-size:13px}select,input[type=range],input[type=file]{width:100%}select,input[type=file]{background:#34252e;color:#fff;border:1px solid #704a56;border-radius:7px;padding:10px}button{cursor:pointer;background:#ad3745;color:white;border:0;padding:11px 13px;border-radius:8px;font-weight:700}button.secondary{background:#44323b}button:disabled{opacity:.5;cursor:not-allowed}.buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.status{padding:10px;border-radius:7px;background:#33252c;margin:12px 0;font-size:13px;line-height:1.5}.meter{height:9px;background:#422d35;border-radius:9px;overflow:hidden;margin:6px 0 12px}.meter>i{display:block;background:#e4b777;height:100%;width:0}.preview{width:100%;aspect-ratio:16/9;background:#000;border:1px solid #6b4d52;border-radius:8px}p{font-size:13px;line-height:1.55}.tip{font-size:12px;color:#d2b6a7}.hide{display:none!important}footer{padding:14px 24px;color:#bba9a5;font-size:12px}@media(max-width:850px){main{grid-template-columns:1fr}}.tag{background:#4a2630;padding:5px 9px;border-radius:20px;font-size:11px}
-</style></head><body><header><div><h1>FREAKSHOW</h1><small>LIVE AUDIO-REACTIVE PROJECTION ENGINE</small></div><span class="tag" id="osTag">Detecting system…</span></header><main><section class="panel"><h2>1 · Setup wizard</h2><label for="os">Operating system</label><select id="os"><option value="windows">Windows</option><option value="mac">macOS</option></select><label for="mode">Audio input</label><select id="mode"><option value="mic">Live microphone (party)</option><option value="file">Song file (testing)</option></select><div id="fileBox" class="hide"><label for="audioFile">Choose MP3, WAV, or other supported audio</label><input type="file" id="audioFile" accept="audio/*"><audio id="player" controls style="width:100%;margin-top:8px"></audio></div><div class="buttons"><button id="start">Start audio</button><button id="stop" class="secondary">Stop</button></div><div class="status" id="status">Ready. Start audio to request microphone permission.</div><h3>Audio response</h3><label>Bass <span id="bassNum">0%</span></label><div class="meter"><i id="bassMeter"></i></div><label>Mid <span id="midNum">0%</span></label><div class="meter"><i id="midMeter"></i></div><label>Treble <span id="highNum">0%</span></label><div class="meter"><i id="highMeter"></i></div><h3>Clown reactions</h3><p class="tip">The clown always drifts, looks around, and breathes. Music continuously moves its eyes and jaw; stronger accents add bigger expressions.</p><label for="selectivity">When should it react?</label><select id="selectivity"><option value="frequent">Lots of musical accents</option><option value="selective" selected>Stronger moments only</option><option value="rare">Only the biggest hits</option></select><label for="motion">How should it move?</label><select id="motion"><option value="smooth" selected>Smooth opening and closing</option><option value="snap">Quick snap and hold</option><option value="spring">Bounce back</option></select><label for="exaggeration">How dramatic?</label><select id="exaggeration"><option value="subtle">Subtle</option><option value="dramatic">Dramatic</option><option value="extreme" selected>Extreme</option></select><div class="buttons"><button id="demo" class="secondary">▶ Visual test: off</button><button id="testKick" class="secondary">Trigger eyes</button><button id="testLead" class="secondary">Trigger jaw</button></div><div class="status" id="reactionStatus">The clown moves even in silence. Try Visual test to simulate bass and melody.</div><p class="tip">Visual test creates simulated bass and melody accents. It works without microphone permission. Live music and song testing override the demo.</p><h3>2 · Visuals</h3><label for="scene">Scene</label><select id="scene"><option value="clown">Clown apparition</option><option value="hands">Reaching hands</option><option value="ringmaster">Ringmaster silhouette</option><option value="tent">Haunted big top</option></select><label><input id="autoScene" type="checkbox"> Auto-cycle scenes every 45 seconds</label><label><input id="flash" type="checkbox" checked> Beat-triggered color accents (no strobe)</label><label for="palette">Projection palette</label><select id="palette"><option value="cream">Cream backdrop / black shadows</option><option value="red">Dark red / cream silhouettes</option><option value="mono">Black and white</option></select><h3>3 · Projector</h3><div class="buttons"><button id="openProjection">Open projection window</button><button id="fullscreen" class="secondary">Fullscreen preview</button></div><p class="tip">Connect HDMI and set the projector as an extended display. Move the projection window onto the projector and fullscreen it there. Allow pop-ups if prompted. The projector window stays synchronized with this control panel.</p><h3>4 · System guide</h3><div id="guide" class="status"></div></section><section class="panel"><h2>Live visual preview</h2><canvas id="preview" class="preview" width="1280" height="720"></canvas><p class="muted">Audio-reactive graphics are rendered locally. No internet, streaming, or DJ mixer connection required. Press 1–4 to switch scenes; Space pauses/resumes animation. The app uses a shared live canvas feed for the projector window.</p><h3>Pre-party checklist</h3><p>Test microphone permission, music sensitivity, scene changes, HDMI projector output, and projector latency on the actual show laptop. Plug the laptop into power; disable sleep and notifications. Avoid pointing the projection beam into DJs' eyes. If microphone permission fails, launch through localhost using the included starter scripts.</p><p class="tip">Performance note: Built-in microphone processing, speaker-to-microphone distance, display refresh, and projector image processing all add delay. Low-latency processing is used, but zero latency cannot be guaranteed.</p></section></main><footer>FREAKSHOW · Offline single-page app · No external libraries or network requests</footer><script>
-(()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('preview'),ctx=canvas.getContext('2d'),W=1280,H=720;let ac,analyser,source,stream,buf,raf,projection=null,objectUrl=null,beat=0,lastBeat=0,levels={bass:0,mid:0,high:0,volume:0},phase=0,clownEye=0,clownMouth=0,clownHair=0,eyeTestUntil=0,mouthTestUntil=0,lastFrame=performance.now(),paused=false,lastScene=performance.now(),running=false;let detected=/Mac/i.test(navigator.platform||navigator.userAgent)?'mac':'windows';$('os').value=detected;$('osTag').textContent=detected==='mac'?'macOS detected':'Windows detected';function guide(){ $('guide').textContent=$('os').value==='mac'?'macOS: System Settings → Displays → arrange projector as extended display. Browser may ask for microphone access; grant it in System Settings → Privacy & Security → Microphone if needed.':'Windows: Connect projector, press Win + P → Extend. In Settings → Privacy & security → Microphone, allow microphone access. Grant permission in browser.';}guide();$('os').onchange=guide;$('mode').onchange=()=>{demo=false;$('demo').textContent='▶ Visual test: off';$('fileBox').classList.toggle('hide',$('mode').value!=='file');stopAudio()};$('testKick').onclick=()=>trigger('eye',performance.now());$('testLead').onclick=()=>trigger('mouth',performance.now());let demo=false,demoNextEye=0,demoNextMouth=0; $('demo').onclick=()=>{demo=!demo;$('demo').textContent=demo?'■ Visual test: on':'▶ Visual test: off';demoNextEye=demoNextMouth=0;if(demo&&running)stopAudio()};function status(s){$('status').textContent=s}async function stopAudio(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}if(source){try{source.disconnect()}catch(e){}source=null}if(ac){try{await ac.close()}catch(e){}ac=null}running=false;levels={bass:0,mid:0,high:0,volume:0};$('player').pause();status('Audio stopped. Visual animation continues.')}async function startAudio(){demo=false;$('demo').textContent='▶ Visual test: off';await stopAudio();try{ac=new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});analyser=ac.createAnalyser();analyser.fftSize=1024;analyser.smoothingTimeConstant=.16;buf=new Uint8Array(analyser.frequencyBinCount);if($('mode').value==='mic'){if(!navigator.mediaDevices?.getUserMedia)throw Error('Microphone unavailable. Open this app through http://localhost using a starter script.');stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:false});source=ac.createMediaStreamSource(stream);source.connect(analyser);status('LIVE microphone active. Speak or play music to check the meters.')}else{let f=$('audioFile').files[0];if(!f)throw Error('Choose an audio file first.');if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(f);$('player').src=objectUrl;source=ac.createMediaElementSource($('player'));source.connect(analyser);analyser.connect(ac.destination);await $('player').play();status('Song test playing. Effects react to the file.')}await ac.resume();running=true}catch(e){status('Audio error: '+e.message);await stopAudio();status('Audio error: '+e.message)}}$('start').onclick=startAudio;$('stop').onclick=stopAudio;function avg(min,max){let hz=ac.sampleRate/analyser.fftSize,a=Math.max(0,Math.floor(min/hz)),b=Math.min(buf.length-1,Math.ceil(max/hz));let sum=0,n=0;for(let i=a;i<=b;i++){sum+=buf[i];n++}return n?sum/n/255:0}// Adaptive event detection: compare each frequency band against its own moving baseline.
-// Strong onsets trigger shaped motion; sustained loudness does not pin features open.
-// Continuously responsive audio plus transient accents; no silence between detected events.
-const baseline={bass:.12,mid:.12},deviation={bass:.06,mid:.06},previous={bass:0,mid:0};
-let eyeEventAt=-1e6,mouthEventAt=-1e6, bassDrive=0,midDrive=0,eyeAccent=0,mouthAccent=0;
-function trigger(kind,now){if(kind==='eye'){eyeEventAt=now;beat=1;lastBeat=now}else{mouthEventAt=now} $('reactionStatus').textContent=(kind==='eye'?'Eyes: bass accent':'Jaw: midrange accent')+' detected';}
-function detect(kind,now){const v=levels[kind],base=baseline[kind],dev=deviation[kind],select=$('selectivity').value;
- const factor=select==='rare'?1.6:select==='frequent'?.5:.85;
- const rising=v-previous[kind];
- const strong=v>Math.max(.075,base+dev*factor) && rising>(select==='rare'?.026:select==='frequent'?.008:.014);
- const cooldown=kind==='bass'?180:260;
- if(strong&&now-(kind==='bass'?eyeEventAt:mouthEventAt)>cooldown)trigger(kind==='bass'?'eye':'mouth',now);
- const adapt=v>base?.003:.012; baseline[kind]+=(v-base)*adapt;
- deviation[kind]+=(Math.abs(v-base)-dev)*.008;
- previous[kind]=v;
-}
-function updateAudio(now){if(!running||!analyser)return;analyser.getByteFrequencyData(buf);
- const target={bass:Math.min(1,avg(35,180)*2.2),mid:Math.min(1,avg(180,2200)*2.4),high:Math.min(1,avg(2200,9000)*2)};
- for(const k of ['bass','mid','high'])levels[k]+=(target[k]-levels[k])*(target[k]>levels[k]?.7:.38);
- levels.volume=(levels.bass+levels.mid+levels.high)/3;
- detect('bass',now);detect('mid',now);
- for(const k of ['bass','mid','high']){$(k+'Meter').style.width=(levels[k]*100).toFixed(0)+'%';$(k+'Num').textContent=Math.round(levels[k]*100)+'%'}
-}
-function palette(){let p=$('palette').value;return p==='red'?{bg:'#230a10',ink:'#e9d2b3',accent:'#ec4455'}:p==='mono'?{bg:'#eee',ink:'#080808',accent:'#777'}:{bg:'#e9d9bf',ink:'#171018',accent:'#ad293c'}}function text(x,y,str,size,color,align='center'){ctx.fillStyle=color;ctx.font=`${size}px Georgia,serif`;ctx.textAlign=align;ctx.fillText(str,x,y)}function pathFill(points,color){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(...points[0]);for(let i=1;i<points.length;i++)ctx.lineTo(...points[i]);ctx.closePath();ctx.fill()}function eyes(x,y,spread,glow){ctx.fillStyle=glow;ctx.beginPath();ctx.ellipse(x-spread,y,14+levels.high*16,10+levels.high*10,0,0,Math.PI*2);ctx.ellipse(x+spread,y,14+levels.high*16,10+levels.high*10,0,0,Math.PI*2);ctx.fill()}function approach(value,target,dt,attack,release){let tau=(target>value?attack:release)/1000;return value+(target-value)*(1-Math.exp(-dt/Math.max(.005,tau)))}function clown(p,t){
- ctx.save();
- // Two independent motion systems: slow autonomous haunt and reactive music accents.
- const floatY=Math.sin(t*.58)*17+Math.sin(t*.21)*11;
- const floatX=Math.sin(t*.31)*13;
- ctx.translate(W/2+floatX,H/2+12+floatY);
- ctx.rotate(Math.sin(t*.39)*.043+Math.sin(t*.16)*.021);
- const eyeOpen=Math.min(1.5,.10+bassDrive*.62+eyeAccent*.92);
- const jawOpen=Math.min(1.5,.045+midDrive*.66+mouthAccent*1.03);
- ctx.fillStyle=p.ink;
- for(let side of [-1,1])for(let i=0;i<5;i++){
-  let x=side*(180+i*32),y=-120+Math.sin(t*.85+i*.8)*14+Math.sin(t*4.5+i*2)*clownHair*14;
-  ctx.beginPath();ctx.arc(x,y,65-i*5,0,Math.PI*2);ctx.fill();
- }
- ctx.beginPath();ctx.moveTo(-205,-130);ctx.bezierCurveTo(-240,-350,240,-350,205,-130);ctx.bezierCurveTo(260,190,130,270,0,285);ctx.bezierCurveTo(-130,270,-260,190,-205,-130);ctx.fill();
- // Fixed eyebrows preserve the sinister expression while the sockets change shape.
- ctx.fillStyle=p.bg;ctx.beginPath();ctx.moveTo(-160,-80);ctx.lineTo(-30,-30);ctx.lineTo(-150,-15);ctx.fill();
- ctx.beginPath();ctx.moveTo(160,-80);ctx.lineTo(30,-30);ctx.lineTo(150,-15);ctx.fill();
- // Dark socket apertures expand with bass; pupils wander slowly and pulse on hits.
- for(let side of [-1,1]){
-  const cx=side*92,cy=-39;
-  const rx=28+eyeOpen*33,ry=20+eyeOpen*25;
-  ctx.fillStyle=p.bg;ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,side*.13,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle=p.accent;ctx.lineWidth=5+eyeAccent*3;ctx.stroke();
-  const wanderX=Math.sin(t*.66+side*.7)*Math.min(16,rx*.36)+Math.sin(t*.23)*7;
-  const wanderY=Math.sin(t*.43+side)*Math.min(10,ry*.3);
-  const pupil=8+eyeAccent*13+bassDrive*6;
-  ctx.fillStyle=p.accent;ctx.beginPath();ctx.arc(cx+wanderX,cy+wanderY,pupil,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=p.bg;ctx.beginPath();ctx.arc(cx+wanderX-3,cy+wanderY-3,Math.max(2,pupil*.19),0,Math.PI*2);ctx.fill();
- }
- ctx.fillStyle=p.accent;ctx.beginPath();ctx.moveTo(0,-28);ctx.lineTo(-32,40);ctx.lineTo(32,40);ctx.fill();
- // The upper lip stays fixed; lower jaw is articulated downward, not an oval scale.
- const idleJaw=3+Math.pow((Math.sin(t*.83)+1)/2,4)*13;
- const gape=idleJaw+jawOpen*180;
- ctx.fillStyle=p.bg;ctx.beginPath();ctx.moveTo(-105,109);ctx.quadraticCurveTo(0,92,105,109);
- ctx.bezierCurveTo(105,136+gape,68,145+gape,0,148+gape);
- ctx.bezierCurveTo(-68,145+gape,-105,136+gape,-105,109);ctx.closePath();ctx.fill();
- ctx.strokeStyle=p.accent;ctx.lineWidth=9;ctx.stroke();
- ctx.fillStyle=p.ink;for(let i=-3;i<=3;i++){let x=i*26;ctx.fillRect(x-9,111,18,Math.min(25,9+gape*.12))}
- ctx.restore();
-}
-function hand(x,y,scale,angle,p,t,flip=1){ctx.save();ctx.translate(x,y);ctx.rotate(angle);ctx.scale(scale*flip,scale);ctx.fillStyle=p.ink;ctx.beginPath();ctx.moveTo(-42,230);ctx.lineTo(-58,45);ctx.bezierCurveTo(-90,8,-98,-32,-86,-48);ctx.bezierCurveTo(-67,-72,-44,-18,-29,0);for(let i=0;i<4;i++){let a=-56+i*33,h=130+(i%2)*45+levels.mid*35;ctx.lineTo(a-16,-35);ctx.lineTo(a-24,-h);ctx.quadraticCurveTo(a,-h-38,a+10,-h);ctx.lineTo(a+17,-35)}ctx.lineTo(85,12);ctx.quadraticCurveTo(108,85,53,120);ctx.lineTo(45,230);ctx.closePath();ctx.fill();ctx.restore()}function hands(p,t){for(let i=0;i<7;i++){let side=i%2?-1:1,x=side===1?W+30:-30,y=80+i*93;hand(x,y,.9+(.2*i)+levels.bass*.3,side*(1.4+Math.sin(t*.7+i)*.24),p,t,side)}}function ringmaster(p,t){ctx.save();ctx.translate(W/2,H/2+65);ctx.rotate(Math.sin(t*.35)*.03);ctx.scale(1+levels.bass*.08,1+levels.bass*.08);ctx.fillStyle=p.ink;ctx.beginPath();ctx.ellipse(0,230,250,60,0,0,Math.PI*2);ctx.fill();pathFill([[-145,210],[-90,-50],[90,-50],[145,210]],p.ink);ctx.beginPath();ctx.arc(0,-120,82,0,Math.PI*2);ctx.fill();ctx.fillRect(-80,-295,160,140);ctx.fillRect(-135,-160,270,22);ctx.fillStyle=p.accent;ctx.fillRect(-80,-183,160,15);eyes(0,-122,35,p.bg);ctx.strokeStyle=p.ink;ctx.lineWidth=22;ctx.beginPath();ctx.moveTo(80,-5);ctx.lineTo(240,45+Math.sin(t*2)*40);ctx.stroke();ctx.strokeStyle=p.accent;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(240,45+Math.sin(t*2)*40);ctx.lineTo(270,220);ctx.stroke();ctx.restore()}function tent(p,t){let sway=Math.sin(t*.5)*15;pathFill([[120,580],[190,200],[W/2+sway,45],[1090,200],[1160,580]],p.ink);for(let i=0;i<9;i++){let x=170+i*117;pathFill([[W/2+sway,45],[x,580],[x+56,580]],i%2?p.bg:p.accent)}ctx.fillStyle=p.bg;ctx.beginPath();ctx.ellipse(W/2,580,165+levels.bass*110,185+levels.bass*40,0,Math.PI,Math.PI*2);ctx.fill();text(W/2,650,'ENTER IF YOU DARE',44,p.ink)}function render(now){raf=requestAnimationFrame(render);if(paused)return;let t=now/1000;let dt=Math.min(.08,Math.max(.001,(now-lastFrame)/1000));lastFrame=now;updateAudio(now);if(demo){levels.bass=.24+.22*(.5+.5*Math.sin(t*9));levels.mid=.22+.25*(.5+.5*Math.sin(t*5.3));levels.high=.18+.12*(.5+.5*Math.sin(t*13));if(now>demoNextEye){trigger('eye',now);demoNextEye=now+780+Math.random()*1000}if(now>demoNextMouth){trigger('mouth',now);demoNextMouth=now+1150+Math.random()*1450}}
- const mode=$('motion').value,ext=$('exaggeration').value;
- const scale=ext==='extreme'?1:ext==='dramatic'?.72:.4;
- function shaped(at,duration){const age=now-at;if(age<0||age>duration)return 0;
-   if(mode==='snap'){if(age<65)return age/65;if(age<duration*.65)return 1;return Math.max(0,(duration-age)/(duration*.35))}
-   if(mode==='spring'){const x=age/duration;return Math.max(0,Math.exp(-3.4*x)*(1.1*Math.sin(x*11)+.42))}
-   const x=age/duration;const rise=Math.min(1,x/.23);const fall=Math.min(1,(1-x)/.64);return Math.max(0,Math.min(rise,fall));
- }
- // Each hit starts a full motion cycle; not continuous audio-controlled scaling.
- // Continuous motion follows music; accent envelopes overlay the strongest moments.
- bassDrive=approach(bassDrive,Math.min(1,levels.bass*1.6),dt,42,155);
- midDrive=approach(midDrive,Math.min(1,levels.mid*1.55),dt,65,205);
- eyeAccent=shaped(eyeEventAt,mode==='smooth'?520:360);
- mouthAccent=shaped(mouthEventAt,mode==='smooth'?710:470);
- clownEye=eyeAccent;clownMouth=mouthAccent;
- clownHair=approach(clownHair,levels.high*.10,dt,75,240);
- beat*=.86;phase+=.016;if($('autoScene').checked&&now-lastScene>45000){$('scene').selectedIndex=($('scene').selectedIndex+1)%4;lastScene=now}let p=palette();ctx.fillStyle=p.bg;ctx.fillRect(0,0,W,H);ctx.save();ctx.globalAlpha=.07;for(let i=0;i<35;i++){ctx.fillStyle=i%2?p.ink:p.accent;ctx.fillRect((i*71+Math.sin(t+i)*13)%W,0,2,H)}ctx.restore();let s=$('scene').value;if(s==='clown')clown(p,t);else if(s==='hands')hands(p,t);else if(s==='ringmaster')ringmaster(p,t);else tent(p,t);if($('flash').checked&&beat>.2){ctx.fillStyle=p.accent;ctx.globalAlpha=beat*.055;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1}ctx.strokeStyle=p.ink;ctx.globalAlpha=.35;ctx.lineWidth=14;ctx.strokeRect(12,12,W-24,H-24);ctx.globalAlpha=1}requestAnimationFrame(render);$('scene').onchange=()=>lastScene=performance.now();document.addEventListener('keydown',e=>{if(['INPUT','SELECT'].includes(document.activeElement?.tagName))return;if('1234'.includes(e.key)&&e.key.length===1){$('scene').selectedIndex=+e.key-1;lastScene=performance.now()}if(e.code==='Space'){e.preventDefault();paused=!paused}});function openProjection(){if(projection&&!projection.closed){projection.focus();return}projection=window.open('','freakshowProjection','width=1200,height=720');if(!projection){status('Popup blocked. Allow popups for this page and retry.');return}projection.document.write(`<!doctype html><html><head><title>FREAKSHOW · Projection</title><style>html,body{margin:0;width:100%;height:100%;background:#000;overflow:hidden}canvas{width:100vw;height:100vh;display:block;object-fit:fill}#hint{position:absolute;top:10px;left:10px;color:white;background:#0009;padding:8px;font:12px sans-serif;cursor:pointer}body:fullscreen #hint{display:none}</style></head><body><canvas id="out" width="1280" height="720"></canvas><div id="hint">Click here for fullscreen (or press F11). Move window to projector first.</div><script>const out=document.getElementById('out'),c=out.getContext('2d');function tick(){try{c.drawImage(window.opener.document.getElementById('preview'),0,0,1280,720)}catch(e){}requestAnimationFrame(tick)}tick();document.getElementById('hint').onclick=()=>document.documentElement.requestFullscreen().catch(()=>{});document.body.ondblclick=()=>document.documentElement.requestFullscreen().catch(()=>{});<\/script></body></html>`);projection.document.close();status('Projection window opened. Drag it onto the extended projector display, then double-click to fullscreen.')} $('openProjection').onclick=openProjection;$('fullscreen').onclick=()=>canvas.requestFullscreen().catch(e=>status('Fullscreen error: '+e.message));window.addEventListener('beforeunload',()=>{if(stream)stream.getTracks().forEach(t=>t.stop());if(projection&&!projection.closed)projection.close()});})();
-</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#121114" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>FREAKSHOW · Projection workshop</title>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="./"
+        >FREAKSHOW<span>PROJECTION WORKSHOP / V5</span></a
+      >
+      <nav aria-label="Workspace">
+        <button data-mode="song" class="active">01 <span>Song Lab</span></button
+        ><button data-mode="studio">02 <span>Visual Studio</span></button
+        ><button data-mode="live">03 <span>Live Show</span></button>
+      </nav>
+      <span class="local">● LOCAL & PRIVATE</span>
+    </header>
+    <main>
+      <div class="heading">
+        <div>
+          <p class="eyebrow" id="eyebrow">LISTEN. OBSERVE. REFINE.</p>
+          <h1 id="title">Every reaction has a moment.</h1>
+          <p id="description">
+            Bring in a song. See what the clown hears. Mark what should happen.
+          </p>
+        </div>
+        <span class="version"
+          >ORIGINAL V4 ARTWORK<br />SHARED MOTION ENGINE</span
+        >
+      </div>
+      <div class="workspace">
+        <section class="stage panel">
+          <div class="panel-heading">
+            <h2>Clown preview</h2>
+            <span id="stateLabel">IDLE / ALWAYS ALIVE</span>
+          </div>
+          <canvas
+            id="preview"
+            width="1280"
+            height="720"
+            aria-label="Animated clown preview"
+          ></canvas>
+          <div class="stage-footer">
+            <span
+              ><i class="dot"></i>
+              <span id="sourceLabel">Autonomous motion</span></span
+            ><button id="pauseMotion" class="text-button">Pause motion</button
+            ><button id="fullPreview" class="text-button">Expand</button>
+          </div>
+        </section>
+        <aside class="panel controls">
+          <div class="panel-heading">
+            <h2 id="controlTitle">Your listening room</h2>
+            <span>01</span>
+          </div>
+          <section data-for="song">
+            <label class="drop" for="audioFile"
+              ><span class="upload-icon">+</span
+              ><strong>Bring a song into the lab</strong
+              ><span>Choose MP3 or WAV · stays on this device</span
+              ><input
+                id="audioFile"
+                type="file"
+                accept=".mp3,.wav,audio/mpeg,audio/wav"
+            /></label>
+            <p id="songName" class="muted">No song loaded</p>
+          </section>
+          <section data-for="studio" hidden>
+            <p>
+              Explore the original movement without audio. Trigger a single
+              expression or rehearse a repeating sequence.
+            </p>
+            <div class="buttons">
+              <button id="triggerEye">Trigger eyes</button
+              ><button id="triggerMouth">Trigger jaw</button
+              ><button id="rehearse" class="secondary">Start rehearsal</button>
+            </div>
+            <label for="idle">Idle character</label
+            ><select id="idle">
+              <option value="haunt">Slow haunt · v4</option>
+              <option value="still">Still pose</option>
+              <option value="restless">Restless</option>
+            </select>
+          </section>
+          <section data-for="live" hidden>
+            <p>
+              Use the room microphone. Open the projector, move it to your
+              extended display, then enter fullscreen there.
+            </p>
+            <div class="buttons">
+              <button id="startMic">Enable microphone</button
+              ><button id="stopMic" class="secondary" disabled>
+                Stop microphone
+              </button>
+            </div>
+            <label for="inputDevice">Microphone</label
+            ><select id="inputDevice">
+              <option value="">System default</option></select
+            ><button id="projector" class="wide secondary">
+              Open projector window
+            </button>
+            <p class="muted">
+              Headphones prevent feedback. Microphone access requires localhost
+              or HTTPS. No audio is sent to a server.
+            </p>
+          </section>
+          <div class="settings">
+            <label for="selectivity">React to</label
+            ><select id="selectivity">
+              <option value="frequent">Lots of musical accents</option>
+              <option value="selective" selected>Stronger moments · v4</option>
+              <option value="rare">Only the biggest hits</option>
+            </select>
+            <div class="two">
+              <div>
+                <label for="motion">Movement</label
+                ><select id="motion">
+                  <option value="smooth">Smooth</option>
+                  <option value="snap">Snap & hold</option>
+                  <option value="spring">Bounce back</option>
+                </select>
+              </div>
+              <div>
+                <label for="exaggeration">Expression</label
+                ><select id="exaggeration">
+                  <option value="subtle">Subtle</option>
+                  <option value="dramatic">Dramatic</option>
+                  <option value="extreme" selected>Extreme · v4</option>
+                </select>
+              </div>
+            </div>
+            <details>
+              <summary>Stage appearance</summary>
+              <label for="scene">Scene</label
+              ><select id="scene">
+                <option value="clown">Clown apparition</option>
+                <option value="hands">Reaching hands</option>
+                <option value="ringmaster">Ringmaster silhouette</option>
+                <option value="tent">Haunted big top</option></select
+              ><label for="palette">Palette</label
+              ><select id="palette">
+                <option value="cream">Antique cream</option>
+                <option value="red">Dark red</option>
+                <option value="mono">Black & white</option></select
+              ><label
+                ><input id="flash" type="checkbox" checked /> Gentle color
+                accents</label
+              >
+            </details>
+          </div>
+          <div id="status" role="status" aria-live="polite">
+            Ready when you are. The clown never quite sleeps.
+          </div>
+        </aside>
+      </div>
+      <section class="panel timeline-panel" data-for="song">
+        <div class="panel-heading">
+          <h2>
+            Song timeline <span class="subtle">/ click any trace to seek</span>
+          </h2>
+          <span id="duration">00:00 / 00:00</span>
+        </div>
+        <div class="transport">
+          <button id="play" disabled>▶ Play</button
+          ><button id="rewind" class="secondary" disabled>↶ Start</button
+          ><label class="sr-only" for="seek">Song position</label
+          ><input
+            id="seek"
+            type="range"
+            min="0"
+            max="1"
+            step="0.001"
+            value="0"
+            disabled
+          /><span id="analysisLabel">WAITING FOR AUDIO</span>
+        </div>
+        <div class="trace-wrap">
+          <div class="trace-labels">
+            <span>WAVEFORM</span><span>BASS ENERGY</span><span>MIDRANGE</span
+            ><span>EVENTS <small>● eyes / ◆ jaw</small></span
+            ><span>ANIMATION <small>eyes / jaw</small></span>
+          </div>
+          <canvas
+            id="timeline"
+            width="1400"
+            height="320"
+            aria-label="Seekable waveform, bass and midrange energy, detected events, and animation state"
+          ></canvas>
+        </div>
+        <p class="timeline-tip">
+          Gold: eyes & bass · coral: jaw & midrange · vertical flags: your
+          annotations. All traces share the same song clock.
+        </p>
+      </section>
+      <section class="panel annotations" data-for="song">
+        <div class="panel-heading">
+          <h2>
+            Listening notes <span class="subtle">/ expected reactions</span>
+          </h2>
+          <div class="buttons compact">
+            <button id="importNotes" class="text-button">Import session</button
+            ><button id="exportNotes" class="text-button" disabled>
+              Export session</button
+            ><input
+              id="notesFile"
+              type="file"
+              accept="application/json,.json"
+              hidden
+            />
+          </div>
+        </div>
+        <div class="note-tools">
+          <label for="noteTime">At second</label
+          ><input
+            id="noteTime"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+          /><label for="noteKind" class="sr-only">Expected reaction</label
+          ><select id="noteKind">
+            <option value="eye">Eyes should react</option>
+            <option value="mouth">Jaw should react</option>
+            <option value="ignore">Ignore this sound</option></select
+          ><label for="noteText" class="sr-only">Note</label
+          ><input
+            id="noteText"
+            placeholder="What are you hearing? (optional)"
+          /><button id="addNote" disabled>+ Mark moment</button
+          ><button id="runRegression" class="secondary" disabled>
+            Check expectations
+          </button>
+        </div>
+        <p id="regressionSummary" class="muted">
+          Mark the playhead or enter an exact timestamp. Checks allow ±150 ms.
+        </p>
+        <ul id="notes">
+          <li class="empty">
+            Your ears set the expectation. The traces show what happened.
+          </li>
+        </ul>
+      </section>
+      <footer>
+        <span>FREAKSHOW / MADE FOR THE BIG TOP</span
+        ><span id="offlineStatus"
+          >Local audio. No uploads. No external assets.</span
+        >
+      </footer>
+    </main>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

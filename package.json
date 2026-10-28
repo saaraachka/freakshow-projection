@@ -1,0 +1,22 @@
+{
+  "name": "freakshow-projection",
+  "version": "5.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.js",
+    "build": "node scripts/build.js",
+    "preview": "node scripts/serve.js dist",
+    "test": "node --test tests/engine.test.js",
+    "test:browser": "npm run build && node tests/browser.js",
+    "check-session": "node scripts/check-session.js",
+    "format": "prettier --write index.html styles.css src scripts tests README.md package.json manifest.webmanifest sw.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2",
+    "prettier": "3.6.2"
+  }
+}

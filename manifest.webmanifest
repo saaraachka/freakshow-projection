@@ -1,0 +1,8 @@
+{
+  "name": "FREAKSHOW Projection Workshop",
+  "short_name": "FREAKSHOW",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#121114",
+  "theme_color": "#121114"
+}

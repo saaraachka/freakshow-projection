@@ -1,0 +1,16 @@
+{
+  "description": "Synthetic annotated song: isolated low kick, midrange lead, silence and a quiet rejected sound. Original v4 selective thresholds.",
+  "sampleRate": 44100,
+  "duration": 4,
+  "tones": [
+    { "start": 0.5, "end": 0.64, "frequency": 80, "amplitude": 0.8 },
+    { "start": 1.5, "end": 1.7, "frequency": 700, "amplitude": 0.8 },
+    { "start": 3, "end": 3.1, "frequency": 120, "amplitude": 0.000001 }
+  ],
+  "annotations": [
+    { "time": 0.52, "kind": "eye", "text": "Low kick opens the eyes" },
+    { "time": 1.52, "kind": "mouth", "text": "Lead opens the jaw" },
+    { "time": 2.5, "kind": "ignore", "text": "Silence" },
+    { "time": 3.05, "kind": "ignore", "text": "Quiet sound below threshold" }
+  ]
+}
