@@ -1,4 +1,4 @@
-const CACHE = "freakshow-v5-mouth-2";
+const CACHE = "freakshow-v5-eyes-3";
 const ASSETS = [
   "./",
   "./index.html",

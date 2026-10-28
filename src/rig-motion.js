@@ -84,7 +84,13 @@ export class RigMotion {
     this.reset();
   }
   reset() {
-    this.fast = { ...RIG_POSES.closed, eye: 0 };
+    this.fast = {
+      ...RIG_POSES.closed,
+      eye: 0,
+      gazeX: 0,
+      gazeY: 0,
+      gazeIdle: 1,
+    };
     this.smooth = { ...this.fast };
   }
   step(state, preview = null) {
@@ -95,7 +101,10 @@ export class RigMotion {
     const target = {
       ...(pose ??
         interpolatePose(RIG_POSES.closed, RIG_POSES.a, state.mouthAccent)),
-      eye: state.eyeAccent,
+      eye: preview?.pupil == null ? state.eyeAccent : preview.pupil,
+      gazeX: preview?.gazeX ?? 0,
+      gazeY: preview?.gazeY ?? 0,
+      gazeIdle: preview?.gazeIdle ?? 1,
     };
     const alpha = 1 - Math.exp(-(1 / 60) / 0.025);
     for (const key of Object.keys(target)) {

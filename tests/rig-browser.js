@@ -181,6 +181,72 @@ try {
     .screenshot({ path: "artifacts/mouth-matrix.png" });
   await page.locator("#mouthMatrix").evaluate((c) => c.remove());
 
+  await page.evaluate(async () => {
+    const { drawClownRig } = await import("./src/clown-rig.js");
+    const { RIG_POSES } = await import("./src/rig-motion.js");
+    const c = document.createElement("canvas");
+    c.id = "eyeMatrix";
+    c.width = 1440;
+    c.height = 600;
+    Object.assign(c.style, { position: "fixed", inset: 0, zIndex: 9999 });
+    document.body.append(c);
+    const x = c.getContext("2d");
+    x.fillStyle = "#e9d9bf";
+    x.fillRect(0, 0, c.width, c.height);
+    const positions = [
+      ["Center", 0, 0],
+      ["Left", -1, 0],
+      ["Right", 1, 0],
+      ["Up", 0, -1],
+      ["Down", 0, 1],
+      ["Idle", 0, 0],
+    ];
+    for (let row = 0; row < 2; row++)
+      for (let col = 0; col < positions.length; col++) {
+        const [name, gazeX, gazeY] = positions[col];
+        const stage = document.createElement("canvas");
+        stage.width = 1280;
+        stage.height = 720;
+        drawClownRig(
+          stage.getContext("2d"),
+          {
+            rig: {
+              ...RIG_POSES.closed,
+              gazeX,
+              gazeY,
+              gazeIdle: col === 5 ? 1 : 0,
+              eye: row,
+            },
+          },
+          { idle: "haunt" },
+          10,
+        );
+        x.drawImage(
+          stage,
+          480,
+          300,
+          320,
+          120,
+          col * 240,
+          row * 300 + 35,
+          240,
+          90,
+        );
+        x.fillStyle = "#201a18";
+        x.font = "18px Georgia";
+        x.fillText(
+          name + " / " + (row ? "dilated" : "resting"),
+          col * 240 + 8,
+          row * 300 + 25,
+        );
+      }
+  });
+  await page
+    .locator("#eyeMatrix")
+    .screenshot({ path: "artifacts/eye-matrix.png" });
+  await page.locator("#eyeMatrix").evaluate((c) => c.remove());
+  await page.locator("#rigGaze").selectOption("left");
+  await page.locator("#rigPupil").selectOption("1");
   await page.locator("#rigMouth").fill("0.5");
   await page.waitForTimeout(300);
   assert.equal(await page.locator("#rigPose").inputValue(), "custom");

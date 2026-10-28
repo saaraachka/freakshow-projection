@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mouthPose, DENTITION } from "../src/clown-rig.js";
+import { mouthPose, DENTITION, eyeGeometry } from "../src/clown-rig.js";
 import { RigMotion, addRigMotion, RIG_POSES } from "../src/rig-motion.js";
 const state = (mouth = 0) => ({
   mouthAccent: mouth,
@@ -63,4 +63,21 @@ test("every inspection expression uses the same canonical incisors and fangs", (
     assert.ok(Math.abs(output.rig.mouth - RIG_POSES[pose].mouth) < 1e-12);
     assert.equal(mouthPose(output.rig.mouth).teethScale, 0.55);
   }
+});
+
+test("shared gaze does not depend on pupil dilation, and the iris never grows", () => {
+  const resting = eyeGeometry(
+    { gazeX: -1, gazeY: 1, gazeIdle: 0, eye: 0 },
+    1,
+    10,
+  );
+  const hit = eyeGeometry({ gazeX: -1, gazeY: 1, gazeIdle: 0, eye: 1 }, 1, 10);
+  assert.equal(resting.dx, hit.dx);
+  assert.equal(resting.dy, hit.dy);
+  assert.equal(resting.irisRadius, hit.irisRadius);
+  assert.ok(hit.pupilRadius > resting.pupilRadius);
+  const rig = new RigMotion();
+  for (let i = 0; i < 60; i++) rig.step(state(), { pupil: 1 });
+  for (let i = 0; i < 60; i++) rig.step(state(), { pupil: 0 });
+  assert.ok(rig.smooth.eye < 0.001);
 });

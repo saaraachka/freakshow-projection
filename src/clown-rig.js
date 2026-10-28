@@ -164,25 +164,20 @@ export function lipPath(ctx, p, border = 0) {
   ctx.closePath();
 }
 function drawHead(ctx, p) {
-  // A continuous row mesh deforms the jaw beneath the nose, leaving the upper face fixed.
-  for (let y = 0; y < 423; y++) {
-    const t = clamp((y - 300) / 123),
-      next = clamp((y + 1 - 300) / 123);
-    const offset = p.jaw * t * t,
-      after = p.jaw * next * next;
-    const widen = p.jawWidth * Math.sin(t * Math.PI);
-    ctx.drawImage(
-      assets.head,
-      0,
-      (y / 423) * assets.head.height,
-      assets.head.width,
-      assets.head.height / 423,
-      -widen,
-      y + offset,
-      423 + widen * 2,
-      1 + after - offset + 0.15,
-    );
-  }
+  // Keep the upper plate intact; only the short jaw below the nose deforms.
+  const cut = (300 / 423) * assets.head.height;
+  ctx.drawImage(assets.head, 0, 0, assets.head.width, cut, 0, 0, 423, 300);
+  ctx.drawImage(
+    assets.head,
+    0,
+    cut,
+    assets.head.width,
+    assets.head.height - cut,
+    0,
+    300,
+    423,
+    123 + p.jaw,
+  );
 }
 function drawMouth(ctx, p) {
   ctx.save();
@@ -284,6 +279,75 @@ function drawMouth(ctx, p) {
   }
   ctx.restore();
 }
+// One gaze vector drives both eyes; pupil radius never changes iris geometry.
+export function eyeGeometry(rig, idle, time) {
+  const drift = (rig?.gazeIdle ?? 1) * idle;
+  return {
+    dx: (rig?.gazeX ?? 0) * 8 + Math.sin(time * 0.28) * 7 * drift,
+    dy: (rig?.gazeY ?? 0) * 4 + Math.sin(time * 0.21) * 3 * drift,
+    irisRadius: 10.6,
+    pupilRadius: 3.1 + clamp(rig?.eye) * 4.2,
+  };
+}
+function eyeBoundary(ctx, cx, cy, side) {
+  ctx.beginPath();
+  ctx.moveTo(cx - 25, cy + 4);
+  ctx.bezierCurveTo(cx - 16, cy - 10, cx - 8, cy - 11, cx, cy - 10);
+  ctx.bezierCurveTo(cx + 12, cy - 11, cx + 20, cy - 3, cx + 25, cy + 5);
+  ctx.bezierCurveTo(cx + 9, cy + 12, cx - 12, cy + 12, cx - 25, cy + 4);
+  ctx.closePath();
+}
+function drawEye(ctx, cx, cy, side, gaze) {
+  ctx.save();
+  eyeBoundary(ctx, cx, cy, side);
+  ctx.clip();
+  const sclera = ctx.createRadialGradient(cx, cy, 5, cx, cy, 27);
+  sclera.addColorStop(0, "#f1d6a5");
+  sclera.addColorStop(0.72, "#d8b489");
+  sclera.addColorStop(1, "#9c5947");
+  ctx.fillStyle = sclera;
+  ctx.fillRect(cx - 30, cy - 18, 60, 40);
+  ctx.strokeStyle = "#a95843";
+  ctx.lineWidth = 0.35;
+  for (const sign of [-1, 1])
+    for (let i = 0; i < 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(cx + sign * 25, cy + 3 + i);
+      ctx.lineTo(cx + sign * (17 + i), cy + i - 2);
+      ctx.lineTo(cx + sign * (13 + i), cy + i - 1);
+      ctx.stroke();
+    }
+  ctx.translate(cx + gaze.dx, cy + gaze.dy);
+  const iris = ctx.createRadialGradient(0, 0, 2, 0, 0, gaze.irisRadius);
+  iris.addColorStop(0, "#284719");
+  iris.addColorStop(0.45, "#77c231");
+  iris.addColorStop(0.78, "#a6e85c");
+  iris.addColorStop(1, "#385826");
+  ctx.beginPath();
+  ctx.arc(0, 0, gaze.irisRadius, 0, Math.PI * 2);
+  ctx.fillStyle = iris;
+  ctx.fill();
+  // Radial ink strokes retain an engraved, rather than glossy, iris.
+  for (let i = 0; i < 100; i++) {
+    const a = (i * Math.PI * 2) / 100,
+      r = 4 + (Math.sin(i * 7.3) + 1) * 1.2;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+    ctx.lineTo(Math.cos(a) * 10.1, Math.sin(a) * 10.1);
+    ctx.strokeStyle = i % 3 ? "#36551c99" : "#d3f77b99";
+    ctx.lineWidth = 0.28;
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.arc(0, 0, gaze.pupilRadius, 0, Math.PI * 2);
+  ctx.fillStyle = "#080e0b";
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(3, -4, 2, 0, Math.PI * 2);
+  ctx.fillStyle = "#f6f4cc";
+  ctx.fill();
+  ctx.restore();
+}
 export function drawClownRig(ctx, state, options, time) {
   if (!assets) {
     if (!loading) loadClownRig().catch(() => {});
@@ -308,6 +372,9 @@ export function drawClownRig(ctx, state, options, time) {
   ctx.translate(-211.5, 0);
   drawHead(ctx, p);
   drawMouth(ctx, p);
+  const gaze = eyeGeometry(state.rig, idle, time);
+  drawEye(ctx, 162, 236, -1, gaze);
+  drawEye(ctx, 260, 236, 1, gaze);
   ctx.restore();
 }
 import { RIG_POSES, interpolatePose } from "./rig-motion.js";

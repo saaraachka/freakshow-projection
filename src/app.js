@@ -17,7 +17,22 @@ let timelineDirty = true;
 const rigMotion = new RigMotion();
 const rigPreview = () =>
   mode === "studio"
-    ? { pose: $("rigPose").value, amount: Number($("rigMouth").value) }
+    ? {
+        pose: $("rigPose").value,
+        amount: Number($("rigMouth").value),
+        ...{
+          idle: { gazeIdle: 1 },
+          center: { gazeIdle: 0 },
+          left: { gazeX: -1, gazeIdle: 0 },
+          right: { gazeX: 1, gazeIdle: 0 },
+          up: { gazeY: -1, gazeIdle: 0 },
+          down: { gazeY: 1, gazeIdle: 0 },
+        }[$("rigGaze").value],
+        pupil:
+          $("rigPupil").value === "animated"
+            ? null
+            : Number($("rigPupil").value),
+      }
     : null;
 const audio = new Audio();
 audio.preload = "auto";
@@ -357,6 +372,7 @@ function seek(time) {
 $("rewind").onclick = () => seek(0);
 $("seek").oninput = (e) => seek(Number(e.target.value));
 $("triggerEye").onclick = () => {
+  $("rigPupil").value = "animated";
   $("rigPose").value = "animated";
   manual.push("eye");
 };
