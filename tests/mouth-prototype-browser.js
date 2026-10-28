@@ -127,6 +127,7 @@ try {
         }
       results.push({ name, strength, yaw, exposed, outside });
     }
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
     return results;
   });
   for (const r of visibility) {
@@ -196,7 +197,11 @@ try {
   await page
     .locator("#expression-contact")
     .screenshot({ path: "artifacts/mouth-prototype/expressions.png" });
-  await page.locator("#expression-contact").evaluate((e) => e.remove());
+  await page.locator("#expression-contact").evaluate((e) => {
+    for (const c of e.querySelectorAll("canvas"))
+      c.getContext("webgl").getExtension("WEBGL_lose_context")?.loseContext();
+    e.remove();
+  });
   await page.locator('[data-pose="a"]').click();
   await page.waitForTimeout(700);
   await page.locator("#wire").check();
@@ -221,8 +226,12 @@ try {
           start = performance.now();
         function sample() {
           const s = window.mouthStudy.snapshot();
-          out.push({ t: s.elapsed, jaw: s.current.jaw, note: s.lastNote });
-          if (s.elapsed > 2.4 || performance.now() - start > 15000)
+          out.push({
+            t: s.elapsed % 2.8,
+            jaw: s.current.jaw,
+            note: s.lastNote,
+          });
+          if (s.elapsed > 5.2 || performance.now() - start > 25000)
             resolve(out);
           else requestAnimationFrame(sample);
         }

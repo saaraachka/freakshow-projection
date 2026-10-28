@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>FREAKSHOW · Anatomy study</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css?rev=acting-2" />
   </head>
   <body>
     <header>
       <div>
-        <span class="eyebrow">FREAKSHOW / DEVELOPMENT STUDY 01</span>
+        <span class="eyebrow">FREAKSHOW / DEVELOPMENT STUDY 02</span>
         <h1>A mouth that moves a face.</h1>
         <p>
           Connected tissue, hinged mandible, rigid teeth. Isolated from the
@@ -40,7 +40,7 @@
       </section>
       <aside>
         <section>
-          <span class="eyebrow">01 / EXPRESSIONS</span>
+          <span class="eyebrow">01 / SPEECH & ACTING</span>
           <h2>Inspect the silhouette</h2>
           <div class="poses">
             <button data-pose="closed" aria-pressed="true">Closed</button
@@ -48,8 +48,47 @@
             ><button data-pose="a" aria-pressed="false">Wide A</button
             ><button data-pose="e" aria-pressed="false">Stretched E</button>
           </div>
+          <label for="emotion">Emotional expression</label>
+          <select id="emotion">
+            <option value="none">Neutral / speech only</option>
+            <option value="grin">Sinister grin</option>
+            <option value="snarl">Angry snarl</option>
+            <option value="laughter">Manic laughter</option>
+            <option value="smirk">Evil smirk</option>
+            <option value="scream">Unhinged scream</option>
+            <option value="whisper">Creepy whisper</option>
+          </select>
+          <label for="affect"
+            >Acting intensity <output id="affectValue">100%</output></label
+          >
+          <input
+            id="affect"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+          />
+          <label for="opening"
+            >Mouth opening <output id="openingValue">100%</output></label
+          >
+          <input
+            id="opening"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+          />
+          <p class="hint">
+            Start with Closed to inspect acting alone. Combine a speech shape
+            with an emotion to blend articulation and character.
+          </p>
+          <button id="demo" class="wide">
+            Demonstrate six emotional expressions
+          </button>
           <label for="strength"
-            >Expression strength <output id="strengthValue">100%</output></label
+            >Speech strength <output id="strengthValue">100%</output></label
           ><input
             id="strength"
             type="range"
@@ -68,6 +107,9 @@
         <section>
           <span class="eyebrow">02 / ANATOMY</span>
           <h2>Look beneath the surface</h2>
+          <label class="check"
+            ><input id="closeup" type="checkbox" /> Dental close-up</label
+          >
           <label class="check"
             ><input id="wire" type="checkbox" /> Show connected face mesh</label
           ><label class="check"
@@ -113,7 +155,24 @@
       A rigging experiment, not an approved production replacement. Judge
       contour, cheek tension, chin travel, dental exposure, and closure in
       motion.
+      <nav class="review-links" aria-label="Rendered review sheets">
+        <a href="review/acting-closeups.png" target="_blank" rel="noopener"
+          >Expression close-ups</a
+        >
+        <a href="review/acting-expressions.png" target="_blank" rel="noopener"
+          >Six expressions</a
+        >
+        <a href="review/acting-openings.png" target="_blank" rel="noopener"
+          >Closed / partial / open</a
+        >
+        <a href="review/teeth-front.png" target="_blank" rel="noopener"
+          >Dental close-up</a
+        >
+        <a href="review/teeth-oblique.png" target="_blank" rel="noopener"
+          >Dental cutaway</a
+        >
+      </nav>
     </footer>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?rev=acting-2"></script>
   </body>
 </html>

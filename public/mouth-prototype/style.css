@@ -251,3 +251,23 @@ footer {
   stroke: #dfbd80;
   stroke-width: 1;
 }
+
+select {
+  width: 100%;
+  padding: 12px;
+  background: #252f36;
+  color: #eee5d5;
+  border: 1px solid #566067;
+  font: 13px system-ui;
+}
+
+.review-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.review-links a {
+  color: #d9b575;
+  text-underline-offset: 4px;
+}
