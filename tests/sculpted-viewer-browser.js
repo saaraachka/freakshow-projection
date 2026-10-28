@@ -251,6 +251,11 @@ try {
         ),
       );
       assert.equal(await page.locator("#jaw,#expression").count(), 0);
+      await page.locator('[data-view="rear-three-quarter"]').click();
+      assert.ok(
+        await page.evaluate(() => assetViewer.camera.position.z < 0),
+        "Rear shortcut must show the rear",
+      );
       await capture(page);
       // Controls change the actual rendered scene and work independently of capture.
       await page.locator("#clay").uncheck();
@@ -317,6 +322,8 @@ try {
       await page.waitForFunction(
         () =>
           assetViewer.modelState.revision === "sculpt-reconstruction-2" &&
+          document.querySelector("#scene").dataset.renderedRevision ===
+            "sculpt-reconstruction-2" &&
           !document.querySelector("#model-version").disabled,
         null,
         { timeout: 90000 },
@@ -333,6 +340,8 @@ try {
       await page.waitForFunction(
         () =>
           assetViewer.modelState.revision === "anatomical-refinement-3" &&
+          document.querySelector("#scene").dataset.renderedRevision ===
+            "anatomical-refinement-3" &&
           !document.querySelector("#model-version").disabled,
       );
       const old = await browser.newPage({
@@ -414,15 +423,38 @@ try {
         await mobile.waitForFunction(
           () =>
             assetViewer.modelState.revision === "sculpt-reconstruction-2" &&
+            document.querySelector("#scene").dataset.renderedRevision ===
+              "sculpt-reconstruction-2" &&
             !document.querySelector("#model-version").disabled,
           null,
           { timeout: 90000 },
         );
         await mobile.selectOption("#model-version", "refined");
         await mobile.waitForFunction(
-          () => assetViewer.modelState.revision === "anatomical-refinement-3",
+          () =>
+            assetViewer.modelState.revision === "anatomical-refinement-3" &&
+            document.querySelector("#scene").dataset.renderedRevision ===
+              "anatomical-refinement-3",
         );
       }
+      await mobile.waitForFunction(
+        () =>
+          document.querySelector("#scene").dataset.renderedRevision ===
+          assetViewer.modelState.revision,
+      );
+      await mobile.evaluate(
+        () =>
+          new Promise((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(resolve)),
+          ),
+      );
+      await mobile.waitForTimeout(150);
+      assert.ok(
+        await mobile.evaluate(
+          () => assetViewer.renderer.info.render.triangles > 340000,
+        ),
+        "Phone must render the refined geometry after switching back",
+      );
       await mobile.screenshot({
         path: remote
           ? `artifacts/sculpted-viewer/deployed-${engine}-phone.png`

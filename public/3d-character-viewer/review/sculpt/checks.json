@@ -56,7 +56,7 @@
         ],
         "faceVertices": 58965,
         "triangles": 346078,
-        "generationMs": 9297.5,
+        "generationMs": 8165.20000000298,
         "teeth": 28,
         "dentalClasses": [
           "incisor",
@@ -152,7 +152,7 @@
         ],
         "faceVertices": 58965,
         "triangles": 346078,
-        "generationMs": 7331,
+        "generationMs": 7343,
         "teeth": 28,
         "dentalClasses": [
           "incisor",

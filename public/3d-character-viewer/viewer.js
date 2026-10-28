@@ -35,6 +35,7 @@ try {
 }
 scene.add(character.root);
 const center = new THREE.Vector3(0, 0, 0);
+let renderedModelRevision = character.state.revision;
 let dirty = true,
   frames = 0,
   start = performance.now(),
@@ -127,7 +128,13 @@ function draw(now) {
   requestAnimationFrame(draw);
   orbit.update();
   if (dirty) {
+    const modelChanged =
+      canvas.dataset.renderedRevision !== renderedModelRevision;
     renderer.render(scene, camera);
+    if (modelChanged)
+      $("metrics").textContent =
+        `${renderer.info.render.triangles.toLocaleString()} triangles · DPR ${renderer.getPixelRatio()} · static sculpt`;
+    canvas.dataset.renderedRevision = renderedModelRevision;
     dirty = false;
     frames++;
   }
@@ -158,6 +165,7 @@ async function setModel(version) {
     }
     scene.remove(character.root);
     character = headCache.get(version);
+    renderedModelRevision = character.state.revision;
     scene.add(character.root);
     character.hair.visible = $("hair").checked;
     character.root.traverse((o) => {
