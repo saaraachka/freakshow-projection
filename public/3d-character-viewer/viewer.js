@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js?anatomy=1";
+import { createProceduralHead } from "./procedural-head.js?sculpt=2";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -16,17 +16,23 @@ orbit.enableDamping = true;
 orbit.minPolarAngle = 0;
 orbit.maxPolarAngle = Math.PI;
 orbit.enablePan = true;
-scene.add(new THREE.HemisphereLight(0xeaf1ff, 0x45404a, 1.5));
+scene.add(new THREE.HemisphereLight(0xffffff, 0x555555, 1.5));
 for (const [color, power, pos] of [
-  [0xffe4ce, 2.4, [3, 5, 5]],
-  [0xadc7ff, 1.2, [-4, 2, 3]],
-  [0xf1e9ff, 2, [2, 4, -5]],
+  [0xffffff, 2.4, [3, 5, 5]],
+  [0xffffff, 1.2, [-4, 2, 3]],
+  [0xffffff, 2, [2, 4, -5]],
 ]) {
   const light = new THREE.DirectionalLight(color, power);
   light.position.set(...pos);
   scene.add(light);
 }
-const character = createProceduralHead();
+let character;
+try {
+  character = await createProceduralHead();
+} catch (error) {
+  $("status").textContent = "Sculpt generation failed: " + error.message;
+  throw error;
+}
 scene.add(character.root);
 const center = new THREE.Vector3(0, 0, 0);
 let dirty = true,
@@ -37,37 +43,54 @@ function setCamera(view = "front") {
   const dirs = {
     front: [0, 0, 1],
     "three-quarter": [0.75, 0.12, 1],
+    "left-three-quarter": [-0.75, 0.12, 1],
     side: [1, 0, 0],
+    "left-side": [-1, 0, 0],
     back: [0, 0, -1],
-    underside: [0, -1, 0.2],
-    mouth: [0, -0.15, 1],
+    top: [0, 1, 0.04],
+    underside: [0, -1, 0.12],
+    eyes: [0, 0.02, 1],
+    nose: [0.15, 0.03, 1],
+    mouth: [0, -0.08, 1],
+    ears: [0.5, 0.02, 1],
+    hair: [0.3, 0.16, 1],
   };
+  const details = {
+    eyes: [[0, 0.31, 0.36], 0.34],
+    nose: [[0, -0.015, 0.64], 0.3],
+    mouth: [[0, -0.49, 0.34], 0.37],
+    ears: [[1, 0.035, -0.1], 0.25],
+    hair: [[0, 0.87, -0.1], 0.65],
+  };
+  const [target, scale] = details[view] || [[0, 0, 0], 1];
+  const aim = new THREE.Vector3(...target);
   distance =
     (1.95 /
       Math.sin(THREE.MathUtils.degToRad(camera.fov / 2)) /
       Math.min(1, camera.aspect)) *
     1.03;
   camera.position
-    .copy(center)
+    .copy(aim)
     .addScaledVector(
       new THREE.Vector3(...dirs[view]).normalize(),
-      distance * (view === "mouth" ? 0.62 : 1),
+      distance * scale,
     );
-  orbit.target.copy(center);
+  orbit.target.copy(aim);
   orbit.minDistance = 1.2;
   orbit.maxDistance = 18;
   orbit.update();
   dirty = true;
 }
-$("expression").onchange = () => {
-  character.setPose($("expression").value, +$("intensity").value);
+const reviewClay = new THREE.MeshStandardMaterial({
+  color: 0xaaa59d,
+  roughness: 0.9,
+});
+function setClay(enabled) {
+  scene.overrideMaterial = enabled ? reviewClay : null;
   dirty = true;
-};
-$("intensity").oninput = $("expression").onchange;
-$("jaw").oninput = () => {
-  character.setJaw(+$("jaw").value);
-  dirty = true;
-};
+}
+$("clay").onchange = (e) => setClay(e.target.checked);
+setClay(true);
 $("reset").onclick = () => setCamera();
 document
   .querySelectorAll("[data-view]")
@@ -117,7 +140,7 @@ requestAnimationFrame(draw);
 canvas.dataset.modelLoaded = "true";
 canvas.dataset.modelSource = "procedural-code";
 $("status").textContent =
-  "Anatomy refinement · continuous skull, sockets, lips and chin · 24 rigid teeth · irregular tapered curl strands. No image assets.";
+  "Static sculpt reconstruction · landmark loft and surface nets · integrated ears · 28 anatomical crowns · authored curl clumps. No animation or audio.";
 window.assetViewer = {
   renderer,
   scene,
@@ -125,6 +148,7 @@ window.assetViewer = {
   orbit,
   character,
   setCamera,
+  setClay,
   get model() {
     return character.root;
   },

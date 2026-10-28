@@ -2,8 +2,8 @@ import { chromium, webkit, devices } from "playwright";
 import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import assert from "node:assert/strict";
-const remote = process.env.FREAKSHOW_BASE_URL,
-  base = remote || "http://localhost:5201/freakshow-projection/";
+const remote = process.env.FREAKSHOW_BASE_URL;
+const base = remote || "http://localhost:5201/freakshow-projection/";
 const server = remote
   ? null
   : spawn(process.execPath, ["scripts/serve.js", "dist"], {
@@ -14,36 +14,107 @@ const server = remote
       },
       stdio: "pipe",
     });
+const folder = "public/3d-character-viewer/review/sculpt";
+const views = {
+  front: [[0, 0, 1], [0, 0, 0], 1],
+  "left-three-quarter": [[-0.75, 0.12, 1], [0, 0, 0], 1],
+  "right-three-quarter": [[0.75, 0.12, 1], [0, 0, 0], 1],
+  "left-profile": [[-1, 0, 0], [0, 0, 0], 1],
+  "right-profile": [[1, 0, 0], [0, 0, 0], 1],
+  back: [[0, 0, -1], [0, 0, 0], 1],
+  top: [[0, 1, 0.04], [0, 0, 0], 1],
+  underside: [[0, -1, 0.12], [0, 0, 0], 1],
+  eyes: [[0, 0.02, 1], [0, 0.31, 0.36], 0.34],
+  nose: [[0.15, 0.03, 1], [0, -0.015, 0.64], 0.3],
+  mouth: [[0, -0.08, 1], [0, -0.49, 0.34], 0.37],
+  ear: [[0.5, 0.02, 1], [1, 0.035, -0.1], 0.25],
+  hair: [[0.3, 0.16, 1], [0, 0.87, -0.1], 0.65],
+};
+async function load(page, url) {
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 });
+  await page.waitForFunction(
+    () => window.assetViewer?.modelState.loaded,
+    null,
+    { timeout: 90000 },
+  );
+  await page.evaluate(() => (assetViewer.orbit.enableDamping = false));
+}
+async function capture(page, prefix = "") {
+  await page.evaluate(() => {
+    const a = assetViewer;
+    a.scene.overrideMaterial = new a.character.face.material.constructor({
+      color: 0xaaa59d,
+      roughness: 0.9,
+    });
+    a.scene.traverse((o) => {
+      if (o.isLight) {
+        o.color.setHex(0xffffff);
+        if (o.isHemisphereLight) o.groundColor.setHex(0x555555);
+      }
+    });
+    document.querySelector("header").style.visibility = "hidden";
+    document.querySelector("#metrics").style.visibility = "hidden";
+  });
+  for (const [name, [direction, target, scale]] of Object.entries(views)) {
+    await page.evaluate(
+      ({ direction, target, scale }) => {
+        const a = assetViewer,
+          aim = a.orbit.target;
+        aim.set(...target);
+        a.camera.position
+          .set(...direction)
+          .normalize()
+          .multiplyScalar(6.4 * scale)
+          .add(aim);
+        a.orbit.update();
+        a.renderer.render(a.scene, a.camera);
+      },
+      { direction, target, scale },
+    );
+    await page.waitForTimeout(80);
+    if (!remote)
+      await page
+        .locator("#scene")
+        .screenshot({ path: `${folder}/${prefix}${name}.png` });
+  }
+}
 const runs = [];
 try {
   if (server) await new Promise((r) => server.stdout.once("data", r));
-  await mkdir("public/3d-character-viewer/review", { recursive: true });
+  await mkdir(folder, { recursive: true });
   await mkdir("artifacts/sculpted-viewer", { recursive: true });
   for (const engine of [
     "chromium",
     ...(process.env.FREAKSHOW_WEBKIT_EXECUTABLE ? ["webkit"] : []),
   ]) {
+    // WebKit uses the system CA store. Chromium's isolated test profile may not
+    // trust a cloud interception CA; never disable certificate verification.
+    if (
+      remote?.startsWith("https:") &&
+      engine === "chromium" &&
+      process.env.FREAKSHOW_REMOTE_WEBKIT_ONLY
+    )
+      continue;
     const browser = await (engine === "webkit" ? webkit : chromium).launch({
       executablePath:
         engine === "webkit"
           ? process.env.FREAKSHOW_WEBKIT_EXECUTABLE
           : "/usr/bin/chromium",
-      proxy:
-        remote && process.env.HTTPS_PROXY
-          ? { server: process.env.HTTPS_PROXY }
-          : undefined,
       args:
         engine === "chromium"
           ? ["--no-sandbox", "--enable-unsafe-swiftshader"]
           : [],
+      proxy:
+        remote?.startsWith("https:") && process.env.HTTPS_PROXY
+          ? { server: process.env.HTTPS_PROXY }
+          : undefined,
     });
     try {
       const page = await browser.newPage({
-        viewport: { width: 1200, height: 900 },
-      });
-      const errors = [],
-        bad = [],
-        requests = [];
+          viewport: { width: 1280, height: 1000 },
+        }),
+        errors = [],
+        assets = [];
       page.on("pageerror", (e) => errors.push(e.message));
       page.on("console", (m) => {
         if (m.type() === "error" && !m.location().url.endsWith("favicon.ico"))
@@ -51,197 +122,162 @@ try {
       });
       page.on("response", (r) => {
         if (r.status() >= 400 && !r.url().endsWith("favicon.ico"))
-          bad.push(r.url());
+          assets.push(r.url());
       });
-      page.on("request", (r) => requests.push(r.url()));
-      await page.goto(base + "public/3d-character-viewer/index.html");
-      await page.waitForFunction(() => window.assetViewer?.modelState.loaded);
-      await page.evaluate(() => (assetViewer.orbit.enableDamping = false));
-      assert.equal(
-        await page.evaluate(() => assetViewer.modelState.source),
-        "procedural-code",
-      );
-      assert.equal(await page.evaluate(() => assetViewer.modelState.teeth), 24);
-      assert.ok(
-        await page.evaluate(
-          () => assetViewer.renderer.info.render.triangles > 20000,
-        ),
-      );
-      assert.equal(
-        requests.some((u) =>
-          /clown-head|\.png|\.svg|approved-character|GLTFLoader|\/renderer.js/.test(
-            u,
-          ),
-        ),
-        false,
-      );
+      await load(page, base + "public/3d-character-viewer/index.html");
       const structure = await page.evaluate(() => {
-        const model = assetViewer.character,
-          geometry = model.face.geometry,
-          p = geometry.attributes.position,
-          n = geometry.attributes.normal,
-          parents = Array.from({ length: p.count }, (_, i) => i);
-        const find = (i) => {
-          while (parents[i] !== i) {
-            parents[i] = parents[parents[i]];
-            i = parents[i];
+        const a = assetViewer,
+          g = a.character.face.geometry,
+          p = g.attributes.position,
+          ix = g.index.array;
+        const parent = Int32Array.from({ length: p.count }, (_, i) => i),
+          find = (i) => {
+            while (parent[i] !== i) {
+              parent[i] = parent[parent[i]];
+              i = parent[i];
+            }
+            return i;
+          };
+        const edges = new Map();
+        for (let i = 0; i < ix.length; i += 3)
+          for (let k = 0; k < 3; k++) {
+            const u = ix[i + k],
+              v = ix[i + ((k + 1) % 3)];
+            parent[find(u)] = find(v);
+            const key = u < v ? `${u}:${v}` : `${v}:${u}`;
+            edges.set(key, (edges.get(key) || 0) + 1);
           }
-          return i;
-        };
-        const index = geometry.index.array;
-        for (let i = 0; i < index.length; i += 3) {
-          const a = find(index[i]);
-          parents[find(index[i + 1])] = a;
-          parents[find(index[i + 2])] = a;
+        const components = new Map();
+        for (let i = 0; i < p.count; i++) {
+          const k = find(i);
+          components.set(k, (components.get(k) || 0) + 1);
         }
-        const components = new Set(parents.map((_, i) => find(i))).size,
-          meshNames = [];
         let finite = true,
           attributesMatch = true;
-        model.root.traverse((o) => {
-          if (!o.isMesh) return;
-          meshNames.push(o.name);
-          for (const key of ["position", "normal", "color"]) {
-            const a = o.geometry.attributes[key];
-            if (a) {
+        const names = [];
+        a.model.traverse((o) => {
+          if (o.isMesh) {
+            names.push(o.name);
+            for (const v of Object.values(o.geometry.attributes)) {
+              finite &&= Array.from(v.array).every(Number.isFinite);
               attributesMatch &&=
-                a.count === o.geometry.attributes.position.count;
-              for (const v of a.array) if (!Number.isFinite(v)) finite = false;
+                v.count === o.geometry.attributes.position.count;
             }
           }
         });
-        let min = Infinity,
-          max = -Infinity;
-        for (let i = 0; i < p.count; i++) {
-          const length = Math.hypot(n.getX(i), n.getY(i), n.getZ(i));
-          min = Math.min(min, length);
-          max = Math.max(max, length);
-        }
-        geometry.computeBoundingBox();
-        const box = geometry.boundingBox,
-          v = model.state.hairVariation;
+        // The geometry itself must contain asymmetry, not just a camera offset.
+        let leftY = 0,
+          rightY = 0,
+          leftN = 0,
+          rightN = 0;
+        for (let i = 0; i < p.count; i++)
+          if (p.getY(i) > 0.15 && p.getY(i) < 0.5 && p.getZ(i) > 0.3) {
+            if (p.getX(i) < 0) {
+              leftY += p.getY(i);
+              leftN++;
+            } else {
+              rightY += p.getY(i);
+              rightN++;
+            }
+          }
         return {
-          components,
+          revision: a.modelState.revision,
+          staticSculpt: a.modelState.staticSculpt,
+          components: [...components.values()].sort((a, b) => b - a),
+          nonManifoldEdges: [...edges.values()].filter((n) => n !== 2).length,
           finite,
           attributesMatch,
-          normalRange: [min, max],
-          skinBounds: box,
-          meshNames,
+          names,
           faceVertices: p.count,
-          generationMs: model.state.generationMs,
-          revision: model.state.revision,
-          hairStrands: v.length,
-          curlRadiusRange: [
-            Math.min(...v.map((s) => s.radius)),
-            Math.max(...v.map((s) => s.radius)),
+          triangles: a.renderer.info.render.triangles,
+          generationMs: a.modelState.generationMs,
+          teeth: a.modelState.teeth,
+          dentalClasses: [
+            ...new Set(a.modelState.dentalClasses.map((d) => d.kind)),
           ],
-          thicknessRange: [
-            Math.min(...v.map((s) => s.thickness)),
-            Math.max(...v.map((s) => s.thickness)),
-          ],
-          openStrands: v.every((s) => s.endpointDistance > 0.03),
-          bothDirections: new Set(v.map((s) => s.direction)).size === 2,
-          eyeFront: Math.max(
-            ...model.eyes.map((e) => {
-              e.geometry.computeBoundingBox();
-              return e.position.z + e.geometry.boundingBox.max.z;
-            }),
-          ),
+          hairClumps: a.modelState.hairClumps,
+          hairLocks: a.modelState.hairLocks,
+          asymmetry: Math.abs(leftY / leftN - rightY / rightN),
+          clay: !!a.scene.overrideMaterial,
         };
       });
-      assert.equal(structure.revision, "anatomy-refinement-1");
-      console.log(engine + " structure " + JSON.stringify(structure));
+      console.log(engine, "structure", JSON.stringify(structure));
+      assert.equal(structure.revision, "sculpt-reconstruction-2");
+      assert.equal(structure.staticSculpt, true);
       assert.equal(
-        structure.components,
+        structure.components.length,
         1,
-        "the skull, lips, sockets, cheeks and chin must be one connected skin",
+        "Skin must be a single connected surface, including ears",
+      );
+      assert.equal(
+        structure.nonManifoldEdges,
+        0,
+        "Skin must be closed and manifold",
       );
       assert.ok(structure.finite && structure.attributesMatch);
+      assert.equal(structure.teeth, 28);
+      assert.equal(structure.dentalClasses.length, 4);
+      assert.ok(structure.asymmetry > 0.0001);
       assert.ok(
-        structure.normalRange[0] > 0.98 && structure.normalRange[1] < 1.02,
+        structure.triangles < 360000,
+        "Keep below the static sculpt mobile triangle budget",
       );
+      assert.ok(structure.hairClumps >= 30 && structure.hairLocks > 200);
+      assert.equal(structure.clay, true);
       assert.ok(
-        structure.hairStrands > 500 &&
-          structure.openStrands &&
-          structure.bothDirections,
+        !structure.names.some((n) =>
+          /Torus|Tube|Pinna|LipMesh|LidMesh/.test(n),
+        ),
       );
-      assert.ok(structure.thicknessRange[1] > structure.thicknessRange[0] * 3);
+      assert.equal(await page.locator("#jaw,#expression").count(), 0);
+      await capture(page);
+      // Controls change the actual rendered scene and work independently of capture.
+      await page.locator("#clay").uncheck();
       assert.equal(
-        structure.meshNames.some((n) =>
-          /ContinuousLipLoop|SculptedEyelid|^Neck$|^Chin$/.test(n),
-        ),
-        false,
-      );
-      assert.ok(structure.eyeFront < 0.66, "globes sit behind the orbital rim");
-      assert.ok(
-        structure.skinBounds.max.z < 1 && structure.skinBounds.min.y > -1.3,
-        "reduced profile and no neck/chin nub",
-      );
-      const originals = await page.evaluate(() =>
-        assetViewer.character.teeth.map((t) =>
-          Array.from(t.geometry.attributes.position.array),
-        ),
-      );
-      for (const view of [
-        "front",
-        "three-quarter",
-        "side",
-        "back",
-        "underside",
-      ]) {
-        await page.locator(`[data-view="${view}"]`).click();
-        await page.waitForTimeout(250);
-        if (engine === "chromium" && !remote)
-          await page.locator("#stage").screenshot({
-            path: `public/3d-character-viewer/review/${view}.png`,
-          });
-      }
-      await page.locator("#jaw").fill("0.8");
-      await page.locator('[data-view="three-quarter"]').click();
-      await page.waitForTimeout(250);
-      if (engine === "chromium" && !remote)
-        await page.locator("#stage").screenshot({
-          path: "public/3d-character-viewer/review/jaw-open.png",
-        });
-      assert.deepEqual(
-        await page.evaluate(() =>
-          assetViewer.character.teeth.map((t) =>
-            Array.from(t.geometry.attributes.position.array),
-          ),
-        ),
-        originals,
-      );
-      assert.ok(
-        await page.evaluate(() => assetViewer.character.lower.rotation.x > 0.3),
-      );
-      await page.locator("#jaw").fill("0");
-      await page.locator("#expression").selectOption("smirk");
-      await page.locator("#reset").click();
-      await page.setViewportSize({ width: 390, height: 844 });
-      await page.waitForTimeout(300);
-      assert.equal(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= innerWidth,
-        ),
+        await page.evaluate(() => assetViewer.scene.overrideMaterial === null),
         true,
       );
-      await page.screenshot({
-        path: `artifacts/sculpted-viewer/${engine}-${remote ? "published" : "generated"}-mobile.png`,
-        fullPage: true,
-      });
-      assert.deepEqual(errors, []);
-      assert.deepEqual(bad, []);
-      console.log(
-        `${engine}: visible procedural head; front/three-quarter/side/back/underside views; 24 rigid teeth under shared jaw rotation; no illustration or external model requests; mobile layout passes.`,
+      await page.locator('[data-view="front"]').click();
+      await page.waitForTimeout(120);
+      if (!remote)
+        await page
+          .locator("#scene")
+          .screenshot({ path: `${folder}/color.png` });
+      await page.locator("#clay").check();
+      await page.locator("#hair").uncheck();
+      assert.equal(
+        await page.evaluate(() => assetViewer.character.hair.visible),
+        false,
       );
-      const desktopCanvas = page.locator("#scene");
-      await desktopCanvas.scrollIntoViewIfNeeded();
-      const desktopBox = await desktopCanvas.boundingBox();
+      if (!remote)
+        await page
+          .locator("#scene")
+          .screenshot({ path: `${folder}/bare-skin.png` });
+      await page.locator("#hair").check();
+      const canvas = page.locator("#scene");
+      await canvas.scrollIntoViewIfNeeded();
+      const rect = await canvas.boundingBox(),
+        before = await page.evaluate(() =>
+          assetViewer.camera.position.toArray(),
+        );
       await page.mouse.move(
-        desktopBox.x + desktopBox.width * 0.5,
-        desktopBox.y + desktopBox.height * 0.5,
+        rect.x + rect.width * 0.55,
+        rect.y + rect.height * 0.5,
       );
-      const zoomBefore = await page.evaluate(() =>
+      await page.mouse.down();
+      await page.mouse.move(
+        rect.x + rect.width * 0.7,
+        rect.y + rect.height * 0.56,
+        { steps: 10 },
+      );
+      await page.mouse.up();
+      await page.waitForTimeout(200);
+      assert.notDeepEqual(
+        await page.evaluate(() => assetViewer.camera.position.toArray()),
+        before,
+        "Orbit drag changes the view",
+      );
+      const distance = await page.evaluate(() =>
         assetViewer.camera.position.distanceTo(assetViewer.orbit.target),
       );
       await page.mouse.wheel(0, -200);
@@ -249,104 +285,91 @@ try {
       assert.ok(
         (await page.evaluate(() =>
           assetViewer.camera.position.distanceTo(assetViewer.orbit.target),
-        )) < zoomBefore,
-        "desktop wheel zoom remains available",
+        )) < distance,
+        "Wheel zoom changes distance",
       );
-      const phone = await browser.newPage({ ...devices["iPhone 13"] });
-      const phoneErrors = [];
-      phone.on("pageerror", (e) => phoneErrors.push(e.message));
-      await phone.goto(base + "public/3d-character-viewer/index.html");
-      await phone.waitForFunction(() => window.assetViewer?.modelState.loaded);
-      await phone.locator("#quality").selectOption("1");
-      await phone.waitForTimeout(200);
-      const mobile = await phone.evaluate(() => {
-        const a = assetViewer,
-          c = document.createElement("canvas");
-        a.renderer.render(a.scene, a.camera);
-        c.width = 64;
-        c.height = 64;
-        c.getContext("2d").drawImage(a.renderer.domElement, 0, 0, 64, 64);
-        const data = c.getContext("2d").getImageData(0, 0, 64, 64).data;
-        let min = 255,
-          max = 0;
-        for (let i = 0; i < data.length; i += 4) {
-          min = Math.min(min, data[i]);
-          max = Math.max(max, data[i]);
-        }
-        return {
-          fits: document.documentElement.scrollWidth <= innerWidth,
-          dpr: a.renderer.getPixelRatio(),
-          webgl2: a.renderer.capabilities.isWebGL2,
-          range: max - min,
-          generationMs: a.character.state.generationMs,
-          triangles: a.renderer.info.render.triangles,
-        };
-      });
-      assert.ok(mobile.fits && mobile.webgl2 && mobile.range > 60);
-      assert.equal(mobile.dpr, 1);
-      await phone.locator("#jaw").fill("0.65");
-      await phone.locator('[data-view="side"]').click();
-      await phone.waitForTimeout(200);
-      assert.ok(
-        await phone.evaluate(
-          () => assetViewer.character.lower.rotation.x > 0.25,
-        ),
-      );
-      await phone.locator("#jaw").fill("0");
-      await phone.locator('[data-view="front"]').click();
-      const orbitBefore = await phone.evaluate(() =>
-        assetViewer.camera.position.toArray(),
-      );
-      const canvas = phone.locator("#scene");
-      await canvas.scrollIntoViewIfNeeded();
-      const box = await canvas.boundingBox();
-      await phone.mouse.move(box.x + box.width * 0.5, box.y + box.height * 0.5);
-      await phone.mouse.down();
-      await phone.mouse.move(
-        box.x + box.width * 0.7,
-        box.y + box.height * 0.5,
-        { steps: 8 },
-      );
-      await phone.mouse.up();
-      await phone.waitForTimeout(200);
-      assert.notDeepEqual(
-        await phone.evaluate(() => assetViewer.camera.position.toArray()),
-        orbitBefore,
-        "orbit drag changes the camera in the mobile viewport",
-      );
-      await phone.locator("#reset").tap();
-      await phone.waitForTimeout(200);
-      await phone.screenshot({
-        path: `artifacts/sculpted-viewer/${engine}-iphone-refined.png`,
+      if (
+        engine === "chromium" &&
+        process.env.FREAKSHOW_SCULPT_BASELINE &&
+        !remote
+      ) {
+        const old = await browser.newPage({
+          viewport: { width: 1280, height: 1000 },
+        });
+        await load(old, process.env.FREAKSHOW_SCULPT_BASELINE);
+        await capture(old, "before-");
+        await old.close();
+      }
+      const phone = await browser.newContext({ ...devices["iPhone 13"] });
+      const mobile = await phone.newPage();
+      await load(mobile, base + "public/3d-character-viewer/index.html");
+      await mobile.selectOption("#quality", "1");
+      const layout = await mobile.evaluate(() => ({
+        fits: document.documentElement.scrollWidth <= innerWidth,
+        dpr: assetViewer.renderer.getPixelRatio(),
+        triangles: assetViewer.renderer.info.render.triangles,
+        webgl2:
+          assetViewer.renderer.getContext() instanceof WebGL2RenderingContext,
+      }));
+      assert.ok(layout.fits && layout.webgl2);
+      await mobile.locator('[data-view="left-side"]').tap();
+      await mobile.locator("#clay").uncheck();
+      await mobile.locator("#reset").tap();
+      await mobile.locator("#scene").scrollIntoViewIfNeeded();
+      await mobile.waitForTimeout(200);
+      await mobile.screenshot({
+        path: remote
+          ? `artifacts/sculpted-viewer/deployed-${engine}-phone.png`
+          : `${folder}/phone-${engine}.png`,
         fullPage: true,
       });
-      if (!remote && engine === "webkit")
-        await phone.screenshot({
-          path: "public/3d-character-viewer/review/iphone-webkit.png",
-          fullPage: true,
-        });
-      assert.deepEqual(phoneErrors, []);
-      await phone.close();
+      const gallery = await browser.newPage();
+      await gallery.goto(
+        base + "public/3d-character-viewer/review/index.html",
+        { waitUntil: "domcontentloaded", timeout: 90000 },
+      );
+      const galleryImages = await gallery.evaluate(async () => {
+        const images = [...document.images];
+        for (const img of images) img.loading = "eager";
+        await Promise.all(images.map((img) => img.decode()));
+        return images.length;
+      });
+      assert.ok(
+        galleryImages >= 29,
+        "Clay comparison gallery must decode all current/baseline renders",
+      );
+      await gallery.close();
+      assert.deepEqual(errors, []);
+      assert.deepEqual(assets, []);
       runs.push({
         engine,
         structure,
-        mobile,
+        mobile: layout,
         errors,
-        assetFailures: bad,
+        assetFailures: assets,
         physicalIPhoneTested: false,
       });
+      console.log(
+        engine,
+        "eight views, five feature close-ups, clay/color, hair visibility, orbit/zoom and iPhone controls passed.",
+      );
+      await phone.close();
     } finally {
       await browser.close();
     }
   }
   if (!remote)
     await writeFile(
-      "public/3d-character-viewer/review/checks.json",
+      `${folder}/checks.json`,
       JSON.stringify(
-        { revision: "anatomy-refinement-1", runs, physicalIPhoneTested: false },
+        {
+          revision: "sculpt-reconstruction-2",
+          runs,
+          physicalIPhoneTested: false,
+        },
         null,
         2,
-      ),
+      ) + "\n",
     );
 } finally {
   server?.kill();

@@ -1,36 +1,37 @@
-# Procedural 3D clown — structural refinement
+# Static Victorian clown sculpt review
 
-Use the same `index.html` viewer and orbit/zoom controls. This development route is isolated from production FREAKSHOW. It uses only generated geometry: no illustration, plane, sprite, GLB or external model service. Lighting, camera presets, orbit controls and quality options remain unchanged for comparison.
+Open `index.html` using the existing development viewer. Neutral clay is the default; turn it off to inspect ivory skin, a red nose, green irises and navy-black hair. Orbit, pinch/scroll zoom, eight full-head views, five feature close-ups, hair visibility and rendering resolution remain directly accessible. There are no facial pose, jaw-animation or audio controls in this static review.
 
-## Anatomy
+Production FREAKSHOW is unchanged. This route loads procedural code and the bundled Three.js runtime; no GLB, image plane, SVG, sprite, character texture or paid service is used. The review PNGs are documentation, never model inputs.
 
-`implicit-skin.js` defines a continuous solid containing the reduced frontal/occipital vault, temples, orbital mounds, cheekbones, maxilla, mandibular body, chin, nose bridge and clown nose. Smooth unions blend those volumes. Recessed sockets and an oral cavity are cut into that same solid. Marching tetrahedra extracts one indexed, connected skin surface; normals come from the scalar-field gradient. The lip relief, mouth corners and nasolabial tension belong to this skin, rather than separate lip or eyelid tubes. There is no separate chin or neck ball. The head finishes in a continuous mandibular/submental surface.
+## Geometry system
 
-The white globes sit inside the orbital recesses, behind the surrounding lid surface. Green irises and black pupils remain actual small dimensional lens surfaces. The red nose is part of the skin solid and blends into the bridge and alae. Its maximum forward extent and that of the eye volumes are reduced from the previous model. Pinnae have pointed upper helices, conchal bowls, antihelix folds, rear surfaces and thickness; their medial sections embed in the modeled temporal/mastoid roots. The ear shells are separate overlapping meshes, not a fully welded ear retopology.
+- `implicit-skin.js`: independently controlled cranial cross-sections form a Hermite-interpolated anatomical loft. Landmark relief defines the frontal eminences, glabella, temporal fossae, orbital shelves, zygomatic bodies, buccal hollows, maxilla, mandibular body and mental eminence. Broad asymmetric offsets affect the actual geometry. A monotonic expansion of the anterior half avoids folding the scalar field under large relief.
+- The nasal root, cartilage tip, alar wings, columella and nostril cuts merge into the skin. Lips, philtral columns, Cupid's bow, nasolabial folds, commissures, under-eye folds and lid thickness are modeled in that surface. Differently tilted almond apertures expose seated globes. The irises and pupils are curved caps following the globe, not floating flat discs.
+- Both pointed auricles belong to the same skin surface. Their field includes helix, antihelix fork, concha, tragus, antitragus, canal recess and lobule. There are no overlapping standalone ear shells or separate chin volume.
+- `surface-nets.js`: shared dual-grid vertices and indexed faces replace the previous tetrahedral triangle soup. Subvoxel saddle collapses and disjoint-fan splitting repair ambiguous thin folds; a small Taubin relaxation retains landmarks. Normals follow the scalar-field gradient. This is a closed static surface, **not animation-ready quad retopology**.
+- `sculpt-dentition.js`: 28 individually placed crown lofts have incisor, canine, premolar and molar profiles, enamel lobes, neck taper, cutting-edge/occlusal relief, uneven orientation and curved arches. Two large upper incisors and upper canines remain distinct. Three-dimensional scalloped gingival banks seat the crowns. The oral subtraction includes the cavity walls and back; lingual and palatal relief are inside it.
+- `sculpt-hair.js`: 47 authored directional primary clumps produce an asymmetric quiff, temple curls, layered occipital falls and unequal sideburns. Secondary locks vary their path length, curl tightness, orientation and thickness. Fine flyaways follow those guides. Closed, tapered, lobed sweep sections replace both the torus groom and uniform scalp sampling. Guide-level ear clearance keeps locks out of the concha while preserving each cross-section. Curvature limits and radius fairing prevent tight sweeps from turning inside out. A recessed, carved undercoat joins the occipital masses. Hair is intentionally stylized into sculpted clumps rather than a strand simulation.
+- `sculpt-worker.js`: skin generation runs in a module worker and transfers its generated buffers to Three.js. Heavy sampling does not block the page's main thread. The static scene renders only when changed.
 
-The oral cut extends behind the teeth and includes an inner wall and back surface. Both gum arches now sit behind the facial border, so the lower ridge does not read as an external tube. All 24 crowns remain rigid. The lower teeth, gum ridge and tongue share a physical jaw hinge; a spatially weighted deformation moves the corresponding continuous skin and oral wall. Relaxed and asymmetric contours alter cheek/corner tension on the same topology. These are development studies, not a finished FACS or speech rig.
+The current model renders about 339,000 triangles, versus 423,108 for `b55c69e`. The skin has about 50,600 vertices. Counts constrain runtime cost; they do not establish artistic quality. Ordinary standard materials and fixed white studio lights are used in both color and clay modes. There is no NPR shader.
 
-## Hair
+## Review and verification
 
-The groom contains 762 deterministic, open 3D strands. Each varies radius, taper, thickness, handedness, turn count, orientation and drift. Coils progress along a local scalp tangent instead of circling one root like a torus. Sideburn locks and wisps change the silhouette. Color variation uses ordinary untextured standard materials; there is no NPR shader. Scalp color under the overlapping strands is part of the skin mesh, with an irregular receding boundary. The groom is merged for drawing and remains a volume from the rear and underside.
+`review/index.html` pairs the previous `b55c69e` model with this sculpt in identical neutral clay, white studio lights, camera positions and framing. The set includes front, left/right three-quarter, left/right profiles, back, top, underside, and eyes/nose/mouth/ear/hair close-ups. Color, bare-skin and WebKit phone views are additional checks. `review/sculpt/checks.json` records the automated results.
 
-## Review and checks
-
-`review/index.html` shows front, three-quarter, side, back, underside and jaw-open renders. Each required view includes the previous geometry for comparison with identical camera and lighting presets. The WebKit/iPhone-viewport screenshot and `checks.json` record current verification. Screenshots are evidence of this geometry, not approval of the sculpt.
+Geometry was rendered during successive skull/face, eye-depth/ear, groom, dental and final remeshing stages. Those checks exposed and corrected eye/dental projection, hair winding, exposed crown roots, flyaways crossing the concha and sub-grid surface pinches. The before/after gallery is the final static review; it is not an assertion of professional sculpt quality or artistic approval.
 
 ```sh
+npm run dev
+# http://localhost:5173/public/3d-character-viewer/index.html
+
 PAGES_BASE=/freakshow-projection/ npm run build
 node tests/sculpted-viewer-browser.js
 ```
 
-Set `FREAKSHOW_WEBKIT_EXECUTABLE` to a supported Playwright WebKit executable to include WebKit. Set `FREAKSHOW_BASE_URL=https://saaraachka.github.io/freakshow-projection/` to check the deployed route without a local server. The focused test checks:
+Set `FREAKSHOW_WEBKIT_EXECUTABLE` to a supported Playwright WebKit executable to include WebKit. Set `FREAKSHOW_BASE_URL=https://saaraachka.github.io/freakshow-projection/` for deployed checks. In this cloud, WebKit uses the trusted system CA store; `FREAKSHOW_REMOTE_WEBKIT_ONLY=1` skips isolated Chromium profiles that lack the cloud proxy CA. TLS verification stays enabled.
 
-- One connected skin component, finite matching geometry attributes and unit normals.
-- No separate lip, lid, chin or neck meshes; bounded eye/nose projection.
-- Open, varied, oppositely wound hair strands and an unchanged rigid crown arrangement through jaw deformation.
-- All required camera views, real rendered pixels, mobile layout, orbit/zoom and jaw controls.
-- No illustration/model requests, failed assets or application console errors.
+To regenerate baseline comparisons, serve `b55c69e` separately and set `FREAKSHOW_SCULPT_BASELINE` to its viewer URL. The test captures that actual previous geometry with the same review setup; baseline images are not substituted for current renders.
 
-Rendering pauses when idle. Mesh generation is synchronous once per page load (the measured generation time is in the report); pose changes update existing buffers. This higher-detail study has roughly 423,000 visible triangles. Use the existing **Lower cost · DPR 1** option if needed on a phone. WebKit viewport checks use software WebGL in this cloud and do not establish physical iPhone Safari frame rate or thermal performance. Actual device review remains necessary.
-
-Production application files, audio detection and reaction code are unchanged. No production integration or NPR work is included.
+Checks cover one connected closed skin surface, manifold edge incidence, finite attributes, four dental classes, geometric asymmetry, a triangle budget, real browser screenshots, clay/color and hair controls, orbit/zoom, iPhone-sized touch controls, console errors and failed assets. These are structural and interaction tests, not automated judgments of anatomical beauty or collision-free animation. No animation has been developed or validated. Physical iPhone Safari performance, thermals and pinch behavior still require device review. Artistic approval remains pending.

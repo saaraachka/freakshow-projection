@@ -174,45 +174,30 @@
         <div id="metrics">Initializing WebGL…</div>
       </section>
       <aside>
-        <h2>Model inspection</h2>
+        <h2>Static sculpt review</h2>
         <p>
           Drag to orbit through 360°. Pinch or scroll to zoom. Use the underside
           and back views to inspect volume.
         </p>
         <p id="status" role="status">Generating 3D geometry…</p>
         <button id="reset">Reset camera</button>
+        <label><input id="clay" type="checkbox" checked /> Neutral clay</label>
         <div id="views">
-          <button data-view="front">Front</button
-          ><button data-view="three-quarter">¾ view</button
-          ><button data-view="side">Side</button
-          ><button data-view="back">Back</button
-          ><button data-view="underside">Underside</button
-          ><button data-view="mouth">Mouth interior</button>
+          <button data-view="front">Front</button>
+          <button data-view="left-three-quarter">Left ¾</button
+          ><button data-view="three-quarter">Right ¾</button>
+          <button data-view="left-side">Left profile</button
+          ><button data-view="side">Right profile</button>
+          <button data-view="back">Back</button
+          ><button data-view="top">Top</button
+          ><button data-view="underside">Underside</button>
+          <button data-view="eyes">Eyes</button
+          ><button data-view="nose">Nose</button
+          ><button data-view="mouth">Mouth</button
+          ><button data-view="ears">Ear</button
+          ><button data-view="hair">Hair</button>
         </div>
-        <label for="expression">Facial contour study</label
-        ><select id="expression">
-          <option value="grin">Default sinister grin</option>
-          <option value="neutral">Relax smile</option>
-          <option value="smirk">Asymmetric smirk study</option></select
-        ><label for="intensity">Expression intensity</label
-        ><input
-          id="intensity"
-          type="range"
-          min="0"
-          max="1"
-          value="1"
-          step=".01"
-        /><label for="jaw">Jaw open</label
-        ><input
-          id="jaw"
-          type="range"
-          min="0"
-          max="1"
-          value="0"
-          step=".01"
-        /><small id="jawStatus"
-          >Lower teeth, tongue and gum ridge share the jaw hinge.</small
-        ><label for="quality">Rendering resolution</label
+        <label for="quality">Rendering resolution</label
         ><select id="quality">
           <option value="2">Sharp · DPR up to 2</option>
           <option value="1">Lower cost · DPR 1</option></select
@@ -222,23 +207,27 @@
           curls</label
         >
         <small
-          >The skull, cheeks, chin and jaw are one continuous polygon surface.
-          Eyes, teeth, nose, ears and hair are modeled volumes with depth. There
-          are no character textures or sprites.</small
+          >The skin, eyelids, lips, chin, nasal anatomy and auricles form one
+          connected surface. The dental crowns and seated globes are separate
+          anatomical volumes.</small
         >
         <small
-          >Structural refinement: recessed sockets, lips and chin share the
-          skin. Ear shells embed at their roots. Artist refinement and device
-          review remain necessary. No music animation or NPR shader is
-          connected.</small
+          >Clay mode uses one neutral material on every mesh and fixed white
+          studio lights. Switch it off to see the ivory complexion, red nose,
+          acid-green eyes and navy-black groom.</small
+        >
+        <small
+          >Static anatomy study awaiting artistic review. No facial animation,
+          audio reactions or NPR shading. Production FREAKSHOW is
+          unchanged.</small
         >
         <p>
           <a href="./review/index.html"
-            >Front, three-quarter, side and back renders</a
+            >Clay review · eight views, feature close-ups and previous sculpt</a
           >
         </p>
       </aside>
     </main>
-    <script type="module" src="./viewer.js?anatomy=1"></script>
+    <script type="module" src="./viewer.js?sculpt=2"></script>
   </body>
 </html>

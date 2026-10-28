@@ -1,123 +1,524 @@
 <!doctype html>
 <html lang="en">
-  <meta charset="utf-8" /><meta
-    name="viewport"
-    content="width=device-width,initial-scale=1"
-  /><title>Procedural 3D clown · anatomy review</title
-  ><style>
-    body {
-      background: #191d24;
-      color: #eee;
-      font: 16px system-ui;
-      margin: 24px;
-    }
-    a {
-      color: #dec18f;
-    }
-    p {
-      line-height: 1.6;
-      max-width: 850px;
-    }
-    main {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    figure {
-      margin: 0;
-    }
-    img {
-      width: 100%;
-      display: block;
-    }
-    figcaption {
-      padding: 10px;
-    }
-  </style>
-  <h1>Generated 3D clown · anatomy review</h1>
-  <p><a href="../index.html">Open the visible, rotatable head</a></p>
-  <p>
-    Structural refinement: compact skull, recessed sockets, integrated lips and
-    chin, folded ear shells and irregular open curl strands. All character
-    surfaces are genuinely three-dimensional. Production FREAKSHOW, camera
-    presets and lighting are unchanged. Open each previous-view comparison to
-    assess the geometry change. This is a procedural anatomy review, not a
-    finished sculpt or physical iPhone performance claim.
-  </p>
-  <main>
-    <figure>
-      <img src="front.png" alt="Refined front geometry" />
-      <details>
-        <summary>Compare previous front geometry</summary>
-        <img
-          src="before-front.png"
-          loading="lazy"
-          alt="Previous front geometry, same camera and lights"
-        />
-      </details>
-      <figcaption>Front · default wide grin</figcaption>
-    </figure>
-    <figure>
-      <img src="three-quarter.png" alt="Refined three-quarter geometry" />
-      <details>
-        <summary>Compare previous three-quarter geometry</summary>
-        <img
-          src="before-three-quarter.png"
-          loading="lazy"
-          alt="Previous three-quarter geometry, same camera and lights"
-        />
-      </details>
-      <figcaption>Three-quarter · facial depth</figcaption>
-    </figure>
-    <figure>
-      <img src="side.png" alt="Refined side geometry" />
-      <details>
-        <summary>Compare previous side geometry</summary>
-        <img
-          src="before-side.png"
-          loading="lazy"
-          alt="Previous side geometry, same camera and lights"
-        />
-      </details>
-      <figcaption>Side · skull, nose and jaw profile</figcaption>
-    </figure>
-    <figure>
-      <img src="back.png" alt="Refined back geometry" />
-      <details>
-        <summary>Compare previous back geometry</summary>
-        <img
-          src="before-back.png"
-          loading="lazy"
-          alt="Previous back geometry, same camera and lights"
-        />
-      </details>
-      <figcaption>Back · skull and dimensional curls</figcaption>
-    </figure>
-    <figure>
-      <img src="underside.png" alt="Refined underside geometry" />
-      <details>
-        <summary>Compare previous underside geometry</summary>
-        <img
-          src="before-underside.png"
-          loading="lazy"
-          alt="Previous underside geometry, same camera and lights"
-        />
-      </details>
-      <figcaption>Underside · jaw and chin</figcaption>
-    </figure>
-    <figure>
-      <img src="jaw-open.png" />
-      <figcaption>Jaw open · rigid teeth and mouth cavity</figcaption>
-    </figure>
-    <figure>
-      <img
-        src="iphone-webkit.png"
-        loading="lazy"
-        alt="Refined viewer in iPhone-size WebKit viewport"
-      />
-      <figcaption>
-        WebKit · iPhone viewport · DPR 1. Not a physical device test.
-      </figcaption>
-    </figure>
-  </main>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FREAKSHOW · Static clay sculpt review</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #191d24;
+        color: #ede9df;
+        font: 16px/1.55 system-ui;
+      }
+      main {
+        max-width: 1300px;
+        margin: auto;
+        padding: 24px;
+      }
+      h1 {
+        font-size: 30px;
+        line-height: 1.2;
+      }
+      h2 {
+        font-size: 22px;
+      }
+      p {
+        max-width: 850px;
+        color: #c5cbd2;
+      }
+      a {
+        color: #e1c799;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        margin: 24px 0;
+      }
+      section {
+        border-top: 1px solid #4a5059;
+        padding: 20px 0;
+        scroll-margin-top: 15px;
+      }
+      .pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      figure {
+        margin: 0;
+      }
+      img {
+        width: 100%;
+        height: auto;
+        display: block;
+        background: #191d24;
+      }
+      figcaption {
+        padding: 9px 0;
+        color: #c5cbd2;
+      }
+      small {
+        color: #bbc1c9;
+      }
+      summary {
+        cursor: pointer;
+      }
+      @media (max-width: 650px) {
+        main {
+          padding: 16px;
+        }
+        h1 {
+          font-size: 25px;
+        }
+        .pair {
+          grid-template-columns: 1fr;
+        }
+        figure + figure {
+          margin-top: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a href="../index.html?sculpt=2">Open the orbitable 3D sculpt</a>
+      <h1>FREAKSHOW · Static clay review</h1>
+      <p>
+        A craniofacial reconstruction for artistic review. The previous model
+        and the new sculpt use the same neutral material, fixed white studio
+        lighting, camera positions and framing. Colors, textures and dramatic
+        lighting cannot account for the differences below. Tap an image to
+        inspect it at full size.
+      </p>
+      <p>
+        Review the silhouette, orbital and nasal anatomy, cheek-to-jaw flow,
+        mouth corners, dental seating, ear attachment and layered groom. The new
+        model has one connected skin surface, four crown classes and an
+        asymmetric groom. These are implementation facts, not a claim of
+        professional sculpt quality. Static artistic approval is pending; no
+        animation, audio, NPR or production integration has begun.
+      </p>
+      <nav>
+        <a href="#front">Front</a
+        ><a href="#left-three-quarter">Left three-quarter</a
+        ><a href="#right-three-quarter">Right three-quarter</a
+        ><a href="#left-profile">Left profile</a
+        ><a href="#right-profile">Right profile</a><a href="#back">Back</a
+        ><a href="#top">Top</a><a href="#underside">Underside</a
+        ><a href="#eyes">Eye sockets and lids</a
+        ><a href="#nose">Nasal anatomy</a
+        ><a href="#mouth">Lips, cavity and dentition</a
+        ><a href="#ear">Auricular folds and attachment</a
+        ><a href="#hair">Groom volume</a>
+      </nav>
+      <section id="front">
+        <h2>Front</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-front.png"
+              ><img
+                src="sculpt/before-front.png"
+                alt="Previous · b55c69e — Front"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/front.png"
+              ><img
+                src="sculpt/front.png"
+                alt="Reconstructed static sculpt — Front"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="left-three-quarter">
+        <h2>Left three-quarter</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-left-three-quarter.png"
+              ><img
+                src="sculpt/before-left-three-quarter.png"
+                alt="Previous · b55c69e — Left three-quarter"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/left-three-quarter.png"
+              ><img
+                src="sculpt/left-three-quarter.png"
+                alt="Reconstructed static sculpt — Left three-quarter"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="right-three-quarter">
+        <h2>Right three-quarter</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-right-three-quarter.png"
+              ><img
+                src="sculpt/before-right-three-quarter.png"
+                alt="Previous · b55c69e — Right three-quarter"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/right-three-quarter.png"
+              ><img
+                src="sculpt/right-three-quarter.png"
+                alt="Reconstructed static sculpt — Right three-quarter"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="left-profile">
+        <h2>Left profile</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-left-profile.png"
+              ><img
+                src="sculpt/before-left-profile.png"
+                alt="Previous · b55c69e — Left profile"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/left-profile.png"
+              ><img
+                src="sculpt/left-profile.png"
+                alt="Reconstructed static sculpt — Left profile"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="right-profile">
+        <h2>Right profile</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-right-profile.png"
+              ><img
+                src="sculpt/before-right-profile.png"
+                alt="Previous · b55c69e — Right profile"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/right-profile.png"
+              ><img
+                src="sculpt/right-profile.png"
+                alt="Reconstructed static sculpt — Right profile"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="back">
+        <h2>Back</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-back.png"
+              ><img
+                src="sculpt/before-back.png"
+                alt="Previous · b55c69e — Back"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/back.png"
+              ><img
+                src="sculpt/back.png"
+                alt="Reconstructed static sculpt — Back"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="top">
+        <h2>Top</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-top.png"
+              ><img
+                src="sculpt/before-top.png"
+                alt="Previous · b55c69e — Top"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/top.png"
+              ><img
+                src="sculpt/top.png"
+                alt="Reconstructed static sculpt — Top"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="underside">
+        <h2>Underside</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-underside.png"
+              ><img
+                src="sculpt/before-underside.png"
+                alt="Previous · b55c69e — Underside"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/underside.png"
+              ><img
+                src="sculpt/underside.png"
+                alt="Reconstructed static sculpt — Underside"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="eyes">
+        <h2>Eye sockets and lids</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-eyes.png"
+              ><img
+                src="sculpt/before-eyes.png"
+                alt="Previous · b55c69e — Eye sockets and lids"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/eyes.png"
+              ><img
+                src="sculpt/eyes.png"
+                alt="Reconstructed static sculpt — Eye sockets and lids"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="nose">
+        <h2>Nasal anatomy</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-nose.png"
+              ><img
+                src="sculpt/before-nose.png"
+                alt="Previous · b55c69e — Nasal anatomy"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/nose.png"
+              ><img
+                src="sculpt/nose.png"
+                alt="Reconstructed static sculpt — Nasal anatomy"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="mouth">
+        <h2>Lips, cavity and dentition</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-mouth.png"
+              ><img
+                src="sculpt/before-mouth.png"
+                alt="Previous · b55c69e — Lips, cavity and dentition"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/mouth.png"
+              ><img
+                src="sculpt/mouth.png"
+                alt="Reconstructed static sculpt — Lips, cavity and dentition"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="ear">
+        <h2>Auricular folds and attachment</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-ear.png"
+              ><img
+                src="sculpt/before-ear.png"
+                alt="Previous · b55c69e — Auricular folds and attachment"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/ear.png"
+              ><img
+                src="sculpt/ear.png"
+                alt="Reconstructed static sculpt — Auricular folds and attachment"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section id="hair">
+        <h2>Groom volume</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/before-hair.png"
+              ><img
+                src="sculpt/before-hair.png"
+                alt="Previous · b55c69e — Groom volume"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Previous · b55c69e</figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/hair.png"
+              ><img
+                src="sculpt/hair.png"
+                alt="Reconstructed static sculpt — Groom volume"
+                loading="lazy"
+                width="960"
+                height="1000"
+            /></a>
+            <figcaption>Reconstructed static sculpt</figcaption>
+          </figure>
+        </div>
+      </section>
+      <section>
+        <h2>Additional inspection</h2>
+        <div class="pair">
+          <figure>
+            <a href="sculpt/color.png"
+              ><img
+                src="sculpt/color.png"
+                alt="Current sculpt in defining colors"
+                loading="lazy"
+            /></a>
+            <figcaption>
+              Defining colors · standard untextured materials
+            </figcaption>
+          </figure>
+          <figure>
+            <a href="sculpt/bare-skin.png"
+              ><img
+                src="sculpt/bare-skin.png"
+                alt="Current clay skin with groom hidden"
+                loading="lazy"
+            /></a>
+            <figcaption>
+              Hair hidden · inspect skull and ear continuity
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+      <section>
+        <h2>Phone browser check</h2>
+        <details>
+          <summary>WebKit with iPhone 13 viewport and touch controls</summary>
+          <a href="sculpt/phone-webkit.png"
+            ><img
+              src="sculpt/phone-webkit.png"
+              alt="WebKit phone viewport"
+              loading="lazy"
+              style="max-width: 450px"
+          /></a>
+        </details>
+        <p>
+          Cloud WebKit emulation checks layout and interaction. It does not
+          establish physical iPhone frame rate, thermal performance or pinch
+          behavior. Open the live viewer on your device for that review.
+        </p>
+        <p>
+          <a href="sculpt/checks.json">Browser and geometry check results</a> ·
+          <a href="../index.html?sculpt=2">Return to the live 3D sculpt</a>
+        </p>
+      </section>
+    </main>
+  </body>
 </html>
