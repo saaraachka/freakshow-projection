@@ -2,23 +2,27 @@ import http from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 const root = path.resolve(process.argv[2] || ".");
+const basePath = process.env.BASE_PATH || "/";
 const types = {
   ".html": "text/html",
   ".js": "text/javascript",
   ".css": "text/css",
   ".json": "application/json",
+  ".webmanifest": "application/manifest+json",
   ".svg": "image/svg+xml",
 };
 http
   .createServer(async (req, res) => {
     try {
       const url = new URL(req.url, "http://localhost");
+      if (!url.pathname.startsWith(basePath)) {
+        res.writeHead(404).end("Not found");
+        return;
+      }
+      const pathname = "/" + url.pathname.slice(basePath.length);
       const file = path.resolve(
         root,
-        "." +
-          decodeURIComponent(
-            url.pathname === "/" ? "/index.html" : url.pathname,
-          ),
+        "." + decodeURIComponent(pathname === "/" ? "/index.html" : pathname),
       );
       if (!file.startsWith(root + path.sep)) {
         res.writeHead(403).end();

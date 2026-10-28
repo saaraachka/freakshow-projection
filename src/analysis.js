@@ -39,32 +39,63 @@ export function magnitudes(samples, start = 0) {
     (_, i) => Math.hypot(re[i], im[i]) / n,
   );
 }
-export function featuresFromSpectrum(spectrum, rate = SAMPLE_RATE) {
-  const avg = (min, max) => {
-    let sum = 0,
-      n = 0;
+// Linear band energy avoids the v4 dB/gain clamp that flattened loud songs.
+export function featuresFromSpectrum(
+  spectrum,
+  rate = SAMPLE_RATE,
+  previous = null,
+) {
+  const band = (low, high) => {
+    let energy = 0,
+      positive = 0,
+      total = 0,
+      peak = 0;
     for (
-      let i = Math.floor(min / (rate / FFT_SIZE));
-      i <= Math.min(spectrum.length - 1, Math.ceil(max / (rate / FFT_SIZE)));
+      let i = Math.max(1, Math.ceil((low * FFT_SIZE) / rate));
+      i <= Math.min(spectrum.length - 1, Math.floor((high * FFT_SIZE) / rate));
       i++
     ) {
-      sum += Math.max(
-        0,
-        Math.min(1, (20 * Math.log10(Math.max(1e-12, spectrum[i])) + 100) / 70),
-      );
-      n++;
+      const v = spectrum[i];
+      energy += v * v;
+      total += v;
+      peak = Math.max(peak, v);
+      const rise = Math.max(0, v - (previous?.[i] || 0));
+      positive += rise * rise;
     }
-    return n ? sum / n : 0;
+    return {
+      energy: Math.min(1, Math.sqrt(energy) * 4),
+      flux: Math.min(1, Math.sqrt(positive) * 4),
+      tonal: total ? peak / total : 0,
+    };
   };
+  const bass = band(35, 180),
+    mid = band(180, 2200),
+    high = band(2200, 9000);
   return {
-    bass: Math.min(1, avg(35, 180) * 2.2),
-    mid: Math.min(1, avg(180, 2200) * 2.4),
-    high: Math.min(1, avg(2200, 9000) * 2),
+    bass: bass.energy,
+    mid: mid.energy,
+    high: high.energy,
+    bassFlux: bass.flux,
+    midFlux: mid.flux,
+    highFlux: high.flux,
+    tonal: mid.tonal,
   };
+}
+export class FeatureExtractor {
+  constructor(rate = SAMPLE_RATE) {
+    this.rate = rate;
+    this.previous = new Float64Array(FFT_SIZE / 2);
+  }
+  process(window) {
+    const spectrum = magnitudes(window);
+    const feature = featuresFromSpectrum(spectrum, this.rate, this.previous);
+    this.previous = spectrum;
+    return feature;
+  }
 }
 export function analyzePCM(pcm, rate = SAMPLE_RATE) {
   const result = [],
-    smooth = new Float64Array(FFT_SIZE / 2),
+    extractor = new FeatureExtractor(rate),
     hop = Math.round(rate * STEP);
   for (let i = 0; i < pcm.length; i += hop) {
     // Causal trailing window, zero padded at the beginning of the song.
@@ -72,10 +103,7 @@ export function analyzePCM(pcm, rate = SAMPLE_RATE) {
       start = i - FFT_SIZE;
     for (let j = 0; j < FFT_SIZE; j++)
       if (start + j >= 0) window[j] = pcm[start + j] || 0;
-    const spectrum = magnitudes(window);
-    for (let j = 0; j < smooth.length; j++)
-      smooth[j] = smooth[j] * 0.16 + spectrum[j] * 0.84;
-    result.push(featuresFromSpectrum(smooth, rate));
+    result.push(extractor.process(window));
   }
   return result;
 }

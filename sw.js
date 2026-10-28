@@ -1,4 +1,4 @@
-const CACHE = "freakshow-v5-1";
+const CACHE = "freakshow-v5-2";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,11 +9,17 @@ const ASSETS = [
   "./src/analysis.js",
   "./src/analysis-worker.js",
   "./src/renderer.js",
+  "./src/song-editor.js",
   "./src/mic-worklet.js",
   "./public/baseline-v4.html",
 ];
 self.addEventListener("install", (event) =>
-  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS))),
+  event.waitUntil(
+    caches
+      .open(CACHE)
+      .then((cache) => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting()),
+  ),
 );
 self.addEventListener("activate", (event) =>
   event.waitUntil(
@@ -21,7 +27,9 @@ self.addEventListener("activate", (event) =>
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)),
+          keys
+            .filter((k) => k.startsWith("freakshow-") && k !== CACHE)
+            .map((k) => caches.delete(k)),
         ),
       )
       .then(() => self.clients.claim()),

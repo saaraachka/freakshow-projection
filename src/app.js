@@ -5,19 +5,13 @@ import {
   simulate,
   evaluateAnnotations,
 } from "./engine.js";
-import {
-  magnitudes,
-  featuresFromSpectrum,
-  SAMPLE_RATE,
-  FFT_SIZE,
-} from "./analysis.js";
+import { FeatureExtractor, SAMPLE_RATE } from "./analysis.js";
+import { SongEditor, validRules } from "./song-editor.js";
 import { drawScene } from "./renderer.js";
 const $ = (id) => document.getElementById(id),
   preview = $("preview"),
   timeline = $("timeline");
-const timelineBase = document.createElement("canvas");
-timelineBase.width = timeline.width;
-timelineBase.height = timeline.height;
+
 let timelineDirty = true;
 const audio = new Audio();
 audio.preload = "auto";
@@ -72,6 +66,33 @@ const safeStorage = {
     }
   },
 };
+const editor = new SongEditor(
+  timeline,
+  () => ({
+    frames,
+    features,
+    pcm,
+    duration,
+    notes,
+    time: audio.currentTime,
+    playing: !audio.paused,
+    rules: options.rules || [],
+  }),
+  seek,
+  (rule) => {
+    options.rules = rule
+      ? [...(options.rules || []).filter((r) => r.source !== rule.source), rule]
+      : [];
+    engine = new Engine(options);
+    rebuild();
+    persist();
+    tell(
+      rule
+        ? "Mapping applied across this song and Live Show. No reactions are scheduled at timestamps."
+        : "Default sound mappings restored.",
+    );
+  },
+);
 function allEvents() {
   return frames.flatMap((f) => f.events);
 }
@@ -93,24 +114,26 @@ function persist() {
     });
 }
 function syncSettings() {
-  for (const k of Object.keys(DEFAULTS)) {
+  for (const k of Object.keys(DEFAULTS).filter((k) => $(k))) {
     if (k === "flash") $(k).checked = options[k];
     else $(k).value = options[k];
   }
 }
 const preferences = safeStorage.get("freakshow:preferences");
 for (const [key, value] of Object.entries(preferences || {})) {
-  if (key === "flash" && typeof value === "boolean") options[key] = value;
+  if (key === "rules" && validRules(value)) options.rules = value;
+  else if (key === "flash" && typeof value === "boolean") options[key] = value;
   else if (
     key in DEFAULTS &&
     key !== "flash" &&
+    key !== "rules" &&
     Array.from($(key).options).some((o) => o.value === value)
   )
     options[key] = value;
 }
 syncSettings();
 engine = new Engine(options);
-for (const key of Object.keys(DEFAULTS))
+for (const key of Object.keys(DEFAULTS).filter((k) => $(k)))
   $(key).addEventListener("change", () => {
     options[key] = key === "flash" ? $(key).checked : $(key).value;
     engine = new Engine(options);
@@ -191,6 +214,8 @@ async function loadSong(file) {
   audio.pause();
   $("play").disabled = true;
   $("audioFile").disabled = true;
+  $("fileStatus").textContent = "Loading and analyzing locally…";
+  $("audioDrop").setAttribute("aria-busy", "true");
   tell("Decoding locally and analyzing at a fixed 60 steps per second…");
   $("analysisLabel").textContent = "ANALYZING…";
   try {
@@ -244,7 +269,7 @@ async function loadSong(file) {
     else {
       pendingSession = null;
       tell(
-        "Song ready. Playback and seeking use the same precomputed detection. Notes save on this device.",
+        "Song ready. Play or select a sound to decide how it should move. Notes save on this device.",
       );
     }
     rebuild();
@@ -261,17 +286,42 @@ async function loadSong(file) {
       "runRegression",
     ])
       $(id).disabled = false;
-    $("analysisLabel").textContent =
-      `${frames.length.toLocaleString()} FIXED STEPS`;
+    $("analysisLabel").textContent = `${allEvents().length} REACTIONS READY`;
+    $("fileStatus").textContent =
+      `Ready: ${file.name} · ${duration.toFixed(1)}s`;
+    editor.start = 0;
+    editor.zoom = 1;
+    $("zoom").value = "1";
+    editor.invalidate();
   } catch (error) {
+    $("fileStatus").textContent = "Load failed: " + error.message;
     tell("Could not load song: " + error.message);
     $("analysisLabel").textContent = "LOAD FAILED";
     $("play").disabled = !song;
   } finally {
     $("audioFile").disabled = false;
+    $("audioDrop").setAttribute("aria-busy", "false");
   }
 }
 $("audioFile").onchange = (e) => loadSong(e.target.files[0]);
+$("audioFile").addEventListener("click", (e) => {
+  e.currentTarget.value = "";
+});
+$("audioFile").addEventListener("cancel", () => {
+  $("fileStatus").textContent =
+    "No file chosen. Choose an MP3/WAV or drop one here.";
+});
+for (const event of ["dragover", "dragenter"])
+  $("audioDrop").addEventListener(event, (e) => {
+    e.preventDefault();
+    $("audioDrop").classList.add("dragging");
+  });
+$("audioDrop").ondragleave = () => $("audioDrop").classList.remove("dragging");
+$("audioDrop").ondrop = (e) => {
+  e.preventDefault();
+  $("audioDrop").classList.remove("dragging");
+  if (!$("audioFile").disabled) loadSong(e.dataTransfer.files[0]);
+};
 $("play").onclick = async () => {
   if (audio.paused) {
     try {
@@ -286,16 +336,20 @@ audio.onpause = audio.onended = () => ($("play").textContent = "▶ Play");
 function seek(time) {
   audio.currentTime = Math.max(0, Math.min(duration, time));
   $("noteTime").value = audio.currentTime.toFixed(2);
+  if (
+    audio.currentTime < editor.start ||
+    audio.currentTime > editor.start + editor.span()
+  ) {
+    editor.start = Math.max(
+      0,
+      Math.min(duration - editor.span(), audio.currentTime),
+    );
+    editor.invalidate();
+  }
   drawTimeline();
 }
 $("rewind").onclick = () => seek(0);
 $("seek").oninput = (e) => seek(Number(e.target.value));
-timeline.onclick = (e) => {
-  if (duration) {
-    const rect = timeline.getBoundingClientRect();
-    seek(((e.clientX - rect.left) / rect.width) * duration);
-  }
-};
 $("triggerEye").onclick = () => manual.push("eye");
 $("triggerMouth").onclick = () => manual.push("mouth");
 $("rehearse").onclick = () => {
@@ -335,6 +389,10 @@ function validateSession(value) {
     throw Error("Invalid annotation.");
   for (const k of Object.keys(value.options || {})) {
     if (!(k in DEFAULTS)) throw Error("Unknown setting.");
+    if (k === "rules") {
+      if (!validRules(value.options[k])) throw Error("Invalid sound mappings.");
+      continue;
+    }
     const el = $(k);
     if (k === "flash") {
       if (typeof value.options[k] !== "boolean")
@@ -426,7 +484,14 @@ $("runRegression").onclick = () => {
     tell("Add an expected reaction or ignored sound before checking.");
 };
 $("exportNotes").onclick = () => {
-  const value = { version: 1, song, options, annotations: notes, features };
+  const value = {
+    version: 1,
+    featureVersion: 2,
+    song,
+    options,
+    annotations: notes,
+    features,
+  };
   const blob = new Blob([JSON.stringify(value)], { type: "application/json" }),
     url = URL.createObjectURL(blob),
     a = document.createElement("a");
@@ -462,108 +527,11 @@ $("notesFile").onchange = async (e) => {
   }
 };
 function drawTimeline() {
-  const c = timeline.getContext("2d"),
-    w = timeline.width,
-    h = timeline.height,
-    row = h / 5;
-  if (!timelineDirty && pcm) {
-    c.drawImage(timelineBase, 0, 0);
-    drawPlayhead(c, w, h);
-    return;
+  if (timelineDirty) {
+    editor.invalidate();
+    timelineDirty = false;
   }
-  c.clearRect(0, 0, w, h);
-  c.fillStyle = "#17151a";
-  c.fillRect(0, 0, w, h);
-  for (let i = 1; i < 5; i++) {
-    c.strokeStyle = "#332c35";
-    c.beginPath();
-    c.moveTo(0, i * row);
-    c.lineTo(w, i * row);
-    c.stroke();
-  }
-  if (!pcm || !duration) {
-    c.fillStyle = "#655d69";
-    c.font = "14px Arial";
-    c.fillText("Your song, mapped from first note to final echo.", 30, 38);
-    return;
-  }
-  c.strokeStyle = "#8b8276";
-  c.beginPath();
-  for (let x = 0; x < w; x++) {
-    const start = Math.floor((x / w) * pcm.length),
-      end = Math.max(start + 1, Math.floor(((x + 1) / w) * pcm.length));
-    let peak = 0;
-    for (let j = start; j < end; j++) peak = Math.max(peak, Math.abs(pcm[j]));
-    c.moveTo(x, row / 2 - peak * (row / 2 - 5));
-    c.lineTo(x, row / 2 + peak * (row / 2 - 5));
-  }
-  c.stroke();
-  const trace = (field, lane, color) => {
-    c.strokeStyle = color;
-    c.lineWidth = 1.5;
-    c.beginPath();
-    for (let x = 0; x < w; x++) {
-      const f =
-        frames[
-          Math.min(frames.length - 1, Math.floor((x / w) * frames.length))
-        ];
-      const v = field(f);
-      const y = (lane + 1) * row - 6 - Math.min(1, v) * (row - 12);
-      if (x === 0) c.moveTo(x, y);
-      else c.lineTo(x, y);
-    }
-    c.stroke();
-  };
-  trace((f) => f.levels.bass, 1, "#dfbc76");
-  trace((f) => f.levels.mid, 2, "#ce7b6f");
-  trace(
-    (f) => Math.min(1, f.bassDrive * 0.62 + f.eyeAccent * 0.92),
-    4,
-    "#dfbc76",
-  );
-  trace(
-    (f) => Math.min(1, f.midDrive * 0.66 + f.mouthAccent * 1.03),
-    4,
-    "#ce7b6f",
-  );
-  for (const event of allEvents()) {
-    const x = (event.time / duration) * w,
-      y = row * 3 + (event.kind === "eye" ? 20 : 43);
-    c.fillStyle = event.kind === "eye" ? "#dfbc76" : "#ce7b6f";
-    c.beginPath();
-    if (event.kind === "eye") c.arc(x, y, 3, 0, Math.PI * 2);
-    else {
-      c.moveTo(x, y - 4);
-      c.lineTo(x + 4, y);
-      c.lineTo(x, y + 4);
-      c.lineTo(x - 4, y);
-      c.closePath();
-    }
-    c.fill();
-  }
-  notes.forEach((n) => {
-    const x = (n.time / duration) * w;
-    c.strokeStyle = n.kind === "ignore" ? "#b7afc0" : "#ddd3bb";
-    c.setLineDash([3, 5]);
-    c.beginPath();
-    c.moveTo(x, 0);
-    c.lineTo(x, h);
-    c.stroke();
-    c.setLineDash([]);
-    c.fillStyle = c.strokeStyle;
-    c.fillRect(x - 3, 0, 6, 8);
-  });
-  timelineBase.getContext("2d").drawImage(timeline, 0, 0);
-  timelineDirty = false;
-  drawPlayhead(c, w, h);
-}
-function drawPlayhead(c, w, h) {
-  c.strokeStyle = "#f5eee4";
-  c.lineWidth = 1;
-  c.beginPath();
-  c.moveTo((audio.currentTime / duration) * w, 0);
-  c.lineTo((audio.currentTime / duration) * w, h);
-  c.stroke();
+  editor.draw();
 }
 
 async function stopMic() {
@@ -616,16 +584,10 @@ async function startMic() {
     mute.gain.value = 0;
     source.connect(worklet);
     worklet.connect(mute).connect(context.destination);
-    const smooth = new Float64Array(FFT_SIZE / 2);
+    const extractor = new FeatureExtractor(context.sampleRate);
     worklet.port.onmessage = ({ data }) => {
       if (!mic) return;
-      const spectrum = magnitudes(data.pcm);
-      for (let i = 0; i < smooth.length; i++)
-        smooth[i] = smooth[i] * 0.16 + spectrum[i] * 0.84;
-      state = engine.step(
-        featuresFromSpectrum(smooth, context.sampleRate),
-        data.time,
-      );
+      state = engine.step(extractor.process(data.pcm), data.time);
       studioTime = data.time;
     };
     mic = { stream, context, source, worklet };
@@ -689,6 +651,19 @@ if (isProjector) {
       options = data.options;
       studioTime = data.time;
       drawScene(preview, state, options, studioTime);
+      const lastHeard =
+        mode === "song" && frames.length
+          ? frames
+              .slice(
+                Math.max(0, Math.floor(studioTime * 60) - 20),
+                Math.floor(studioTime * 60) + 1,
+              )
+              .flatMap((f) => f.detections || [])
+          : state.detections || [];
+      const recent = lastHeard.at(-1);
+      $("detectionMonitor").textContent = recent
+        ? `Heard: ${recent.source === "kick" ? "low thump" : recent.source === "lead" ? "tonal note" : "bright tick"} → ${recent.ignored ? "ignored" : recent.kind === "eye" ? "eye trigger" : "mouth trigger"} | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}%`
+        : `No recent onset | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}% · idle motion continues`;
     }
   });
 }
@@ -728,6 +703,19 @@ function tick(now) {
     }
   }
   drawScene(preview, state, options, studioTime);
+  const lastHeard =
+    mode === "song" && frames.length
+      ? frames
+          .slice(
+            Math.max(0, Math.floor(studioTime * 60) - 20),
+            Math.floor(studioTime * 60) + 1,
+          )
+          .flatMap((f) => f.detections || [])
+      : state.detections || [];
+  const recent = lastHeard.at(-1);
+  $("detectionMonitor").textContent = recent
+    ? `Heard: ${recent.source === "kick" ? "low thump" : recent.source === "lead" ? "tonal note" : "bright tick"} → ${recent.ignored ? "ignored" : recent.kind === "eye" ? "eye trigger" : "mouth trigger"} | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}%`
+    : `No recent onset | Eyes ${Math.round(state.eyeAccent * 100)}% · Mouth ${Math.round(state.mouthAccent * 100)}% · idle motion continues`;
   $("stateLabel").textContent =
     state.eyeAccent > 0.15
       ? "EYES / BASS ACCENT"
@@ -738,7 +726,7 @@ function tick(now) {
     mode === "song" && song
       ? audio.paused
         ? "Song paused"
-        : "Recorded song · deterministic"
+        : "Song audio"
       : mic
         ? "Microphone · live"
         : mode === "studio"

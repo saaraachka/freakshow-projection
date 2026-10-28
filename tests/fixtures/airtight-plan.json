@@ -1,0 +1,20 @@
+{
+  "track": "Remotif - Airtight (Original Mix)",
+  "status": "awaiting_actual_audio",
+  "annotations": [
+    {
+      "time": 6.3,
+      "kind": "mouth",
+      "text": "First of three lead notes; approximate, confirm against actual audio"
+    },
+    { "time": 6.6, "kind": "mouth", "text": "Second distinct lead note" },
+    { "time": 6.9, "kind": "mouth", "text": "Third distinct lead note" }
+  ],
+  "listening_checks": [
+    "Opening hi-hats should produce ignored detections and no triggered eye/mouth reactions",
+    "Mark each background kick after listening, rather than guessing timestamps",
+    "Mark the main drop after listening; compare eye amplitudes before and after it",
+    "During silence verify autonomous head, pupil, mouth and hair motion"
+  ],
+  "note": "Planning data only. Not a passed fixture. No track audio is supplied and these timestamps are never used by detection."
+}

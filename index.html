@@ -45,6 +45,9 @@
             height="720"
             aria-label="Animated clown preview"
           ></canvas>
+          <div class="detection-monitor" id="detectionMonitor">
+            Waiting for sound · movement is autonomous
+          </div>
           <div class="stage-footer">
             <span
               ><i class="dot"></i>
@@ -59,15 +62,21 @@
             <span>01</span>
           </div>
           <section data-for="song">
-            <label class="drop" for="audioFile"
-              ><span class="upload-icon">+</span
-              ><strong>Bring a song into the lab</strong
-              ><span>Choose MP3 or WAV · stays on this device</span
+            <div class="drop" id="audioDrop">
+              <strong>Choose a song or drop it here</strong
+              ><label for="audioFile">MP3 / WAV · stays on this device</label
               ><input
                 id="audioFile"
                 type="file"
-                accept=".mp3,.wav,audio/mpeg,audio/wav"
-            /></label>
+                accept=".mp3,.wav,audio/mpeg,audio/wav,audio/x-wav"
+              /><span id="fileStatus" role="status"
+                >Ready to choose a file.</span
+              >
+            </div>
+            <p class="muted">
+              If this embedded browser does not show a file picker, open this
+              page in your system browser, or drag a file onto the box.
+            </p>
             <p id="songName" class="muted">No song loaded</p>
           </section>
           <section data-for="studio" hidden>
@@ -161,7 +170,8 @@
       <section class="panel timeline-panel" data-for="song">
         <div class="panel-heading">
           <h2>
-            Song timeline <span class="subtle">/ click any trace to seek</span>
+            Sound timeline
+            <span class="subtle">/ click or drag to mark a sound</span>
           </h2>
           <span id="duration">00:00 / 00:00</span>
         </div>
@@ -179,23 +189,101 @@
             disabled
           /><span id="analysisLabel">WAITING FOR AUDIO</span>
         </div>
+        <div class="zoom-tools">
+          <label for="zoom">Zoom</label
+          ><select id="zoom">
+            <option value="1">Whole song</option>
+            <option value="2">2×</option>
+            <option value="4">4×</option>
+            <option value="8">8×</option>
+            <option value="16">16×</option>
+            <option value="32">32×</option></select
+          ><label for="viewOffset">Move view</label
+          ><input
+            id="viewOffset"
+            type="range"
+            min="0"
+            max="0"
+            step="0.01"
+            value="0"
+          /><span id="viewRange">0–0s</span
+          ><label
+            ><input id="advanced" type="checkbox" /> Advanced diagnostics</label
+          >
+        </div>
         <div class="trace-wrap">
-          <div class="trace-labels">
-            <span>WAVEFORM</span><span>BASS ENERGY</span><span>MIDRANGE</span
-            ><span>EVENTS <small>● eyes / ◆ jaw</small></span
-            ><span>ANIMATION <small>eyes / jaw</small></span>
+          <div class="trace-labels" id="traceLabels">
+            <span>WAVEFORM</span><span data-advanced hidden>BASS ENERGY</span
+            ><span data-advanced hidden>MIDRANGE</span
+            ><span
+              >SOUNDS
+              <small>gold: eyes / coral: mouth / gray: ignored</small></span
+            ><span>ANIMATION <small>eyes / mouth</small></span>
           </div>
           <canvas
             id="timeline"
             width="1400"
             height="320"
-            aria-label="Seekable waveform, bass and midrange energy, detected events, and animation state"
+            aria-label="Zoomable waveform and sound-event timeline; click or drag to select a sound"
           ></canvas>
         </div>
-        <p class="timeline-tip">
-          Gold: eyes & bass · coral: jaw & midrange · vertical flags: your
-          annotations. All traces share the same song clock.
+        <p id="eventSummary" class="timeline-tip">
+          Load a song to see detected and ignored sounds.
         </p>
+        <div
+          id="soundEvents"
+          class="event-list"
+          aria-label="Detected sounds"
+        ></div>
+        <section class="sound-editor">
+          <h2>Sound → animation</h2>
+          <p id="selectedSound">
+            Click a sound above, or drag over a short sound in the waveform.
+          </p>
+          <div class="mapping-controls">
+            <div>
+              <label for="soundFamily">Sound family</label
+              ><select id="soundFamily">
+                <option value="kick">Low thumps / kicks</option>
+                <option value="lead">Tonal notes / melody</option>
+                <option value="bright">Bright ticks / hi-hats</option>
+              </select>
+            </div>
+            <label class="ignore-control"
+              ><input id="ignoreSound" type="checkbox" /> Ignore</label
+            >
+            <div>
+              <label for="whatMoves">What Moves</label
+              ><select id="whatMoves">
+                <option value="mouth">Mouth</option>
+                <option value="eye">Eye sockets</option>
+              </select>
+            </div>
+            <div>
+              <label for="howReacts">How It Reacts</label
+              ><select id="howReacts">
+                <option value="smooth">Open & close</option>
+                <option value="snap">Snap & hold</option>
+                <option value="spring">Bounce back</option>
+              </select>
+            </div>
+            <div>
+              <label for="howDramatic">How Dramatic</label
+              ><select id="howDramatic">
+                <option value="subtle">Subtle</option>
+                <option value="dramatic">Dramatic</option>
+                <option value="extreme" selected>Extreme</option>
+              </select>
+            </div>
+            <button id="applySound" disabled>Apply to similar sounds</button
+            ><button id="resetRules" class="secondary">Reset mappings</button>
+          </div>
+          <p id="activeRules" class="muted"></p>
+          <p class="muted">
+            Mappings apply to the selected sound family throughout the song and
+            in Live Show. Marks are examples, never scheduled reactions.
+          </p>
+        </section>
       </section>
       <section class="panel annotations" data-for="song">
         <div class="panel-heading">

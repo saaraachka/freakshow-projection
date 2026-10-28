@@ -44,7 +44,7 @@ npm run preview
 
 `dist/` is a standalone static site; serve it from localhost or HTTPS. After the first online visit completes caching, the app shell, modules, audio worklet, and baseline work offline. Local audio files must be chosen again after a reload. Installability varies by browser; offline use does not require installation. Opening `index.html` directly as `file://` is unsupported because ES modules, workers, and microphone APIs need a server.
 
-The service worker uses a versioned app-shell cache. Increment `CACHE` in `sw.js` when publishing a new release. Close existing app tabs and reopen to activate an update. Serve development and production on distinct origins/ports when switching between them so a previous production worker cannot cache development files.
+The service worker uses a versioned app-shell cache. Increment `CACHE` in `sw.js` when publishing a new release. Updates activate as soon as their files have cached; reload the page to use the updated app. Serve development and production on distinct origins/ports when switching between them so a previous production worker cannot cache development files.
 
 ## Structure and v4 compatibility
 
@@ -56,7 +56,27 @@ The service worker uses a versioned app-shell cache. Increment `CACHE` in `sw.js
 - `src/app.js`: workspace orchestration, transport, notes, diagnostics, device lifecycle, and projector messaging.
 - `public/baseline-v4.html`: the original repository page, preserved byte-for-byte for comparison.
 
-The v4 selective thresholds, adaptive baselines, cooldowns, continuous eye/jaw drive, idle artwork, and motion envelopes remain the baseline. Detection now advances at a fixed cadence instead of requestAnimationFrame. Replay/seek uses precomputed states, eliminating seek history and display-rate dependence. Microphone input uses the same feature extractor and engine at 60 Hz. Browser audio decoders can differ slightly across platforms; deterministic regression exports pin the extracted features. The old exaggeration selector computed a scale without applying it; v5 applies the chosen expression strength while preserving the original extreme setting as default. Random demo timing is replaced by a repeatable rehearsal. Automatic scene cycling and the OS setup wizard are omitted in favor of explicit scene choices and browser-native device access.
+The original v4 page remains available as a baseline. The current detector uses linear spectral energy and positive spectral change rather than the v4 logarithmic averages, which could saturate and hide note onsets. It rejects note-release transients and routes low thumps to eyes, tonal notes to mouth, and bright ticks to Ignore by default. These are heuristic sound families, not source separation or instrument recognition. Dense mixes can require calibration. Detected sound candidates and resulting animation triggers are visible separately. Reaction envelopes close between quick notes; kick energy controls pulse amplitude while resting sockets stay small. The renderer's original clown paths and autonomous motion are preserved. No timestamp schedules animation.
+
+Song Lab's native file input is visible and enabled when ready, with local loading/error feedback, same-file reselection, and drag-and-drop fallback. Tests click the native input, wait for a file-chooser event, then choose actual generated WAV and encoded MP3 fixtures. This verifies browser file selection, not the host integration of every embedded webview's operating-system picker. If an embedded browser suppresses its native picker, use the system browser or drop a file. The reported deployed-picker failure could not be reproduced on the remote site because the cloud network denies its hostname; do not treat local success as remote verification. A release cache version bump prevents old cached modules from persisting across releases after reload.
+
+## Visual sound editor and calibration status
+
+Zoom the waveform and pan with **Move view**. Click a sound chip or click/drag on the waveform to select an example. Choose a sound family, **Ignore**, **What Moves**, **How It Reacts**, and **How Dramatic**, then **Apply to similar sounds**. The mapping changes the selected family across the whole song and in Live Show. It is deliberately broad, not a classifier trained on the exact sample. Reset mappings to restore defaults. Mappings persist in preferences and exported sessions. Expected timestamp notes remain tests only. Advanced diagnostics reveals bass/mid energy lanes; the main view contains waveform, heard sounds, and animation output. Eye/mouth percentages and the recent heard sound distinguish missing detections from missing motion.
+
+**“Remotif – Airtight (Original Mix)” is not calibrated yet.** The actual audio has not been supplied. `tests/fixtures/airtight-plan.json` records the approximate 6.3/6.6/6.9-second expectations and listening checks, explicitly as an unverified plan. It is not loaded by the detector and is not counted as a passing test. After obtaining the user's audio file, listen to and mark the opening hats, the three separate lead notes, background kicks and the drop; compare exact heard sounds, triggered events, and rendered expressions. Export the annotated real-song session for regression. Do not infer actual-track accuracy from synthetic fixtures.
+
+Generalization checks currently cover multiple pitches and levels, legato changes, three notes 300 ms apart, quiet/loud kick pulses, ignored high ticks, mapping at changed timestamps, and equality of microphone/recorded-window features. These validate the mechanism, not separation quality on arbitrary finished recordings. Session feature snapshots are versioned; old notes can still be imported against matching audio, but re-export the song before running the new CLI detector regression.
+
+To run the interaction suite against the actual deployed app (when network access is allowed):
+
+```sh
+FREAKSHOW_BASE_URL=https://saaraachka.github.io/freakshow-projection/ CHROMIUM_PATH=/usr/bin/chromium node tests/browser.js
+```
+
+For a local full-suite check under the Pages path, run `FREAKSHOW_TEST_BASE_PATH=/freakshow-projection/ CHROMIUM_PATH=/usr/bin/chromium npm run test:browser`.
+
+The deployed test uses the configured HTTPS proxy, checks asset/console failures, opens file choosers and loads MP3/WAV. A blocked navigation is a failed deployment-verification attempt, not a pass.
 
 No strobe is used. Test projector placement and playback conditions on the intended hardware before a show.
 

@@ -18,6 +18,10 @@ try {
     )
   )
     throw Error("Invalid saved features.");
+  if (session.featureVersion !== 2)
+    throw Error(
+      "Reload the audio in Song Lab and export a new session: this feature snapshot uses the older detector.",
+    );
   const frames = simulate(session.features, session.options),
     results = evaluateAnnotations(
       frames.flatMap((f) => f.events),

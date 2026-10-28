@@ -4,7 +4,7 @@ class PCMFrames extends AudioWorkletProcessor {
     this.ring = new Float32Array(1024);
     this.index = 0;
     this.samples = 0;
-    this.next = 0;
+    this.next = sampleRate / 60;
   }
   process(inputs) {
     const channels = inputs[0];
