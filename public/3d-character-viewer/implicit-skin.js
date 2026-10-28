@@ -263,7 +263,8 @@ export function facialSolidField(x, y, z, column = sampleColumn(x, y)) {
       z - 0.255,
       0.015,
     );
-    const socket = smin(channel, rear, 0.015);
+    const rearInside = smax(rear, d + 0.02, 0.01);
+    const socket = smin(channel, rearInside, 0.015);
     d = smax(d, -socket, 0.02);
     // The nostrils pass backwards and upwards into the integrated nasal alae.
     const nostril = ellipsoid(
@@ -323,6 +324,11 @@ export function createSkinGeometry() {
       (Math.abs(Math.abs(x) - 0.393) < 0.25 &&
         y > 0.15 &&
         y < 0.48 &&
-        z > 0.12),
+        z > 0.12) ||
+      (Math.abs(x) > 0.45 &&
+        Math.abs(x) < 0.72 &&
+        y > -0.45 &&
+        y < -0.12 &&
+        z > 0.2),
   });
 }

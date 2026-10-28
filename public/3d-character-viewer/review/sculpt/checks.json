@@ -6,10 +6,10 @@
       "structure": {
         "revision": "precision-correction-4",
         "staticSculpt": true,
-        "cacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
-        "hairCacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
+        "cacheHash": "ee77e152cd025478bd3d92ce860230026a1ee439664d558c9d806db20ff649c9",
+        "hairCacheHash": "ee77e152cd025478bd3d92ce860230026a1ee439664d558c9d806db20ff649c9",
         "components": [
-          77855
+          80897
         ],
         "nonManifoldEdges": 0,
         "finite": true,
@@ -56,9 +56,9 @@
           "CurvedPupil",
           "UnifiedCurlMassesAndRootedFlyaways"
         ],
-        "faceVertices": 77855,
-        "triangles": 398378,
-        "generationMs": 387.80000000447035,
+        "faceVertices": 80897,
+        "triangles": 392742,
+        "generationMs": 390.5,
         "teeth": 28,
         "dentalClasses": [
           "incisor",
@@ -67,8 +67,8 @@
           "molar"
         ],
         "hairClumps": 23,
-        "hairLocks": 80,
-        "asymmetry": 0.0028086449842403827,
+        "hairLocks": 150,
+        "asymmetry": 0.002808688793162928,
         "clay": true,
         "posteriorExtent": 1.292527675628662,
         "eyeAspect": [
@@ -293,7 +293,7 @@
       "mobile": {
         "fits": true,
         "dpr": 1,
-        "triangles": 398378,
+        "triangles": 392742,
         "webgl2": true
       },
       "errors": [],
@@ -305,10 +305,10 @@
       "structure": {
         "revision": "precision-correction-4",
         "staticSculpt": true,
-        "cacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
-        "hairCacheHash": "b01d2cfd18c3dcd1cd61273c593aef541bb6993241e4125be24b5659df70ef7f",
+        "cacheHash": "ee77e152cd025478bd3d92ce860230026a1ee439664d558c9d806db20ff649c9",
+        "hairCacheHash": "ee77e152cd025478bd3d92ce860230026a1ee439664d558c9d806db20ff649c9",
         "components": [
-          77855
+          80897
         ],
         "nonManifoldEdges": 0,
         "finite": true,
@@ -355,9 +355,9 @@
           "CurvedPupil",
           "UnifiedCurlMassesAndRootedFlyaways"
         ],
-        "faceVertices": 77855,
-        "triangles": 398378,
-        "generationMs": 445,
+        "faceVertices": 80897,
+        "triangles": 392742,
+        "generationMs": 645,
         "teeth": 28,
         "dentalClasses": [
           "incisor",
@@ -366,8 +366,8 @@
           "molar"
         ],
         "hairClumps": 23,
-        "hairLocks": 80,
-        "asymmetry": 0.0028086449842403827,
+        "hairLocks": 150,
+        "asymmetry": 0.002808688793162928,
         "clay": true,
         "posteriorExtent": 1.292527675628662,
         "eyeAspect": [
@@ -592,7 +592,7 @@
       "mobile": {
         "fits": true,
         "dpr": 1,
-        "triangles": 398378,
+        "triangles": 392742,
         "webgl2": true
       },
       "errors": [],
