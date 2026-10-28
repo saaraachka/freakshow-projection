@@ -696,7 +696,7 @@ try {
       });
       const gallery = await browser.newPage();
       await gallery.goto(
-        base + "public/3d-character-viewer/review/index.html",
+        base + "public/3d-character-viewer/review/index.html?sculpt=4",
         { waitUntil: "domcontentloaded", timeout: 90000 },
       );
       const galleryImages = await gallery.evaluate(async () => {
