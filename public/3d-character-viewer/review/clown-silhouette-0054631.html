@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>FREAKSHOW · Forehead and clown silhouette comparison</title
+  ><style>
+    :root {
+      color-scheme: dark;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #191d24;
+      color: #eee9df;
+      font: 16px/1.55 system-ui;
+    }
+    main {
+      max-width: 1180px;
+      margin: auto;
+      padding: 20px;
+    }
+    a {
+      color: #a9e6ce;
+    }
+    h1 {
+      font-size: 1.7rem;
+    }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 2em;
+    }
+    h3 {
+      margin: 0.8em 0 0.4em;
+    }
+    p {
+      max-width: 85ch;
+    }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    figure {
+      margin: 0;
+      background: #11151b;
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      padding: 8px;
+      font-size: 0.85rem;
+    }
+    nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    details {
+      padding: 10px 0;
+    }
+    .phone {
+      max-width: 390px;
+    }
+    @media (max-width: 500px) {
+      main {
+        padding: 12px;
+      }
+      .pair {
+        gap: 4px;
+      }
+      figcaption {
+        font-size: 0.72rem;
+        padding: 5px;
+      }
+    }
+  </style>
+  <main>
+    <h1>FREAKSHOW · Forehead and clown silhouette</h1>
+    <nav>
+      <a href="../baseline-0054631/index.html?sculpt=7">Rotate the current sculpt</a
+      ><a href="../baseline-7a6a104/index.html">Frozen 7a6a104 viewer</a
+      ><a href="reference-refinement-7a6a104.html">Previous sculpt review</a>
+    </nav>
+    <p>
+      Each pair uses identical camera coordinates, zoom, neutral clay material,
+      viewport and fixed white studio lights. Before is the preserved 7a6a104
+      sculpt; after is the reference-guided refinement. Artistic review is
+      pending.
+    </p>
+    <p>
+      The 7a6a104 model is the foundation. This pass lengthens the upper skull,
+      raises the frontal hairline, sweeps the fringe away from the brows and
+      widens the lateral hair envelope and curl groups. Facial geometry below
+      the upper-head transition is retained. Production, animation, rigging and
+      audio remain unchanged.
+    </p>
+    <p>
+      Diagnostic colors: skin gray, lips coral, gums blue, teeth ivory, cavity
+      purple. Surfaces remain opaque so geometry cannot be hidden by
+      transparency. The silhouettes use an unlit black material on white.
+    </p>
+    <p>
+      Review limitation: some curl shapes remain tubular, and supporting hair
+      volume is still visible at parts of the hairline and crown. This candidate
+      is not a completed match to the supplied hair references.
+    </p>
+    <h2>Matched whole-head clay views</h2>
+    <section>
+      <h3>Front</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-front.png?sculpt=7"
+            alt="Before · 7a6a104: front"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-front.png?sculpt=7"
+            alt="After · forehead and silhouette pass: front"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Left three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-left-three-quarter.png?sculpt=7"
+            alt="Before · 7a6a104: left-three-quarter"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-left-three-quarter.png?sculpt=7"
+            alt="After · forehead and silhouette pass: left-three-quarter"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Right three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-right-three-quarter.png?sculpt=7"
+            alt="Before · 7a6a104: right-three-quarter"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-right-three-quarter.png?sculpt=7"
+            alt="After · forehead and silhouette pass: right-three-quarter"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Left profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-left-profile.png?sculpt=7"
+            alt="Before · 7a6a104: left-profile"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-left-profile.png?sculpt=7"
+            alt="After · forehead and silhouette pass: left-profile"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Right profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-right-profile.png?sculpt=7"
+            alt="Before · 7a6a104: right-profile"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-right-profile.png?sculpt=7"
+            alt="After · forehead and silhouette pass: right-profile"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Back</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-back.png?sculpt=7"
+            alt="Before · 7a6a104: back"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-back.png?sculpt=7"
+            alt="After · forehead and silhouette pass: back"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Top</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-top.png?sculpt=7"
+            alt="Before · 7a6a104: top"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-top.png?sculpt=7"
+            alt="After · forehead and silhouette pass: top"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Underside</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-underside.png?sculpt=7"
+            alt="Before · 7a6a104: underside"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-underside.png?sculpt=7"
+            alt="After · forehead and silhouette pass: underside"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Underlying skull · hair hidden</h2>
+    <h3>front</h3>
+    <div class="pair">
+      <figure>
+        <img
+          loading="lazy"
+          width="960"
+          height="1000"
+          src="clown-silhouette/before-bare-skull-front.png?sculpt=7"
+          alt="Before · 7a6a104: bare skull front"
+        />
+        <figcaption>Before · 7a6a104</figcaption>
+      </figure>
+      <figure>
+        <img
+          loading="lazy"
+          width="960"
+          height="1000"
+          src="clown-silhouette/after-bare-skull-front.png?sculpt=7"
+          alt="After · taller upper cranium: bare skull front"
+        />
+        <figcaption>After · taller upper cranium</figcaption>
+      </figure>
+    </div>
+    <h3>right profile</h3>
+    <div class="pair">
+      <figure>
+        <img
+          loading="lazy"
+          width="960"
+          height="1000"
+          src="clown-silhouette/before-bare-skull-right-profile.png?sculpt=7"
+          alt="Before · 7a6a104: bare skull right-profile"
+        />
+        <figcaption>Before · 7a6a104</figcaption>
+      </figure>
+      <figure>
+        <img
+          loading="lazy"
+          width="960"
+          height="1000"
+          src="clown-silhouette/after-bare-skull-right-profile.png?sculpt=7"
+          alt="After · taller upper cranium: bare skull right-profile"
+        />
+        <figcaption>After · taller upper cranium</figcaption>
+      </figure>
+    </div>
+    <h2>Hair and anatomical close-ups</h2>
+    <section>
+      <h3>Hairline</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-hairline.png?sculpt=7"
+            alt="Before · 7a6a104: hairline"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-hairline.png?sculpt=7"
+            alt="After · forehead and silhouette pass: hairline"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Crown</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-crown.png?sculpt=7"
+            alt="Before · 7a6a104: crown"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-crown.png?sculpt=7"
+            alt="After · forehead and silhouette pass: crown"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Back hair</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-back-hair.png?sculpt=7"
+            alt="Before · 7a6a104: back-hair"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-back-hair.png?sculpt=7"
+            alt="After · forehead and silhouette pass: back-hair"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Eyes</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-eyes.png?sculpt=7"
+            alt="Before · 7a6a104: eyes"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-eyes.png?sculpt=7"
+            alt="After · forehead and silhouette pass: eyes"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Eyes three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-eyes-three-quarter.png?sculpt=7"
+            alt="Before · 7a6a104: eyes-three-quarter"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-eyes-three-quarter.png?sculpt=7"
+            alt="After · forehead and silhouette pass: eyes-three-quarter"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Eyes profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-eyes-profile.png?sculpt=7"
+            alt="Before · 7a6a104: eyes-profile"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-eyes-profile.png?sculpt=7"
+            alt="After · forehead and silhouette pass: eyes-profile"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Ear</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-ear.png?sculpt=7"
+            alt="Before · 7a6a104: ear"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-ear.png?sculpt=7"
+            alt="After · forehead and silhouette pass: ear"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Nose</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-nose.png?sculpt=7"
+            alt="Before · 7a6a104: nose"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-nose.png?sculpt=7"
+            alt="After · forehead and silhouette pass: nose"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Lips</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-lips.png?sculpt=7"
+            alt="Before · 7a6a104: lips"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-lips.png?sculpt=7"
+            alt="After · forehead and silhouette pass: lips"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Mouth three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-mouth-three-quarter.png?sculpt=7"
+            alt="Before · 7a6a104: mouth-three-quarter"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-mouth-three-quarter.png?sculpt=7"
+            alt="After · forehead and silhouette pass: mouth-three-quarter"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Left corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-left-corner.png?sculpt=7"
+            alt="Before · 7a6a104: left-corner"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-left-corner.png?sculpt=7"
+            alt="After · forehead and silhouette pass: left-corner"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Right corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-right-corner.png?sculpt=7"
+            alt="Before · 7a6a104: right-corner"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-right-corner.png?sculpt=7"
+            alt="After · forehead and silhouette pass: right-corner"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Mouth occlusion diagnostics</h2>
+    <section>
+      <h3>Diagnostic lips</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-diagnostic-lips.png?sculpt=7"
+            alt="Before · 7a6a104: diagnostic-lips"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-diagnostic-lips.png?sculpt=7"
+            alt="After · forehead and silhouette pass: diagnostic-lips"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Diagnostic left corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-diagnostic-left-corner.png?sculpt=7"
+            alt="Before · 7a6a104: diagnostic-left-corner"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-diagnostic-left-corner.png?sculpt=7"
+            alt="After · forehead and silhouette pass: diagnostic-left-corner"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Diagnostic right corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-diagnostic-right-corner.png?sculpt=7"
+            alt="Before · 7a6a104: diagnostic-right-corner"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-diagnostic-right-corner.png?sculpt=7"
+            alt="After · forehead and silhouette pass: diagnostic-right-corner"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Diagnostic mouth three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-diagnostic-mouth-three-quarter.png?sculpt=7"
+            alt="Before · 7a6a104: diagnostic-mouth-three-quarter"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-diagnostic-mouth-three-quarter.png?sculpt=7"
+            alt="After · forehead and silhouette pass: diagnostic-mouth-three-quarter"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Unlit silhouettes</h2>
+    <section>
+      <h3>Silhouette front</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-silhouette-front.png?sculpt=7"
+            alt="Before · 7a6a104: silhouette-front"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-silhouette-front.png?sculpt=7"
+            alt="After · forehead and silhouette pass: silhouette-front"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette right three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-silhouette-right-three-quarter.png?sculpt=7"
+            alt="Before · 7a6a104: silhouette-right-three-quarter"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-silhouette-right-three-quarter.png?sculpt=7"
+            alt="After · forehead and silhouette pass: silhouette-right-three-quarter"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette right profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-silhouette-right-profile.png?sculpt=7"
+            alt="Before · 7a6a104: silhouette-right-profile"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-silhouette-right-profile.png?sculpt=7"
+            alt="After · forehead and silhouette pass: silhouette-right-profile"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette back</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-silhouette-back.png?sculpt=7"
+            alt="Before · 7a6a104: silhouette-back"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-silhouette-back.png?sculpt=7"
+            alt="After · forehead and silhouette pass: silhouette-back"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette top</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/before-silhouette-top.png?sculpt=7"
+            alt="Before · 7a6a104: silhouette-top"
+          />
+          <figcaption>Before · 7a6a104</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="clown-silhouette/after-silhouette-top.png?sculpt=7"
+            alt="After · forehead and silhouette pass: silhouette-top"
+          />
+          <figcaption>After · forehead and silhouette pass</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Phone browser review</h2>
+    <p>
+      Browser-emulated iPhone viewport; this is not a physical-device
+      performance measurement.
+    </p>
+    <figure class="phone">
+      <img
+        loading="lazy"
+        src="clown-silhouette/phone-chromium.png?sculpt=7"
+        alt="Phone viewport of the colored sculpt"
+      />
+      <figcaption>Chromium phone viewport</figcaption>
+    </figure>
+    <p>
+      <a href="clown-silhouette/phone-webkit.png?sculpt=7"
+        >WebKit phone viewport</a
+      >
+      ·
+      <a href="clown-silhouette/checks.json"
+        >Recorded geometry and browser checks</a
+      >
+    </p>
+  </main>
+</html>
