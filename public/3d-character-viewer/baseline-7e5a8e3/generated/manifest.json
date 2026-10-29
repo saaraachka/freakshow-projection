@@ -1,0 +1,18 @@
+{
+  "revision": "cranial-groom-5",
+  "sourceHash": "4f5f4a5f4811571d3630af1322848f5df573748a5d81a2b8065ada268764525d",
+  "parts": {
+    "skin": {
+      "file": "skin-4f5f4a5f4811.bin.gz",
+      "triangles": 161790,
+      "vertices": 80897,
+      "bytes": 2444804
+    },
+    "hair": {
+      "file": "hair-4f5f4a5f4811.bin.gz",
+      "triangles": 161314,
+      "vertices": 80792,
+      "bytes": 2406955
+    }
+  }
+}
