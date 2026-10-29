@@ -1,16 +1,16 @@
-import { createRefinedSkinGeometry } from "./cranial-refinement.js?sculpt=7";
-import { createHairGeometry } from "./sculpt-hair.js?sculpt=7";
+import { createRefinedSkinGeometry } from "./cranial-refinement.js?sculpt=8";
+import { createHairGeometry } from "./sculpt-hair.js?sculpt=8";
 const part = new URL(import.meta.url).searchParams.get("part");
 async function cached() {
   if (typeof DecompressionStream === "undefined") return null;
   const response = await fetch(
-    new URL("./generated/manifest.json?sculpt=7", import.meta.url),
+    new URL("./generated/manifest.json?sculpt=8", import.meta.url),
     { cache: "no-cache" },
   );
   if (!response.ok)
     throw new Error("Sculpt cache manifest: " + response.status);
   const manifest = await response.json();
-  if (manifest.revision !== "clown-silhouette-7")
+  if (manifest.revision !== "carved-curls-8")
     throw new Error("Sculpt cache revision mismatch");
   const asset = await fetch(
     new URL("./generated/" + manifest.parts[part].file, import.meta.url),
@@ -50,7 +50,9 @@ try {
   }
   if (!data) {
     const geometry =
-      part === "hair" ? createHairGeometry() : createRefinedSkinGeometry();
+      part === "hair"
+        ? await createHairGeometry()
+        : createRefinedSkinGeometry();
     data = { index: geometry.index.array, metadata: geometry.userData };
     for (const key of ["position", "normal", "color"])
       data[key] = geometry.attributes[key].array;

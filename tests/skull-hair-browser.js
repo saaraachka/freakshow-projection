@@ -1,3 +1,3 @@
-// Previous sculpt regressions remain in Git at 7a6a104.
-// Run the active upper-skull and clown-silhouette comparison.
-import "./clown-silhouette-browser.js";
+// Earlier sculpt regressions remain in Git at 0054631.
+// Run the active hair-only comparison and closed-volume checks.
+import "./carved-curls-browser.js";

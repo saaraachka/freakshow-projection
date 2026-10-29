@@ -14,6 +14,8 @@ export const sources = [
   "sculpt-hair.js",
   "hair-support.js",
   "volume-mesh.js",
+  "vendor/manifold/manifold.js",
+  "vendor/manifold/manifold.wasm",
   "../../scripts/bake-character-sculpt.js",
   "../../package-lock.json",
 ];
@@ -28,7 +30,7 @@ export async function sourceHash() {
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   const hash = await sourceHash(),
     manifest = {
-      revision: "clown-silhouette-7",
+      revision: "carved-curls-8",
       sourceHash: hash,
       parts: {},
     };
@@ -38,7 +40,7 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
     ["hair", createHairGeometry],
   ]) {
     const start = performance.now(),
-      g = generate();
+      g = await generate();
     if (part === "hair") {
       await MeshoptSimplifier.ready;
       const original = g.index.array,
@@ -81,7 +83,7 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
           3,
           g.attributes.normal.array,
           3,
-          [0.001, 0.001, 0.001],
+          [0.025, 0.025, 0.025],
           locked,
           Math.min(180000 * 3, input.length),
           0.003,
@@ -94,10 +96,13 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
         for (let i = 0; i < input.length; i += 3)
           if (ring[input[i]] || ring[input[i + 1]] || ring[input[i + 2]])
             for (let k = 0; k < 3; k++) locked[input[i + k]] = 1;
-        if (attempt === 5)
-          throw new Error(
-            "Cannot simplify groom without altering its closed topology",
-          );
+        if (attempt === 5) {
+          // Keep valid source geometry if no safe contraction remains. Never
+          // trade a closed sculpt for a smaller buffer with damaged edges.
+          simplified = input;
+          error = 0;
+          break;
+        }
       }
       const used = new Map(),
         ix = [],

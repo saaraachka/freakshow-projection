@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { mouthLine, oralCavityField } from "./implicit-skin.js?sculpt=7";
+import { mouthLine, oralCavityField } from "./implicit-skin.js?sculpt=8";
 const cache = new WeakMap();
 export function restoreMouthMaterials(character) {
   const saved = cache.get(character);

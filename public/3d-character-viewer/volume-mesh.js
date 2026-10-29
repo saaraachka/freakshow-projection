@@ -5,7 +5,13 @@ import * as THREE from "../character-3d/vendor/three.module.js";
 export function volumeMesh(
   field,
   color,
-  { step = 0.036, lo = [-1.54, -1.03, -1.85], hi = [1.57, 1.91, 1.0] } = {},
+  {
+    step = 0.036,
+    lo = [-1.54, -1.03, -1.85],
+    hi = [1.57, 1.91, 1.0],
+    postprocess = true,
+    refineEdges = false,
+  } = {},
 ) {
   const [nx, ny, nz] = hi.map((v, i) => Math.ceil((v - lo[i]) / step)),
     sx = nx + 1,
@@ -44,14 +50,37 @@ export function volumeMesh(
       [2, 3],
     ];
   const positions = [],
+    linearPositions = [],
     indices = [],
     cache = new Map(),
     total = values.length;
   function vertex(a, b, pa, pb, va, vb) {
     const key = a < b ? a * total + b : b * total + a;
     if (cache.has(key)) return cache.get(key);
-    const t = va / (va - vb),
-      id = positions.length / 3;
+    let t = va / (va - vb);
+    const linearT = t;
+    if (refineEdges) {
+      // Keep each vertex on its own grid edge. Bracketed roots resolve the
+      // curved channel accurately without projecting through another sheet.
+      let lo = 0,
+        hi = 1;
+      for (let pass = 0; pass < 7; pass++) {
+        const f = field(
+          pa.x + (pb.x - pa.x) * t,
+          pa.y + (pb.y - pa.y) * t,
+          pa.z + (pb.z - pa.z) * t,
+        );
+        if (f < 0 === va < 0) lo = t;
+        else hi = t;
+        t = (lo + hi) / 2;
+      }
+    }
+    const id = positions.length / 3;
+    linearPositions.push(
+      pa.x + (pb.x - pa.x) * linearT,
+      pa.y + (pb.y - pa.y) * linearT,
+      pa.z + (pb.z - pa.z) * linearT,
+    );
     positions.push(
       pa.x + (pb.x - pa.x) * t,
       pa.y + (pb.y - pa.y) * t,
@@ -60,7 +89,9 @@ export function volumeMesh(
     cache.set(key, id);
     return id;
   }
-  const point = (i) => new THREE.Vector3().fromArray(positions, i * 3);
+  // Order each tetrahedron using its coplanar LINEAR cuts. Refining edge
+  // roots bends the quad; sorting those noncoplanar points can break adjacency.
+  const point = (i) => new THREE.Vector3().fromArray(linearPositions, i * 3);
   for (let z = 0; z < nz; z++)
     for (let y = 0; y < ny; y++)
       for (let x = 0; x < nx; x++) {
@@ -165,7 +196,7 @@ export function volumeMesh(
       adjacent[b].add(a);
     }
   let data = new Float32Array(positions);
-  for (const weight of [0.28, -0.285, 0.18, -0.185]) {
+  for (const weight of postprocess ? [0.28, -0.285, 0.18, -0.185] : []) {
     const next = data.slice();
     for (let i = 0; i < adjacent.length; i++)
       for (let k = 0; k < 3; k++) {
@@ -177,7 +208,7 @@ export function volumeMesh(
       }
     data = next;
   }
-  for (let pass = 0; pass < 3; pass++)
+  for (let pass = 0; pass < (postprocess ? 3 : 0); pass++)
     for (let i = 0; i < data.length; i += 3) {
       const x = data[i],
         y = data[i + 1],

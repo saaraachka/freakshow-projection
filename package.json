@@ -17,12 +17,13 @@
     "test:pages": "PAGES_BASE=/freakshow-projection/ npm run build && node tests/pages-browser.js",
     "sculpt:bake": "node scripts/bake-character-sculpt.js",
     "sculpt:check": "node scripts/check-character-sculpt-cache.js",
-    "test:sculpt": "npm run build && node tests/clown-silhouette-browser.js"
+    "test:sculpt": "npm run build && node tests/carved-curls-browser.js"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "manifold-3d": "^3.5.4",
     "meshoptimizer": "^1.0.1",
     "playwright": "1.58.2",
     "prettier": "3.6.2"
