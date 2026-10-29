@@ -2,9 +2,9 @@ import * as THREE from "three";
 import {
   applyMouthDiagnostic,
   restoreMouthMaterials,
-} from "./mouth-diagnostic.js?sculpt=4";
+} from "./mouth-diagnostic.js?sculpt=6";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js?sculpt=5";
+import { createProceduralHead } from "./procedural-head.js?sculpt=6";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -67,6 +67,9 @@ function setCamera(view = "front") {
     mouth: [0, -0.08, 1],
     ears: [0.5, 0.02, 1],
     hair: [0.3, 0.16, 1],
+    hairline: [0, 0.05, 1],
+    crown: [0, 1, 0.1],
+    "back-hair": [0.25, 0.1, -1],
   };
   const details = {
     eyes: [[0, 0.31, 0.36], 0.34],
@@ -80,6 +83,9 @@ function setCamera(view = "front") {
     mouth: [[0, -0.49, 0.34], 0.37],
     ears: [[1, 0.035, -0.1], 0.25],
     hair: [[0, 0.87, -0.1], 0.65],
+    hairline: [[0, 0.8, 0.35], 0.44],
+    crown: [[0, 0.75, -0.4], 0.5],
+    "back-hair": [[0, 0.35, -1.1], 0.5],
   };
   const [target, scale] = details[view] || [[0, 0, 0], 1];
   const aim = new THREE.Vector3(...target);
@@ -208,9 +214,9 @@ canvas.dataset.modelSource = "procedural-code";
 const headCache = new Map([["refined", character]]);
 function modelStatus() {
   $("status").textContent =
-    character.state.revision === "cranial-groom-5"
-      ? "Skull and hierarchical curl masses · static review. Facial features preserved."
-      : "Before skull/hair pass · 8777414. Preserved geometry.";
+    character.state.revision === "reference-refinement-6"
+      ? "Reference-guided curls and facial refinement · static review."
+      : "Before refinement · 7e5a8e3. Preserved geometry.";
 }
 async function setModel(version) {
   $("model-version").disabled = true;
@@ -218,7 +224,7 @@ async function setModel(version) {
   try {
     if (!headCache.has(version)) {
       const module = await import(
-        "./baseline-8777414/procedural-head.js?sculpt=4"
+        "./baseline-7e5a8e3/procedural-head.js?sculpt=5"
       );
       headCache.set(version, await module.createProceduralHead());
     }

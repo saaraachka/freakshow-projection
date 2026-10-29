@@ -1,5 +1,5 @@
 import * as THREE from "../character-3d/vendor/three.module.js";
-import { createSkinGeometry, sampleColumn } from "./implicit-skin.js?sculpt=4";
+import { createSkinGeometry, sampleColumn } from "./implicit-skin.js?sculpt=6";
 const smooth = THREE.MathUtils.smoothstep;
 // A posterior/crown-only warp. Its support excludes the face, eyes and ears.
 export function cranialPoint(x, y, z) {
@@ -45,7 +45,8 @@ export function createRefinedSkinGeometry() {
   g.userData = {
     ...g.userData,
     cranialWarp: "posterior-crown-only",
-    facialVerticesPreserved: true,
+    baseRefinement:
+      "integrated lips, spherical orbital chamber and thinner auricles",
   };
   return g;
 }

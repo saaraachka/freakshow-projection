@@ -12,6 +12,7 @@ export const sources = [
   "cranial-refinement.js",
   "surface-nets.js",
   "sculpt-hair.js",
+  "hair-support.js",
   "volume-mesh.js",
   "../../scripts/bake-character-sculpt.js",
   "../../package-lock.json",
@@ -27,7 +28,7 @@ export async function sourceHash() {
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   const hash = await sourceHash(),
     manifest = {
-      revision: "cranial-groom-5",
+      revision: "reference-refinement-6",
       sourceHash: hash,
       parts: {},
     };

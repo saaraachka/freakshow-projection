@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { eyeLandmark } from "./implicit-skin.js?sculpt=4";
-import { createDentition } from "./sculpt-dentition.js?sculpt=4";
+import { eyeLandmark } from "./implicit-skin.js?sculpt=6";
+import { createDentition } from "./sculpt-dentition.js?sculpt=6";
 // Static sculpt only. No pose blending, jaw rig, audio coupling or animation loop.
 export async function createProceduralHead() {
   const started = performance.now(),
@@ -10,7 +10,7 @@ export async function createProceduralHead() {
     new Promise((resolve, reject) => {
       const worker = new Worker(
         new URL(
-          "./sculpt-worker.js?sculpt=5&part=" +
+          "./sculpt-worker.js?sculpt=6&part=" +
             part +
             (new URL(location.href).searchParams.has("generate")
               ? "&generate=1"
@@ -117,7 +117,7 @@ export async function createProceduralHead() {
     group: new THREE.Group(),
     records: hairGeometry.userData.records,
   };
-  groom.group.name = "CoherentFullCrownGroom";
+  groom.group.name = "HierarchicalFullCrownGroom";
   const hairMesh = new THREE.Mesh(
     hairGeometry,
     new THREE.MeshStandardMaterial({
@@ -126,7 +126,7 @@ export async function createProceduralHead() {
       roughness: 0.86,
     }),
   );
-  hairMesh.name = "UnifiedCurlMassesAndRootedFlyaways";
+  hairMesh.name = "SupportedCurlClustersAndRootedFlyaways";
   groom.group.add(hairMesh);
   root.add(groom.group);
   const generationMs = performance.now() - started;
@@ -139,7 +139,7 @@ export async function createProceduralHead() {
     get state() {
       return {
         source: "procedural-code",
-        revision: "cranial-groom-5",
+        revision: "reference-refinement-6",
         staticSculpt: true,
         cacheHash: geometry.userData.cacheHash || null,
         hairCacheHash: hairGeometry.userData.cacheHash || null,

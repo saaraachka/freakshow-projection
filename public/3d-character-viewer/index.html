@@ -182,19 +182,19 @@
         <div id="metrics">Initializing WebGL…</div>
       </section>
       <aside>
-        <h2>Skull and hair review</h2>
+        <h2>Reference-guided sculpt review</h2>
         <label for="model-version">Compare sculpt</label
         ><select id="model-version" disabled>
-          <option value="refined">Current skull/hair pass</option>
-          <option value="approved">Before skull/hair pass · 8777414</option>
+          <option value="refined">Reference refinement · candidate</option>
+          <option value="approved">Before refinement · 7e5a8e3</option>
         </select>
         <small
           >Switch versions without changing your viewing angle, zoom or
           lighting.</small
         >
         <p>
-          <a href="./baseline-8777414/index.html"
-            >Open the preserved 8777414 sculpt</a
+          <a href="./baseline-7e5a8e3/index.html"
+            >Open the preserved 7e5a8e3 sculpt</a
           >
         </p>
         <p>
@@ -233,7 +233,10 @@
           ><button data-view="mouth-left-corner">Left corner</button
           ><button data-view="mouth-right-corner">Right corner</button
           ><button data-view="ears">Ear</button
-          ><button data-view="hair">Hair</button>
+          ><button data-view="hair">Hair</button
+          ><button data-view="hairline">Hairline</button
+          ><button data-view="crown">Crown</button
+          ><button data-view="back-hair">Back hair</button>
         </div>
         <label for="quality">Rendering resolution</label
         ><select id="quality">
@@ -241,8 +244,7 @@
           <option value="1">Lower cost · DPR 1</option></select
         ><label><input type="checkbox" id="wire" /> Inspect topology</label>
         <label
-          ><input type="checkbox" id="hair" checked /> Show geometric
-          curls</label
+          ><input type="checkbox" id="hair" checked /> Show hair clumps</label
         >
         <small
           >The skin, eyelids, lips, chin, nasal anatomy and auricles form one
@@ -255,17 +257,17 @@
           acid-green eyes and navy-black groom.</small
         >
         <small
-          >Skull and hair pass, awaiting review. Facial anatomy is preserved. No
-          facial animation, audio reactions or NPR shading. Production FREAKSHOW
-          is unchanged.</small
+          >Reference-guided static refinement, awaiting review. No facial
+          animation, audio reactions or NPR shading. Production FREAKSHOW is
+          unchanged.</small
         >
         <p>
-          <a href="./review/index.html?sculpt=5"
+          <a href="./review/index.html?sculpt=6"
             >Clay review · matched views and approved foundation</a
           >
         </p>
       </aside>
     </main>
-    <script type="module" src="./viewer.js?sculpt=5"></script>
+    <script type="module" src="./viewer.js?sculpt=6"></script>
   </body>
 </html>

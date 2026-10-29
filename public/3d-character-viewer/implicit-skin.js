@@ -34,7 +34,7 @@ export function eyeLandmark(s) {
   return {
     x: s * 0.393,
     y: s < 0 ? 0.292 : 0.316,
-    z: 0.175,
+    z: 0.215,
     tilt: s < 0 ? -0.075 : 0.12,
     width: s < 0 ? 0.183 : 0.18,
     height: s < 0 ? 0.067 : 0.058,
@@ -100,8 +100,8 @@ function facialRelief(x, y) {
     f += 0.06 * bump(x, y, s * 0.29, -0.25, 0.23, 0.19); // maxillary muzzle
     f += 0.036 * bump(x, y, s * 0.48, -0.78, 0.17, 0.2); // mandibular body
     const foldX = 0.23 + 0.88 * clamp(-y - 0.1, 0, 0.5);
-    f -= 0.018 * bump(x, y, s * foldX, -0.28, 0.042, 0.18); // nasolabial crease
-    f += 0.025 * bump(x, y, s * (foldX + 0.054), -0.27, 0.048, 0.18);
+    f -= 0.012 * bump(x, y, s * foldX, -0.28, 0.042, 0.18); // nasolabial crease
+    f += 0.018 * bump(x, y, s * (foldX + 0.054), -0.27, 0.048, 0.18);
     f -= 0.04 * bump(x, y, s * 0.633, mouthLine(s * 0.633), 0.035, 0.058); // commissure dimple
   }
   // Nasal bridge, pear-shaped tip, alae and columella are a single relief.
@@ -125,14 +125,14 @@ function facialRelief(x, y) {
     const upperY = upper + 0.024 + bow;
     const upperBorder = upper + 0.075 + bow;
     const body =
-      0.06 * gauss((x - 0.17) / 0.29) + 0.052 * gauss((x + 0.19) / 0.28);
-    f += body * gauss((y - upperY) / 0.052) * span;
+      0.079 * gauss((x - 0.17) / 0.29) + 0.071 * gauss((x + 0.19) / 0.28);
+    f += body * gauss((y - upperY) / 0.059) * span;
     f -= 0.012 * gauss((y - upperBorder) / 0.023) * span * gauss(x / 0.55);
     f += 0.008 * gauss((y - (upperBorder + 0.021)) / 0.032) * span;
     f += 0.016 * bump(x, y, -0.008, upper + 0.009, 0.075, 0.032) * span; // tubercle
     f +=
-      0.068 *
-      gauss((y - (lower - 0.04)) / 0.063) *
+      0.084 *
+      gauss((y - (lower - 0.04)) / 0.07) *
       span *
       (0.9 + 0.1 * Math.sin(x * 5 + 0.3));
     f -= 0.015 * gauss((y - (lower - 0.108)) / 0.028) * gauss(x / 0.5); // lower vermilion border
@@ -156,24 +156,24 @@ function auricleField(x, y, z) {
     (0.27 + (sign < 0 ? 0.025 : 0)) * gauss((Math.atan2(v, u) - 0.75) / 0.27);
   const q = Math.hypot(u, v) / outline,
     base = -0.155 - 0.085 * u;
-  const helix = 0.034 * gauss((q - 0.87) / 0.09);
+  const helix = 0.023 * gauss((q - 0.87) / 0.12);
   const stem =
-    0.066 * gauss((u - (0.22 + 0.13 * v)) / 0.16) * gauss((v + 0.02) / 0.58);
+    0.045 * gauss((u - (0.22 + 0.13 * v)) / 0.18) * gauss((v + 0.02) / 0.58);
   const forkGate = smooth(v, 0.15, 0.35) * (1 - smooth(v, 0.65, 0.85));
   const fork =
-    0.044 * gauss((u - (0.18 - 0.56 * (v - 0.2))) / 0.15) * forkGate +
-    0.037 * gauss((u - (0.3 + 0.68 * (v - 0.2))) / 0.15) * forkGate;
+    0.034 * gauss((u - (0.18 - 0.56 * (v - 0.2))) / 0.15) * forkGate +
+    0.029 * gauss((u - (0.3 + 0.68 * (v - 0.2))) / 0.15) * forkGate;
   const scapha =
     -0.017 * gauss((q - 0.67) / 0.095) * (1 - smooth(-u, 0.2, 0.6));
   const concha =
     -0.032 * bump(u, v, -0.29, -0.12, 0.31, 0.38) -
     0.017 * bump(u, v, -0.15, 0.34, 0.3, 0.22);
-  const tragus = 0.049 * bump(u, v, -0.53, -0.12, 0.18, 0.2);
-  const antitragus = 0.039 * bump(u, v, -0.19, -0.47, 0.22, 0.16);
+  const tragus = 0.038 * bump(u, v, -0.53, -0.12, 0.18, 0.2);
+  const antitragus = 0.03 * bump(u, v, -0.19, -0.47, 0.22, 0.16);
   const antiBody = 0.03 * bump(u, v, 0.18, 0.04, 0.4, 0.64);
   const front =
     base +
-    0.068 +
+    0.055 +
     helix +
     stem +
     fork +
@@ -242,14 +242,14 @@ export function facialSolidField(x, y, z, column = sampleColumn(x, y)) {
     0.163,
     0.188,
   );
-  d = smin(d, tip, 0.095);
+  d = smin(d, tip, 0.105);
   for (const sign of [-1, 1]) {
     const e = eyeLandmark(sign),
       dx = x - e.x,
       dy = y - e.y - e.tilt * dx;
     // Continuous lid tissue follows the complete globe. The old external
     // facial sheet fell behind its outer hemisphere, exposing a false cut edge.
-    const lidEnvelope = ellipsoid(x, y, z, e.x, e.y, e.z, 0.226, 0.222, 0.226);
+    const lidEnvelope = ellipsoid(x, y, z, e.x, e.y, e.z, 0.242, 0.238, 0.242);
     d = smin(d, lidEnvelope, 0.055);
     // An almond aperture with tapered canthi, cut through a sculpted lid shelf.
     // A swept orbital vestibule widens behind the lid, rather than letting
@@ -258,13 +258,11 @@ export function facialSolidField(x, y, z, column = sampleColumn(x, y)) {
       w = e.width;
     const aperture = (Math.hypot(dx / w, dy / h) - 1) * h;
     const channel = smax(aperture, -0.1 - z, 0.025);
-    const rear = smax(
-      Math.hypot(dx, y - e.y, z - e.z) - 0.22,
-      z - 0.255,
-      0.015,
-    );
-    const rearInside = smax(rear, d + 0.02, 0.01);
-    const socket = smin(channel, rearInside, 0.015);
+    // Explicit spherical orbital chamber with a guaranteed tissue envelope.
+    // Unlike intersecting the cutter with d itself, this cannot produce the
+    // self-referential saddle that cut away the lateral lid in the old field.
+    const chamber = Math.hypot(dx, y - e.y, z - e.z) - 0.212;
+    const socket = smin(channel, chamber, 0.012);
     d = smax(d, -socket, 0.02);
     // The nostrils pass backwards and upwards into the integrated nasal alae.
     const nostril = ellipsoid(
@@ -278,7 +276,7 @@ export function facialSolidField(x, y, z, column = sampleColumn(x, y)) {
       0.032,
       0.09,
     );
-    d = smax(d, -nostril, 0.022);
+    d = smax(d, -nostril, 0.027);
   }
   return d;
 }

@@ -1,38 +1,38 @@
-# Skull and hair review · pass 5
+# Reference-guided static refinement · pass 6
 
-This pass changes only the posterior crown, scalp interface and groom. The existing eyes, nose, mouth, teeth, ears, facial expression, materials and production application are preserved. There is no facial animation, audio integration or NPR shading.
+The current development viewer compares the reference-guided sculpt against a frozen `7e5a8e3` model. Production FREAKSHOW, detection, audio, animation and NPR shading are unchanged.
 
-## Preserved comparison
+The four supplied image references inform grouped tapering curls, root direction, overlapping clumps, and readable stylized facial transitions. They are visual guides only; the model remains procedural 3D geometry. No image planes, texture substitutes, toruses or external model assets were introduced. Artistic approval remains pending. The current candidate still has simplified, tubular curl shapes and visible undercoat in places; it does not yet meet the full professional hair-design target.
 
-`baseline-8777414/` contains the complete pre-pass viewer, generation modules and generated meshes, saved before changes in commit `cba2a5f`. Only relative shared-vendor/comparison links were relocated. `skull-hair-baseline-8777414` preserves the original repository state. Earlier `baseline-6b838a5/` and `approved/` versions remain intact.
+## Preservation and comparison
 
-The current viewer switches the actual old/new meshes without changing the camera or lighting. Neutral clay, silhouettes, hair visibility, orbit and zoom work with either version. `review/index.html` includes matched front, both three-quarter views, both profiles, back and top, plus unlit head silhouettes, hair-only silhouettes and bare-skull comparisons. The previous precision gallery is retained at `review/precision-8777414.html`. PNGs document real renders; they are not character geometry or textures.
+`baseline-7e5a8e3/` preserves the prior source modules, compressed meshes and viewer. Only shared-vendor and comparison/gallery paths are relocated. The earlier `baseline-8777414/`, `baseline-6b838a5/` and `approved/` versions remain available. The rollback tag is `reference-baseline-7e5a8e3`.
 
-## Modeling changes
+The main viewer switches actual meshes while retaining camera, target, zoom, lighting, clay/silhouette modes and orbit controls. `review/index.html` contains paired whole-head views (front, both three-quarter views, both profiles, back, top, underside), hairline/crown/back-hair and anatomical close-ups, opaque mouth diagnostics and unlit silhouettes. The previous gallery is retained as `review/skull-hair-7e5a8e3.html`. Review PNGs are real renders, never character geometry.
 
-`cranial-refinement.js` starts with the unchanged anatomical mesh and applies a smooth posterior-crown warp. Its support excludes every vertex at or below y=0.60 and every vertex at or in front of z=0.12. This rounds the upper occipital/crown transition without resizing the face or moving the ears. The original skin topology is retained, and only supported normals are transformed with the inverse-transpose deformation Jacobian. Protected skin positions, normals and colors remain bitwise unchanged.
+## Geometry changes
 
-The scalp distance function follows that same anatomical loft and inverse posterior warp. The hair foundation tapers from approximately 0.006 units at the irregular hairline to 0.081 units inside the groom, replacing the separate thick cap edge. The anterior hairline has an asymmetric recession/forelock rather than a horizontal band.
+- `hair-support.js` defines six growth regions: asymmetric fringe, left/right temples, crown whorl, occipital fall and nape. Their root rows are staggered, with different sweep, lift and fall. A continuous thin scalp-following envelope supports the groom and preserves crown coverage; the previous twenty large exposed lobes are removed.
+- `sculpt-hair.js` builds volumetric clumps along each region's growth direction. Bent curl axes follow the skull; radius, tightness, handedness, phase, width and tip taper vary deterministically. Closed transported cross-sections have substantial depth and shallow longitudinal fluting. Five fine flyaways start inside parent clumps. The reference-guided groom remains a review candidate, not approved professional sculpting or animation-ready topology.
+- `implicit-skin.js` seats the globes slightly farther forward and replaces the self-referential socket subtraction with a spherical chamber inside a thicker tissue envelope. The almond apertures retain the narrowed expression. Upper and lower vermilion volumes are strengthened within the same skin surface. Nasolabial creases soften; auricular helix/antihelix/tragus relief is thinner; nasal-tip and nostril blending is smoother. Skull landmarks, posterior depth and the cranial warp remain unchanged.
+- `sculpt-dentition.js` keeps every crown's identity and local geometry. Roots follow the curved upper/lower lip landmarks, and the posterior dental arch recedes farther into the oral cavity. The teeth are not globally shrunk.
 
-`sculpt-hair.js` defines twenty authored primary masses, from the asymmetric crest and temples through the crown, occipital falls and nape. Their roots and paths are placed on the actual skull. Each mass owns two smaller curl rolls with different widths, directions and returns. Five finer flyaways have embedded roots. This replaces the previous 150 logical locks with 65, rather than adding randomly distributed curls.
+The compressed geometry cache is generated reproducibly from these source modules. The renderer pauses when idle. Mobile viewport checks and a triangle ceiling do not establish physical-device speed or artistic success.
 
-Primary forms are filled, variable-width elliptical sweeps with substantial depth. Continuous cubic centerlines and transported frames avoid the segmented end caps of a union of short cylinders. The secondary curls blend into their parent masses; they are not separate rings attached to a shell. The groom is extracted as a single closed connected implicit volume, with the five rooted fine strands added separately. No torus meshes, image planes, sprites or ribbons are used.
-
-The worker loads a reproducible compressed geometry cache for mobile review. At bake time, meshoptimizer may reduce the groom within an absolute error bound while protecting closed topology. This is a static sculpt and guide hierarchy for future rigging, not animation-ready retopology. The renderer still pauses when idle; there is no new animation loop. The validated scene renders 369,944 triangles versus 392,742 in the preserved version (about 6% fewer). This is a mobile budget check, not a measure of artistic quality.
-
-## Build and verification
+## Run and validate
 
 ```sh
 npm run dev
-# http://localhost:5173/public/3d-character-viewer/index.html?sculpt=5
-npm run sculpt:bake   # after procedural geometry changes
-npm run sculpt:check  # source/cache match, also checked by Pages CI
+# http://localhost:5173/public/3d-character-viewer/index.html?sculpt=6
+npm run sculpt:bake
+npm run sculpt:check
+npm test
 PAGES_BASE=/freakshow-projection/ npm run build
-node tests/skull-hair-browser.js
+node tests/reference-refinement-browser.js
 ```
 
-`tests/sculpted-viewer-browser.js` forwards to the current skull/hair regression. The precision-pass test remains in Git at 8777414. Set `FREAKSHOW_WEBKIT_EXECUTABLE` to a compatible WebKit executable to include WebKit, and `FREAKSHOW_TEST_PORT` to choose a local test port. `FREAKSHOW_BASE_URL` selects the actual HTTPS deployment. This cloud uses `FREAKSHOW_REMOTE_WEBKIT_ONLY=1` for remote testing with the trusted system CA; certificate verification remains enabled.
+`npm run test:sculpt` builds then runs the current browser regression. The older test entry points forward to it. Set `FREAKSHOW_WEBKIT_EXECUTABLE` to include WebKit, `FREAKSHOW_TEST_PORT` to choose the server port, and `FREAKSHOW_BASE_URL` for deployed HTTPS checks. `FREAKSHOW_REMOTE_WEBKIT_ONLY=1` selects WebKit for deployment testing in this cloud; TLS verification remains enabled.
 
-The browser test compares the real preserved/current models. It requires exact equality of all non-hair mesh attributes/transforms/material colors, bitwise equality of protected skin attributes, unchanged skin topology, a lower/equal rendered triangle count, a closed connected groom, full sampled crown coverage and embedded fine roots. It exercises model switching, clay/silhouette modes, orbit/zoom, phone-sized controls and gallery decoding, and checks console/asset errors. `?generate=1` bypasses the cache for slower source generation.
+Checks cover source/cache identity, complete globes and visible spherical surface samples, unchanged tooth crown geometry, exposed enamel contained in the cavity from multiple directions, embedded clump roots, sampled crown coverage, unchanged cranial warp, finite geometry, preserved camera on comparison switch, real mouse orbit/zoom, phone-sized controls and failed assets/JavaScript errors. The gallery records identical-angle before/after renders. The frozen standalone viewer is also exercised.
 
-Geometry checks and polygon counts do not establish artistic success. The matched clay and silhouette renders are the basis for review. Physical iPhone performance, thermal behavior and pinch gestures are not established by phone-sized browser emulation. Do not proceed to facial animation or other anatomy before this pass is reviewed.
+Review the renders for remaining stylization, repetition, undercoat visibility and intersections. These are not certified professional sculpture or physical-iPhone performance results. No animation or production integration should begin until the static sculpt is approved.

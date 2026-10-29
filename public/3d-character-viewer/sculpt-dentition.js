@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { mergeVertices } from "./vendor/BufferGeometryUtils.js";
-import { mouthLine } from "./implicit-skin.js?sculpt=4";
+import { lipLandmarks } from "./implicit-skin.js?sculpt=6";
 // Closed crown lofts with enamel lobes, neck taper, labial plane and occlusal
 // relief. The crown classes have genuinely different surfaces, not scaled blocks.
 function crownGeometry(kind, width, height, depth, variant) {
@@ -101,13 +101,12 @@ export function dentalArch(theta, lower = false) {
     0.075 +
     Math.cos(theta) * 0.346 -
     (lower ? 0.023 : 0) -
-    0.115 * posterior ** 1.2;
-  const root =
-    mouthLine(x) +
-    (lower ? -0.115 : 0.125) +
-    (lower ? 0.005 : -0.045) * posterior;
+    0.155 * posterior ** 1.2;
+  const root = lower
+    ? lipLandmarks(x).lower - 0.025
+    : lipLandmarks(x).upper + 0.026;
   const dx = 0.561 * Math.cos(t) - ((0.08 * 1.3) / 0.76) * posterior ** 0.3,
-    dz = 0.346 * Math.sin(t) + ((0.115 * 1.2) / 0.76) * posterior ** 0.2;
+    dz = 0.346 * Math.sin(t) + ((0.155 * 1.2) / 0.76) * posterior ** 0.2;
   const yaw = Math.sign(theta) * Math.atan2(dz, dx);
   return { x, z, root, yaw };
 }
