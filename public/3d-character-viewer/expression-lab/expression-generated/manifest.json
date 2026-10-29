@@ -1,0 +1,9 @@
+{
+  "revision": "perioral-flow-11",
+  "sourceHash": "085d284a46ed2b77a5643594203b24adb69321ac892c07d5c045f10d601e9c11",
+  "baseSourceHash": "a3458b22e532f1cb6b91ec8d0ec8a5b79fd230d6c06328285354c582eb08b045",
+  "file": "face-085d284a46ed.bin.gz",
+  "bytes": 6322342,
+  "vertices": 82720,
+  "triangles": 165436
+}

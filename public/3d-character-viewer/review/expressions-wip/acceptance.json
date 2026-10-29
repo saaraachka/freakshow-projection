@@ -1,0 +1,28 @@
+{
+  "decision": "reviewable-architecture-candidate",
+  "sourceHash": "085d284a46ed2b77a5643594203b24adb69321ac892c07d5c045f10d601e9c11",
+  "approvedDefault": "fed4cd1",
+  "productionChanged": false,
+  "views": [
+    "front",
+    "three-quarter",
+    "profile"
+  ],
+  "states": [
+    "Neutral",
+    "50% Neutral-Angry",
+    "Angry",
+    "50% Neutral-Surprised",
+    "Surprised",
+    "50% Angry-Surprised"
+  ],
+  "primaryTransition": "Neutral-Surprised-Neutral",
+  "slowBrowserRecording": "slow-rehearsal.mp4",
+  "geometryAudit": "12 endpoints and quarter blends; mouth and upper-face self-intersections zero",
+  "identity": "source skin positions/normals/colors/indices, hair and tooth crowns bit-for-bit preserved",
+  "consoleAndAssetErrors": 0,
+  "eyeClearanceTolerance": 0.002,
+  "maximumSampledEyePenetration": 0.000395370503272402,
+  "apertureProbe": "coarse virtual aperture: approved grin 3 misses; mixed 1; Neutral and Surprised 0; recorded separately from visual inspection",
+  "physicalIPhoneTested": false
+}

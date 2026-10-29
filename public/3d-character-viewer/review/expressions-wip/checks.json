@@ -1,0 +1,289 @@
+{
+  "runs": [
+    {
+      "engine": "chromium",
+      "preserved": {
+        "position": true,
+        "normal": true,
+        "color": true,
+        "topology": true,
+        "hair": true,
+        "teeth": true
+      },
+      "audit": [
+        {
+          "name": "angry",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0.000395370503272402
+        },
+        {
+          "name": "neutral",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "surprised",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "neutral_angry_0.25",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "neutral_surprised_0.25",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "angry_surprised_0.25",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "neutral_angry_0.5",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "neutral_surprised_0.5",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "angry_surprised_0.5",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "neutral_angry_0.75",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "neutral_surprised_0.75",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        },
+        {
+          "name": "angry_surprised_0.75",
+          "openOrNonManifoldEdges": 0,
+          "degenerateMouthTriangles": 0,
+          "mouthIntersections": 0,
+          "examples": [],
+          "upperFaceSelfIntersections": 0,
+          "maxEyePenetration": 0
+        }
+      ],
+      "dental": [
+        {
+          "name": "neutral",
+          "visible": 26,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "neutral_angry_50",
+          "visible": 46,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "angry",
+          "visible": 78,
+          "outside": 3,
+          "examples": [
+            {
+              "tooth": "Lower_R_incisor_1",
+              "point": [
+                0.17483995198325739,
+                -0.56,
+                0.4074460799742422
+              ]
+            },
+            {
+              "tooth": "Lower_R_premolar_3",
+              "point": [
+                0.29009354824205874,
+                -0.495,
+                0.3232208434493218
+              ]
+            },
+            {
+              "tooth": "Upper_R_molar_5",
+              "point": [
+                0.464720863982051,
+                -0.365,
+                0.19957055997238604
+              ]
+            }
+          ]
+        },
+        {
+          "name": "neutral_surprised_50",
+          "visible": 46,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "surprised",
+          "visible": 61,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "mixed",
+          "visible": 74,
+          "outside": 1,
+          "examples": [
+            {
+              "tooth": "Upper_L_premolar_3",
+              "point": [
+                -0.3315495239187181,
+                -0.36500000000000005,
+                0.3793069598749513
+              ]
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "failed": [],
+      "hash": "085d284a46ed2b77a5643594203b24adb69321ac892c07d5c045f10d601e9c11"
+    },
+    {
+      "engine": "webkit",
+      "preserved": {
+        "position": true,
+        "normal": true,
+        "color": true,
+        "topology": true,
+        "hair": true,
+        "teeth": true
+      },
+      "audit": [],
+      "dental": [
+        {
+          "name": "neutral",
+          "visible": 26,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "neutral_angry_50",
+          "visible": 46,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "angry",
+          "visible": 78,
+          "outside": 3,
+          "examples": [
+            {
+              "tooth": "Lower_R_incisor_1",
+              "point": [
+                0.17483995198325739,
+                -0.56,
+                0.4074460799742422
+              ]
+            },
+            {
+              "tooth": "Lower_R_premolar_3",
+              "point": [
+                0.29009354824205874,
+                -0.495,
+                0.3232208434493218
+              ]
+            },
+            {
+              "tooth": "Upper_R_molar_5",
+              "point": [
+                0.464720863982051,
+                -0.365,
+                0.19957055997238604
+              ]
+            }
+          ]
+        },
+        {
+          "name": "neutral_surprised_50",
+          "visible": 46,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "surprised",
+          "visible": 61,
+          "outside": 0,
+          "examples": []
+        },
+        {
+          "name": "mixed",
+          "visible": 74,
+          "outside": 1,
+          "examples": [
+            {
+              "tooth": "Upper_L_premolar_3",
+              "point": [
+                -0.3315495239187181,
+                -0.36500000000000005,
+                0.3793069598749513
+              ]
+            }
+          ]
+        }
+      ],
+      "errors": [],
+      "failed": [],
+      "hash": "085d284a46ed2b77a5643594203b24adb69321ac892c07d5c045f10d601e9c11"
+    }
+  ],
+  "physicalIPhoneTested": false,
+  "visualReviewRequired": true
+}

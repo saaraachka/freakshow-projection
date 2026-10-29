@@ -17,7 +17,9 @@
     "test:pages": "PAGES_BASE=/freakshow-projection/ npm run build && node tests/pages-browser.js",
     "sculpt:bake": "node scripts/bake-character-sculpt.js",
     "sculpt:check": "node scripts/check-character-sculpt-cache.js",
-    "test:sculpt": "npm run build && node tests/sculpt-cleanup-browser.js"
+    "test:sculpt": "npm run build && node tests/sculpt-cleanup-browser.js",
+    "expressions:bake": "node scripts/bake-expression-prototype.js",
+    "expressions:check": "node scripts/bake-expression-prototype.js --check"
   },
   "engines": {
     "node": ">=20"

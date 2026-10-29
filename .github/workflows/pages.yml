@@ -24,6 +24,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run sculpt:check
+      - run: npm run expressions:check
       - run: npm run build
         env:
           PAGES_BASE: /freakshow-projection/
