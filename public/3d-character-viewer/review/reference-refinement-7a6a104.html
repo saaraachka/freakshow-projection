@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>FREAKSHOW · Reference refinement comparison</title
+  ><style>
+    :root {
+      color-scheme: dark;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #191d24;
+      color: #eee9df;
+      font: 16px/1.55 system-ui;
+    }
+    main {
+      max-width: 1180px;
+      margin: auto;
+      padding: 20px;
+    }
+    a {
+      color: #a9e6ce;
+    }
+    h1 {
+      font-size: 1.7rem;
+    }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 2em;
+    }
+    h3 {
+      margin: 0.8em 0 0.4em;
+    }
+    p {
+      max-width: 85ch;
+    }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    figure {
+      margin: 0;
+      background: #11151b;
+    }
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      padding: 8px;
+      font-size: 0.85rem;
+    }
+    nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    details {
+      padding: 10px 0;
+    }
+    .phone {
+      max-width: 390px;
+    }
+    @media (max-width: 500px) {
+      main {
+        padding: 12px;
+      }
+      .pair {
+        gap: 4px;
+      }
+      figcaption {
+        font-size: 0.72rem;
+        padding: 5px;
+      }
+    }
+  </style>
+  <main>
+    <h1>FREAKSHOW · Reference-guided static refinement</h1>
+    <nav>
+      <a href="../baseline-7a6a104/index.html?sculpt=6">Rotate the current sculpt</a
+      ><a href="../baseline-7e5a8e3/index.html">Frozen 7e5a8e3 viewer</a
+      ><a href="skull-hair-7e5a8e3.html">Previous skull/hair review</a>
+    </nav>
+    <p>
+      Each pair uses identical camera coordinates, zoom, neutral clay material,
+      viewport and fixed white studio lights. Before is the preserved 7e5a8e3
+      sculpt; after is the reference-guided refinement. Artistic review is
+      pending.
+    </p>
+    <p>
+      The supplied references guide scalp growth, grouped tapering curls,
+      overlapping volumes and readable lip and eyelid forms. The clown retains
+      its cranial volume, cheekbones, wide grin, pointed ears and color
+      identity. Facial animation, audio and production integration remain out of
+      scope.
+    </p>
+    <p>
+      Diagnostic colors: skin gray, lips coral, gums blue, teeth ivory, cavity
+      purple. Surfaces remain opaque so geometry cannot be hidden by
+      transparency. The silhouettes use an unlit black material on white.
+    </p>
+    <p>
+      Review limitation: some curl shapes remain tubular, and supporting hair
+      volume is still visible at parts of the hairline and crown. This candidate
+      is not a completed match to the supplied hair references.
+    </p>
+    <h2>Matched whole-head clay views</h2>
+    <section>
+      <h3>Front</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-front.png?sculpt=6"
+            alt="Before · 7e5a8e3: front"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-front.png?sculpt=6"
+            alt="After · reference refinement: front"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Left three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-left-three-quarter.png?sculpt=6"
+            alt="Before · 7e5a8e3: left-three-quarter"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-left-three-quarter.png?sculpt=6"
+            alt="After · reference refinement: left-three-quarter"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Right three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-right-three-quarter.png?sculpt=6"
+            alt="Before · 7e5a8e3: right-three-quarter"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-right-three-quarter.png?sculpt=6"
+            alt="After · reference refinement: right-three-quarter"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Left profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-left-profile.png?sculpt=6"
+            alt="Before · 7e5a8e3: left-profile"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-left-profile.png?sculpt=6"
+            alt="After · reference refinement: left-profile"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Right profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-right-profile.png?sculpt=6"
+            alt="Before · 7e5a8e3: right-profile"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-right-profile.png?sculpt=6"
+            alt="After · reference refinement: right-profile"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Back</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-back.png?sculpt=6"
+            alt="Before · 7e5a8e3: back"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-back.png?sculpt=6"
+            alt="After · reference refinement: back"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Top</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-top.png?sculpt=6"
+            alt="Before · 7e5a8e3: top"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-top.png?sculpt=6"
+            alt="After · reference refinement: top"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Underside</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-underside.png?sculpt=6"
+            alt="Before · 7e5a8e3: underside"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-underside.png?sculpt=6"
+            alt="After · reference refinement: underside"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Hair and anatomical close-ups</h2>
+    <section>
+      <h3>Hairline</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-hairline.png?sculpt=6"
+            alt="Before · 7e5a8e3: hairline"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-hairline.png?sculpt=6"
+            alt="After · reference refinement: hairline"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Crown</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-crown.png?sculpt=6"
+            alt="Before · 7e5a8e3: crown"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-crown.png?sculpt=6"
+            alt="After · reference refinement: crown"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Back hair</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-back-hair.png?sculpt=6"
+            alt="Before · 7e5a8e3: back-hair"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-back-hair.png?sculpt=6"
+            alt="After · reference refinement: back-hair"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Eyes</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-eyes.png?sculpt=6"
+            alt="Before · 7e5a8e3: eyes"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-eyes.png?sculpt=6"
+            alt="After · reference refinement: eyes"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Eyes three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-eyes-three-quarter.png?sculpt=6"
+            alt="Before · 7e5a8e3: eyes-three-quarter"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-eyes-three-quarter.png?sculpt=6"
+            alt="After · reference refinement: eyes-three-quarter"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Eyes profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-eyes-profile.png?sculpt=6"
+            alt="Before · 7e5a8e3: eyes-profile"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-eyes-profile.png?sculpt=6"
+            alt="After · reference refinement: eyes-profile"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Ear</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-ear.png?sculpt=6"
+            alt="Before · 7e5a8e3: ear"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-ear.png?sculpt=6"
+            alt="After · reference refinement: ear"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Nose</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-nose.png?sculpt=6"
+            alt="Before · 7e5a8e3: nose"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-nose.png?sculpt=6"
+            alt="After · reference refinement: nose"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Lips</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-lips.png?sculpt=6"
+            alt="Before · 7e5a8e3: lips"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-lips.png?sculpt=6"
+            alt="After · reference refinement: lips"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Mouth three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-mouth-three-quarter.png?sculpt=6"
+            alt="Before · 7e5a8e3: mouth-three-quarter"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-mouth-three-quarter.png?sculpt=6"
+            alt="After · reference refinement: mouth-three-quarter"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Left corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-left-corner.png?sculpt=6"
+            alt="Before · 7e5a8e3: left-corner"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-left-corner.png?sculpt=6"
+            alt="After · reference refinement: left-corner"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Right corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-right-corner.png?sculpt=6"
+            alt="Before · 7e5a8e3: right-corner"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-right-corner.png?sculpt=6"
+            alt="After · reference refinement: right-corner"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Mouth occlusion diagnostics</h2>
+    <section>
+      <h3>Diagnostic lips</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-diagnostic-lips.png?sculpt=6"
+            alt="Before · 7e5a8e3: diagnostic-lips"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-diagnostic-lips.png?sculpt=6"
+            alt="After · reference refinement: diagnostic-lips"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Diagnostic left corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-diagnostic-left-corner.png?sculpt=6"
+            alt="Before · 7e5a8e3: diagnostic-left-corner"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-diagnostic-left-corner.png?sculpt=6"
+            alt="After · reference refinement: diagnostic-left-corner"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Diagnostic right corner</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-diagnostic-right-corner.png?sculpt=6"
+            alt="Before · 7e5a8e3: diagnostic-right-corner"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-diagnostic-right-corner.png?sculpt=6"
+            alt="After · reference refinement: diagnostic-right-corner"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Diagnostic mouth three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-diagnostic-mouth-three-quarter.png?sculpt=6"
+            alt="Before · 7e5a8e3: diagnostic-mouth-three-quarter"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-diagnostic-mouth-three-quarter.png?sculpt=6"
+            alt="After · reference refinement: diagnostic-mouth-three-quarter"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Unlit silhouettes</h2>
+    <section>
+      <h3>Silhouette front</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-silhouette-front.png?sculpt=6"
+            alt="Before · 7e5a8e3: silhouette-front"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-silhouette-front.png?sculpt=6"
+            alt="After · reference refinement: silhouette-front"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette right three quarter</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-silhouette-right-three-quarter.png?sculpt=6"
+            alt="Before · 7e5a8e3: silhouette-right-three-quarter"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-silhouette-right-three-quarter.png?sculpt=6"
+            alt="After · reference refinement: silhouette-right-three-quarter"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette right profile</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-silhouette-right-profile.png?sculpt=6"
+            alt="Before · 7e5a8e3: silhouette-right-profile"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-silhouette-right-profile.png?sculpt=6"
+            alt="After · reference refinement: silhouette-right-profile"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette back</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-silhouette-back.png?sculpt=6"
+            alt="Before · 7e5a8e3: silhouette-back"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-silhouette-back.png?sculpt=6"
+            alt="After · reference refinement: silhouette-back"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section>
+      <h3>Silhouette top</h3>
+      <div class="pair">
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/before-silhouette-top.png?sculpt=6"
+            alt="Before · 7e5a8e3: silhouette-top"
+          />
+          <figcaption>Before · 7e5a8e3</figcaption>
+        </figure>
+        <figure>
+          <img
+            loading="lazy"
+            width="960"
+            height="1000"
+            src="reference-refinement/after-silhouette-top.png?sculpt=6"
+            alt="After · reference refinement: silhouette-top"
+          />
+          <figcaption>After · reference refinement</figcaption>
+        </figure>
+      </div>
+    </section>
+    <h2>Phone browser review</h2>
+    <p>
+      Browser-emulated iPhone viewport; this is not a physical-device
+      performance measurement.
+    </p>
+    <figure class="phone">
+      <img
+        loading="lazy"
+        src="reference-refinement/phone-chromium.png?sculpt=6"
+        alt="Phone viewport of the colored sculpt"
+      />
+      <figcaption>Chromium phone viewport</figcaption>
+    </figure>
+    <p>
+      <a href="reference-refinement/phone-webkit.png?sculpt=6"
+        >WebKit phone viewport</a
+      >
+      ·
+      <a href="reference-refinement/checks.json"
+        >Recorded geometry and browser checks</a
+      >
+    </p>
+  </main>
+</html>
