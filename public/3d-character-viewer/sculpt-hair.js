@@ -4,9 +4,10 @@ import {
   normalAt,
   scalpHairField,
   growthRegions,
-} from "./hair-support.js?sculpt=6";
+  lateralProfile,
+} from "./hair-support.js?sculpt=7";
 import { volumeMesh } from "./volume-mesh.js?sculpt=5";
-export { hairline, scalpHairField } from "./hair-support.js?sculpt=6";
+export { hairline, scalpHairField } from "./hair-support.js?sculpt=7";
 const smooth = THREE.MathUtils.smoothstep;
 export function createHairDefinition() {
   const records = [],
@@ -18,6 +19,8 @@ export function createHairDefinition() {
         const phase = zi * 1.7 + row * 2.13 + col * 1.37,
           theta = zone.theta[col] + 0.035 * Math.sin(phase) + row * 0.07,
           phi = zone.phi[row] + 0.075 * Math.sin(phase * 1.3),
+          flow =
+            zone.name === "crown" && Math.cos(theta) > 0.25 ? -0.23 : zone.flow,
           radius = 0.065 + 0.065 * (0.5 + 0.5 * Math.sin(phase * 1.8)),
           width = 0.047 + 0.042 * (0.5 + 0.5 * Math.cos(phase * 1.3)),
           turns = 1.22 + 0.55 * (0.5 + 0.5 * Math.sin(phase)),
@@ -27,10 +30,10 @@ export function createHairDefinition() {
         for (let k = 0; k <= 64; k++) {
           const t = k / 64,
             th = theta + zone.sweep * t,
-            ph = phi + (zi === 0 && row === 0 ? 0.16 : zone.flow) * t,
+            ph = phi + flow * t,
             base = scalpPoint(th, ph),
             out = normalAt(base),
-            tangent = scalpPoint(th + zone.sweep * 0.02, ph + zone.flow * 0.02)
+            tangent = scalpPoint(th + zone.sweep * 0.02, ph + flow * 0.02)
               .sub(base)
               .normalize(),
             side = new THREE.Vector3().crossVectors(tangent, out).normalize(),
@@ -47,6 +50,42 @@ export function createHairDefinition() {
                   Math.cos(angle) * coil,
               )
               .addScaledVector(side, Math.sin(angle) * coil);
+          // Widen the outer hair while keeping the first section seated in
+          // the scalp. The matching implicit envelope supports this volume.
+          p.x +=
+            Math.sign(base.x) *
+            0.34 *
+            smooth(Math.abs(base.x), 0.3, 0.7) *
+            lateralProfile(base.y, base.z) *
+            smooth(t, 0, 0.28);
+          // Seat the visible side curls on the rounded supporting mass rather
+          // than burying their middle sections in the newly widened volume.
+          if (Math.abs(p.x) > 0.55 && lateralProfile(p.y, p.z) > 0.3) {
+            const blend = smooth(t, 0.06, 0.28),
+              e = 0.003;
+            for (let pass = 0; pass < 4; pass++) {
+              const d = scalpHairField(p.x, p.y, p.z) - width * 0.25;
+              if (d >= 0) break;
+              const gradient = new THREE.Vector3(
+                (scalpHairField(p.x + e, p.y, p.z) -
+                  scalpHairField(p.x - e, p.y, p.z)) /
+                  (2 * e),
+                (scalpHairField(p.x, p.y + e, p.z) -
+                  scalpHairField(p.x, p.y - e, p.z)) /
+                  (2 * e),
+                (scalpHairField(p.x, p.y, p.z + e) -
+                  scalpHairField(p.x, p.y, p.z - e)) /
+                  (2 * e),
+              );
+              p.addScaledVector(
+                gradient,
+                Math.min(
+                  0.12,
+                  (-d * blend) / Math.max(0.01, gradient.lengthSq()),
+                ),
+              );
+            }
+          }
           points.push(p);
         }
         // Do not grow a cluster through the ear clearance or below the hairline.
@@ -126,8 +165,8 @@ export function createHairGeometry() {
   const definition = createHairDefinition(),
     solid = volumeMesh(definition.field, () => new THREE.Color(0x142031), {
       step: 0.042,
-      lo: [-1.6, -1.08, -1.95],
-      hi: [1.6, 1.9, 1.15],
+      lo: [-2.0, -1.08, -1.95],
+      hi: [2.0, 2.2, 1.25],
     }),
     p = Array.from(solid.attributes.position.array),
     n = Array.from(solid.attributes.normal.array),
@@ -157,7 +196,12 @@ export function createHairGeometry() {
   };
   for (let i = 0; i < records.length; i++)
     append(lockGeometry(definition.curves[i], records[i]));
-  for (const i of [1, 8, 17, 29, 36]) {
+  const crownIndices = records.flatMap((record, index) =>
+    record.parent === "crown" ? [index] : [],
+  );
+  for (const i of [0, 0.22, 0.45, 0.67, 0.9].map(
+    (f) => crownIndices[Math.floor(f * (crownIndices.length - 1))],
+  )) {
     const c = definition.curves[i],
       root = c.getPointAt(0.35),
       out = root

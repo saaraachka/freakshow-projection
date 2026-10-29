@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { mergeVertices } from "./vendor/BufferGeometryUtils.js";
-import { lipLandmarks } from "./implicit-skin.js?sculpt=6";
+import { lipLandmarks } from "./implicit-skin.js?sculpt=7";
 // Closed crown lofts with enamel lobes, neck taper, labial plane and occlusal
 // relief. The crown classes have genuinely different surfaces, not scaled blocks.
 function crownGeometry(kind, width, height, depth, variant) {

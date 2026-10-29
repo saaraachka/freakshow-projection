@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { eyeLandmark } from "./implicit-skin.js?sculpt=6";
-import { createDentition } from "./sculpt-dentition.js?sculpt=6";
+import { eyeLandmark } from "./implicit-skin.js?sculpt=7";
+import { createDentition } from "./sculpt-dentition.js?sculpt=7";
 // Static sculpt only. No pose blending, jaw rig, audio coupling or animation loop.
 export async function createProceduralHead() {
   const started = performance.now(),
@@ -10,7 +10,7 @@ export async function createProceduralHead() {
     new Promise((resolve, reject) => {
       const worker = new Worker(
         new URL(
-          "./sculpt-worker.js?sculpt=6&part=" +
+          "./sculpt-worker.js?sculpt=7&part=" +
             part +
             (new URL(location.href).searchParams.has("generate")
               ? "&generate=1"
@@ -139,7 +139,7 @@ export async function createProceduralHead() {
     get state() {
       return {
         source: "procedural-code",
-        revision: "reference-refinement-6",
+        revision: "clown-silhouette-7",
         staticSculpt: true,
         cacheHash: geometry.userData.cacheHash || null,
         hairCacheHash: hairGeometry.userData.cacheHash || null,

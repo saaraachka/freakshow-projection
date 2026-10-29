@@ -1,2 +1,3 @@
-// Current development sculpt review; older checks remain in Git history.
-import "./reference-refinement-browser.js";
+// Previous sculpt regressions remain in Git at 7a6a104.
+// Run the active upper-skull and clown-silhouette comparison.
+import "./clown-silhouette-browser.js";

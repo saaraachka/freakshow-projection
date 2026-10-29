@@ -2,9 +2,9 @@ import * as THREE from "three";
 import {
   applyMouthDiagnostic,
   restoreMouthMaterials,
-} from "./mouth-diagnostic.js?sculpt=6";
+} from "./mouth-diagnostic.js?sculpt=7";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js?sculpt=6";
+import { createProceduralHead } from "./procedural-head.js?sculpt=7";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -83,8 +83,8 @@ function setCamera(view = "front") {
     mouth: [[0, -0.49, 0.34], 0.37],
     ears: [[1, 0.035, -0.1], 0.25],
     hair: [[0, 0.87, -0.1], 0.65],
-    hairline: [[0, 0.8, 0.35], 0.44],
-    crown: [[0, 0.75, -0.4], 0.5],
+    hairline: [[0, 1.05, 0.35], 0.44],
+    crown: [[0, 1.0, -0.4], 0.5],
     "back-hair": [[0, 0.35, -1.1], 0.5],
   };
   const [target, scale] = details[view] || [[0, 0, 0], 1];
@@ -214,9 +214,13 @@ canvas.dataset.modelSource = "procedural-code";
 const headCache = new Map([["refined", character]]);
 function modelStatus() {
   $("status").textContent =
-    character.state.revision === "reference-refinement-6"
-      ? "Reference-guided curls and facial refinement · static review."
-      : "Before refinement · 7e5a8e3. Preserved geometry.";
+    character.state.revision === "clown-silhouette-7"
+      ? "Higher forehead and crown · raised hairline · wider clown side masses."
+      : "Preserved comparison sculpt · " +
+        (character.state.revision === "reference-refinement-6"
+          ? "7a6a104"
+          : "7e5a8e3") +
+        ".";
 }
 async function setModel(version) {
   $("model-version").disabled = true;
@@ -224,7 +228,9 @@ async function setModel(version) {
   try {
     if (!headCache.has(version)) {
       const module = await import(
-        "./baseline-7e5a8e3/procedural-head.js?sculpt=5"
+        version === "earlier"
+          ? "./baseline-7e5a8e3/procedural-head.js?sculpt=5"
+          : "./baseline-7a6a104/procedural-head.js?sculpt=6"
       );
       headCache.set(version, await module.createProceduralHead());
     }

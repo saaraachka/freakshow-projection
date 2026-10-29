@@ -1,6 +1,6 @@
 import * as THREE from "../character-3d/vendor/three.module.js";
-import { scalpDistance } from "./cranial-refinement.js?sculpt=6";
-import { ellipsoid } from "./implicit-skin.js?sculpt=6";
+import { scalpDistance } from "./cranial-refinement.js?sculpt=7";
+import { ellipsoid } from "./implicit-skin.js?sculpt=7";
 const smooth = THREE.MathUtils.smoothstep;
 const smin = (a, b, k) => {
   const h = Math.max(k - Math.abs(a - b), 0) / k;
@@ -8,12 +8,21 @@ const smin = (a, b, k) => {
 };
 const smax = (a, b, k) => -smin(-a, -b, k);
 export function hairline(x, z) {
-  const f = smooth(z, -0.65, 0.4);
+  const f = smooth(z, -0.75, -0.05);
   return (
     -0.5 +
-    1.2 * f -
-    0.12 * Math.exp(-1 * ((x + 0.17) / 0.3) ** 2) * f +
+    1.6 * f -
+    0.08 * Math.exp(-1 * ((x + 0.17) / 0.3) ** 2) * f +
     0.035 * Math.sin(x * 9 + 0.5) * f
+  );
+}
+// The side envelope expands the groom, never the facial mesh. Its front and
+// lower falloffs retain an attached hairline and clearance around the ears.
+export function lateralProfile(y, z) {
+  return (
+    smooth(y, -0.12, 0.22) *
+    (1 - 0.55 * smooth(y, 1.15, 1.65)) *
+    (1 - smooth(z, 0.05, 0.5))
   );
 }
 export function normalAt(p) {
@@ -49,6 +58,20 @@ export function scalpHairField(x, y, z) {
     thickness =
       0.005 + (0.065 + 0.025 * crown + 0.018 * temple) * smooth(edge, 0, 0.2);
   let d = smax(scalpDistance(x, y, z) - thickness, -edge, 0.022);
+  // Rounded temporal/occipital masses establish the clown silhouette. Unlike
+  // stretching the scalp shell, these do not extrude a flat forehead curtain.
+  for (const sign of [-1, 1]) {
+    d = smin(
+      d,
+      ellipsoid(x, y, z, sign * 0.98, 0.66, -0.82, 0.37, 0.48, 0.47),
+      0.11,
+    );
+    d = smin(
+      d,
+      ellipsoid(x, y, z, sign * 0.83, 1.19, -0.67, 0.34, 0.36, 0.43),
+      0.1,
+    );
+  }
   for (const s of [-1, 1])
     d = smax(
       d,
@@ -63,7 +86,7 @@ export const growthRegions = [
   {
     name: "fringe",
     theta: [-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1],
-    phi: [0.94, 0.72, 0.5],
+    phi: [0.72, 0.54, 0.36],
     flow: -0.17,
     sweep: 0.38,
     lift: 0.2,
@@ -74,7 +97,7 @@ export const growthRegions = [
     phi: [0.74, 0.98, 1.22, 1.46],
     flow: 0.37,
     sweep: -0.1,
-    lift: 0.19,
+    lift: 0.26,
   },
   {
     name: "right-temple",
@@ -82,7 +105,7 @@ export const growthRegions = [
     phi: [0.76, 1.0, 1.24, 1.48],
     flow: 0.39,
     sweep: 0.15,
-    lift: 0.23,
+    lift: 0.29,
   },
   {
     name: "crown",
@@ -93,7 +116,7 @@ export const growthRegions = [
     phi: [0.14, 0.38, 0.62],
     flow: 0.38,
     sweep: 0.52,
-    lift: 0.25,
+    lift: 0.2,
   },
   {
     name: "occiput",

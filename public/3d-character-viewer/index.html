@@ -182,19 +182,20 @@
         <div id="metrics">Initializing WebGL…</div>
       </section>
       <aside>
-        <h2>Reference-guided sculpt review</h2>
+        <h2>Forehead and clown silhouette review</h2>
         <label for="model-version">Compare sculpt</label
         ><select id="model-version" disabled>
-          <option value="refined">Reference refinement · candidate</option>
-          <option value="approved">Before refinement · 7e5a8e3</option>
+          <option value="refined">Higher forehead · wider clown hair</option>
+          <option value="approved">Before this pass · 7a6a104</option>
+          <option value="earlier">Earlier foundation · 7e5a8e3</option>
         </select>
         <small
           >Switch versions without changing your viewing angle, zoom or
           lighting.</small
         >
         <p>
-          <a href="./baseline-7e5a8e3/index.html"
-            >Open the preserved 7e5a8e3 sculpt</a
+          <a href="./baseline-7a6a104/index.html"
+            >Open the preserved 7a6a104 sculpt</a
           >
         </p>
         <p>
@@ -262,12 +263,12 @@
           unchanged.</small
         >
         <p>
-          <a href="./review/index.html?sculpt=6"
+          <a href="./review/index.html?sculpt=7"
             >Clay review · matched views and approved foundation</a
           >
         </p>
       </aside>
     </main>
-    <script type="module" src="./viewer.js?sculpt=6"></script>
+    <script type="module" src="./viewer.js?sculpt=7"></script>
   </body>
 </html>

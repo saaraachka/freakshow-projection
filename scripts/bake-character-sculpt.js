@@ -28,7 +28,7 @@ export async function sourceHash() {
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   const hash = await sourceHash(),
     manifest = {
-      revision: "reference-refinement-6",
+      revision: "clown-silhouette-7",
       sourceHash: hash,
       parts: {},
     };

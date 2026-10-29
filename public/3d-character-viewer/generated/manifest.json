@@ -1,18 +1,18 @@
 {
-  "revision": "reference-refinement-6",
-  "sourceHash": "7a23c38e0594bea23f3c792d9c8de95a7a22206addd339ab740bf71de912b994",
+  "revision": "clown-silhouette-7",
+  "sourceHash": "b840314da7adffbafc0561c3c2f63c6862e1946ef331b85a5f2cc918b1fc4096",
   "parts": {
     "skin": {
-      "file": "skin-7a23c38e0594.bin.gz",
+      "file": "skin-b840314da7ad.bin.gz",
       "triangles": 163916,
       "vertices": 81960,
-      "bytes": 2499739
+      "bytes": 2499552
     },
     "hair": {
-      "file": "hair-7a23c38e0594.bin.gz",
-      "triangles": 152514,
-      "vertices": 76559,
-      "bytes": 2166102
+      "file": "hair-b840314da7ad.bin.gz",
+      "triangles": 159866,
+      "vertices": 80203,
+      "bytes": 2274650
     }
   }
 }
