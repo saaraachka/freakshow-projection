@@ -2,9 +2,9 @@ import * as THREE from "three";
 import {
   applyMouthDiagnostic,
   restoreMouthMaterials,
-} from "./mouth-diagnostic.js?sculpt=8";
+} from "./mouth-diagnostic.js?sculpt=9";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { createProceduralHead } from "./procedural-head.js?sculpt=8";
+import { createProceduralHead } from "./procedural-head.js?sculpt=9";
 const $ = (id) => document.getElementById(id),
   canvas = $("scene"),
   stage = $("stage");
@@ -214,12 +214,12 @@ canvas.dataset.modelSource = "procedural-code";
 const headCache = new Map([["refined", character]]);
 function modelStatus() {
   $("status").textContent =
-    character.state.revision === "carved-curls-8"
-      ? "Carved curl clumps · full clown halo · high hairline preserved."
+    character.state.revision === "angry-fairing-9"
+      ? "Surface cleanup and angry brow · current clown halo preserved."
       : "Preserved comparison sculpt · " +
-        (character.state.revision === "clown-silhouette-7"
-          ? "0054631"
-          : "7a6a104") +
+        (character.state.revision === "carved-curls-8"
+          ? "3b89be9"
+          : "0054631") +
         ".";
 }
 async function setModel(version) {
@@ -229,8 +229,8 @@ async function setModel(version) {
     if (!headCache.has(version)) {
       const module = await import(
         version === "earlier"
-          ? "./baseline-7a6a104/procedural-head.js?sculpt=6"
-          : "./baseline-0054631/procedural-head.js?sculpt=7"
+          ? "./baseline-0054631/procedural-head.js?sculpt=7"
+          : "./baseline-3b89be9/procedural-head.js?sculpt=8"
       );
       headCache.set(version, await module.createProceduralHead());
     }

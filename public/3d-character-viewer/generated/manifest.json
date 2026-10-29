@@ -1,18 +1,18 @@
 {
-  "revision": "carved-curls-8",
-  "sourceHash": "18a316fd06bd8ff3df214c8585dcf66670f207f5eb512054267fe4f21a7a5f45",
+  "revision": "angry-fairing-9",
+  "sourceHash": "a3458b22e532f1cb6b91ec8d0ec8a5b79fd230d6c06328285354c582eb08b045",
   "parts": {
     "skin": {
-      "file": "skin-18a316fd06bd.bin.gz",
-      "triangles": 163916,
-      "vertices": 81960,
-      "bytes": 2499546
+      "file": "skin-a3458b22e532.bin.gz",
+      "triangles": 165436,
+      "vertices": 82720,
+      "bytes": 2591581
     },
     "hair": {
-      "file": "hair-18a316fd06bd.bin.gz",
-      "triangles": 137208,
-      "vertices": 68592,
-      "bytes": 1953677
+      "file": "hair-a3458b22e532.bin.gz",
+      "triangles": 137202,
+      "vertices": 68589,
+      "bytes": 2022753
     }
   }
 }

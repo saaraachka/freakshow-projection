@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>FREAKSHOW · Procedural 3D clown</title>
+    <style>
+      [hidden] {
+        display: none !important;
+      }
+      :root {
+        color-scheme: dark;
+      }
+      select {
+        appearance: none;
+        -webkit-appearance: none;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #191d24;
+        color: #eee9df;
+        font: 15px system-ui;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        min-height: 100svh;
+      }
+      #stage {
+        position: relative;
+        height: 100svh;
+        min-height: 400px;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        touch-action: none;
+      }
+      header {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        pointer-events: none;
+      }
+      h1 {
+        font-size: 19px;
+        margin: 0 0 8px;
+      }
+      header p {
+        margin: 0;
+        color: #b7bec8;
+      }
+      aside {
+        padding: 22px;
+        background: #242a34;
+      }
+      p,
+      small {
+        line-height: 1.5;
+        color: #bdc6d2;
+      }
+      label {
+        display: block;
+        margin: 20px 0 7px;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      button,
+      select {
+        padding: 9px;
+        background: #394455;
+        border: 1px solid #69778b;
+        color: white;
+        border-radius: 5px;
+      }
+      select,
+      input[type="range"] {
+        width: 100%;
+      }
+      button {
+        cursor: pointer;
+        margin: 4px 0;
+      }
+      button:disabled,
+      select:disabled,
+      input:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      #empty {
+        position: absolute;
+        inset: 20%;
+        display: grid;
+        align-content: center;
+        pointer-events: none;
+        max-width: 520px;
+      }
+      #empty h2 {
+        font-size: 24px;
+      }
+      #status {
+        overflow-wrap: anywhere;
+      }
+      #metrics {
+        position: absolute;
+        bottom: 15px;
+        left: 20px;
+        font: 12px monospace;
+        color: #bcc4d1;
+      }
+      #views {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      a {
+        color: #e0c18a;
+      }
+      input[type="file"] {
+        width: 100%;
+        color: #c9d1dd;
+      }
+      small {
+        display: block;
+        margin-top: 15px;
+      }
+      @media (max-width: 700px) {
+        main {
+          display: block;
+        }
+        #stage {
+          height: 68svh;
+          min-height: 400px;
+        }
+        #empty {
+          inset: 22% 8%;
+        }
+        aside {
+          padding: 18px;
+        }
+        header {
+          left: 14px;
+          top: 14px;
+        }
+        h1 {
+          font-size: 17px;
+        }
+      }
+      .silhouette header h1,
+      .silhouette header p,
+      .silhouette #metrics {
+        color: #111;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../../character-3d/vendor/three.module.js",
+          "three/addons/controls/OrbitControls.js": "../../character-3d/vendor/OrbitControls.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main>
+      <section id="stage">
+        <header>
+          <h1>FREAKSHOW / Procedural 3D clown</h1>
+          <p>Separate development route · production unchanged</p>
+        </header>
+        <canvas id="scene" aria-label="Orbitable procedural 3D clown"></canvas>
+        <div id="metrics">Initializing WebGL…</div>
+      </section>
+      <aside>
+        <h2>Sculpted clown curls review</h2>
+        <label for="model-version">Compare sculpt</label
+        ><select id="model-version" disabled>
+          <option value="refined">Carved curl clumps · full halo</option>
+          <option value="approved">Before this pass · 0054631</option>
+          <option value="earlier">Earlier foundation · 7a6a104</option>
+        </select>
+        <small
+          >Switch versions without changing your viewing angle, zoom or
+          lighting.</small
+        >
+        <p>
+          <a href="../baseline-0054631/index.html"
+            >Open the preserved 0054631 sculpt</a
+          >
+        </p>
+        <p>
+          Drag to orbit through 360°. Pinch or scroll to zoom. Use the underside
+          and back views to inspect volume.
+        </p>
+        <p id="status" role="status">Generating 3D geometry…</p>
+        <button id="reset">Reset camera</button>
+        <label><input id="clay" type="checkbox" checked /> Neutral clay</label>
+        <label><input id="silhouette" type="checkbox" /> Silhouette</label>
+        <label
+          ><input id="diagnostic" type="checkbox" /> Mouth tissue colors</label
+        >
+        <small id="diagnostic-key" hidden
+          >Skin gray · Lips coral · Gums blue · Teeth ivory · Cavity purple.
+          Geometry stays opaque.</small
+        >
+        <div id="views">
+          <button data-view="front">Front</button>
+          <button data-view="left-three-quarter">Left ¾</button
+          ><button data-view="three-quarter">Right ¾</button>
+          <button data-view="left-side">Left profile</button
+          ><button data-view="side">Right profile</button>
+          <button data-view="rear-three-quarter">Rear ¾</button
+          ><button data-view="left-rear-three-quarter">Left rear ¾</button
+          ><button data-view="back">Back</button
+          ><button data-view="top">Top</button
+          ><button data-view="underside">Underside</button>
+          <button data-view="eyes">Eyes</button
+          ><button data-view="eyes-three-quarter">Eyes ¾</button
+          ><button data-view="eyes-side">Eyes profile</button
+          ><button data-view="nose">Nose</button
+          ><button data-view="mouth">Mouth</button
+          ><button data-view="mouth-three-quarter">Mouth ¾</button
+          ><button data-view="mouth-side">Mouth profile</button
+          ><button data-view="mouth-left-corner">Left corner</button
+          ><button data-view="mouth-right-corner">Right corner</button
+          ><button data-view="ears">Ear</button
+          ><button data-view="hair">Hair</button
+          ><button data-view="hairline">Hairline</button
+          ><button data-view="crown">Crown</button
+          ><button data-view="back-hair">Back hair</button>
+        </div>
+        <label for="quality">Rendering resolution</label
+        ><select id="quality">
+          <option value="2">Sharp · DPR up to 2</option>
+          <option value="1">Lower cost · DPR 1</option></select
+        ><label><input type="checkbox" id="wire" /> Inspect topology</label>
+        <label
+          ><input type="checkbox" id="hair" checked /> Show hair clumps</label
+        >
+        <small
+          >The skin, eyelids, lips, chin, nasal anatomy and auricles form one
+          connected surface. The dental crowns and seated globes are separate
+          anatomical volumes.</small
+        >
+        <small
+          >Clay mode uses one neutral material on every mesh and fixed white
+          studio lights. Switch it off to see the ivory complexion, red nose,
+          acid-green eyes and navy-black groom.</small
+        >
+        <small
+          >Reference-guided static refinement, awaiting review. No facial
+          animation, audio reactions or NPR shading. Production FREAKSHOW is
+          unchanged.</small
+        >
+        <p>
+          <a href="../review/carved-curls-3b89be9.html?sculpt=8"
+            >Clay review · matched views and approved foundation</a
+          >
+        </p>
+      </aside>
+    </main>
+    <script type="module" src="./viewer.js?sculpt=8"></script>
+  </body>
+</html>

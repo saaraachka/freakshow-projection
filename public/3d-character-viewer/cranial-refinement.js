@@ -1,5 +1,6 @@
 import * as THREE from "../character-3d/vendor/three.module.js";
-import { createSkinGeometry, sampleColumn } from "./implicit-skin.js?sculpt=7";
+import { createSkinGeometry, sampleColumn } from "./implicit-skin.js?sculpt=9";
+import { fairSurface } from "./sculpt-fairing.js?sculpt=9";
 const smooth = THREE.MathUtils.smoothstep;
 // Lengthen the upper frontal/crown volume while retaining the approved rear
 // depth. Support begins above y=.48; eyes, mouth, nose and ears are untouched.
@@ -51,7 +52,25 @@ export function createRefinedSkinGeometry() {
     baseRefinement:
       "integrated lips, spherical orbital chamber and thinner auricles",
   };
-  return g;
+  return fairSurface(g, {
+    pairs: 6,
+    limit: 0.004,
+    preserveFieldNormals: true,
+    weight: (x, y, z) => {
+      // Crown, occiput and frontal height remain exact. Protect the oral
+      // vestibule and globe-contact surfaces while fairing exposed skin.
+      const front = smooth(z, 0.18, 0.34);
+      const belowScalp = 1 - smooth(y, 0.85, 1.02);
+      const ears =
+        smooth(Math.abs(x), 0.84, 0.92) * (1 - smooth(Math.abs(x), 1.15, 1.25));
+      const oral =
+        Math.exp(
+          -1 * ((y + 0.49 - 0.23 * (x / 0.65) ** 2 - 0.035 * x) / 0.15) ** 2,
+        ) *
+        (1 - smooth(z, 0.25, 0.48));
+      return Math.max(ears, front * belowScalp * (1 - oral));
+    },
+  });
 }
 // The scalp follows the same loft and posterior warp as the visible skull.
 export function scalpDistance(x, y, z) {

@@ -82,8 +82,8 @@ function facialRelief(x, y) {
   for (const s of [-1, 1]) {
     const e = eyeLandmark(s),
       a = Math.abs(x),
-      browY = e.y + 0.14 + 0.085 * (a - 0.35);
-    f += 0.092 * bump(x, y, s * 0.39, browY, 0.27, 0.085);
+      browY = 0.445 + 0.52 * (a - 0.35);
+    f += 0.128 * bump(x, y, s * 0.39, browY, 0.27, 0.078);
     f -= 0.067 * bump(x, y, s * 0.7, 0.39, 0.15, 0.27); // temporal fossa
     const ex = x - e.x,
       ey = y - e.y - e.tilt * ex,
@@ -311,6 +311,14 @@ export function skinColor(x, y, z) {
     c.lerp(new THREE.Color(0x8c4144), 0.66 * gauss((q - 1.1) / 0.2));
   if (y > -0.17 && y < 0.14 && Math.abs(x) < 0.225 && z > 0.61)
     c.lerp(new THREE.Color(0xa52d37), smooth(z, 0.61, 0.76));
+  const a = Math.abs(x),
+    browY = 0.445 + 0.52 * (a - 0.35);
+  const brow =
+    gauss((y - browY) / 0.047) *
+    smooth(a, 0.12, 0.21) *
+    (1 - smooth(a, 0.57, 0.68)) *
+    smooth(z, 0.3, 0.44);
+  c.lerp(new THREE.Color(0x101b30), brow * 0.96);
   return c;
 }
 

@@ -1,16 +1,16 @@
-import { createRefinedSkinGeometry } from "./cranial-refinement.js?sculpt=8";
-import { createHairGeometry } from "./sculpt-hair.js?sculpt=8";
+import { createRefinedSkinGeometry } from "./cranial-refinement.js?sculpt=9";
+import { createHairGeometry } from "./sculpt-hair.js?sculpt=9";
 const part = new URL(import.meta.url).searchParams.get("part");
 async function cached() {
   if (typeof DecompressionStream === "undefined") return null;
   const response = await fetch(
-    new URL("./generated/manifest.json?sculpt=8", import.meta.url),
+    new URL("./generated/manifest.json?sculpt=9", import.meta.url),
     { cache: "no-cache" },
   );
   if (!response.ok)
     throw new Error("Sculpt cache manifest: " + response.status);
   const manifest = await response.json();
-  if (manifest.revision !== "carved-curls-8")
+  if (manifest.revision !== "angry-fairing-9")
     throw new Error("Sculpt cache revision mismatch");
   const asset = await fetch(
     new URL("./generated/" + manifest.parts[part].file, import.meta.url),

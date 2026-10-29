@@ -1,37 +1,28 @@
-# Sculpted clown curl clumps · pass 8
+# Surface cleanup and angry brow · pass 9
 
-Working foundation: review release `0054631`. The high hairline and the complete skull/face are preserved. This is a hair-only reconstruction on the existing Three.js review route. Production FREAKSHOW, animation, rigging, audio, textures and NPR styling are unchanged.
+Foundation: `3b89be9`, not an earlier sculpt. `baseline-3b89be9/` freezes that viewer, its procedural source, runtime and geometry caches. Only shared paths are relocated. The comparison selector retains it and `0054631`; the previous matched gallery remains at `review/carved-curls-3b89be9.html`.
 
-## Comparison and rollback
+## Scope
 
-`baseline-0054631/` freezes the previous viewer, generation modules and generated geometry; only shared-runtime and historical-gallery paths are relocated. Rollback tag: `curls-baseline-0054631`. The comparison selector also retains `7a6a104`; older snapshots remain linked through the archived galleries.
+The existing 51 solid curl clumps, authored growth layout, carved channels, broad temporal/occipital halo, high hairline and cranial warp remain. No curl replacement or new support volume is introduced. Bounded Taubin fairing acts on the existing indexed mesh: stronger on the front, restrained on the back, with a maximum hair displacement of 0.018 model units. The geometry keeps its topology. Triangle orientation and area checks reject unsafe moves around thin CSG slivers. The original smooth Manifold normals receive restrained neighbor filtering so skinny triangles do not dominate the shading; analytical skin normals are retained.
 
-Actual old/new geometry switches without moving the camera, changing zoom, lighting or review material. `review/index.html` contains matched front, both three-quarter views, both profiles, back, top, crown, hairline, back hair, additional anatomical close-ups, opaque mouth diagnostics, unlit silhouettes and hair-hidden skull views. PNGs are render evidence, never substitute geometry.
+The integrated brow ridge is mirrored, more prominent, and slopes down toward the inner brow and upward toward the tail. The dark navy brow marking follows the same anatomical ridge. It remains visible as actual relief in clay mode.
 
-## Modeling changes
+Exposed skin and auricular transitions receive restrained fairing capped at 0.004 units. The oral vestibule and globe-contact region are protected by a spatial mask. Continuous field normals retain the intended anatomical curvature without emphasizing tessellation. The upper scalp and cranial proportions are protected. Dental geometry, globes, irises, mouth opening and evil grin are retained. No animation, rigging, audio, production integration, textures or NPR work is included.
 
-- **Volume and silhouette:** the continuous skull-following support grows into fuller temporal, upper-side, crown and occipital masses. The back and top have their own authored crests, not just front-facing decoration. The visible forehead stays high and long; the skin and its cranial deformation are unchanged.
-- **Curl system:** 51 authored pear-shaped solid clumps replace 129 swept curls. Broad scrolls alternate with swept folds. Their width, aspect, direction, handedness, contour, groove depth and curvature vary. Rolled crests, carved channels and flatter rooted heels shape the actual surfaces. There are no tube sweeps, toruses, ribbons, strands or wire flyaways in the new groom.
-- **Rooting:** each clump joins the common hair volume. Low external temporal clumps trace back to hair-covered scalp rather than attaching to the bare forehead. Forehead protection retains the approved high line while allowing the external side halo to extend beside the head. The existing ear clearance also trims the added clumps.
-- **Hairline:** the approved boundary function is unchanged. A thicker, rounded contact edge replaces the under-resolved thin cutoff. Crown coverage is checked against the supporting volume contained within the final union.
-- **Solid construction:** each carved clump is a closed parametric solid, joined to the scalp-following support by exact Manifold Boolean union. Geometric guards retain the high hairline and ear clearance. Only the inner support uses implicit surface extraction; the visible curl channels are directly constructed surfaces. The free Apache-licensed Manifold runtime is vendored for optional browser source rebuilding; no external model is used. Closed, connected topology is checked before caching. Normal-aware simplification retains valid source geometry when contractions would damage it. No face data is simplified or deformed.
+## Review and checks
 
-The result remains a stylized solid-clump sculpt. Matched neutral renders show a broader clown halo and remove the old swept-tube pattern. Some angular creases and broad exposed support surfaces remain visible at clump joins, particularly on the crown and back; these are known sculptural limitations, not hidden by the topology checks. This review is not an assertion of finished professional sculpt quality.
-
-## Run and verify
+The same interactive viewer retains orbit, zoom, clay, silhouette and mouth diagnostics. `review/index.html` contains matched front, both three-quarter views, both profiles, back, top, underside and close-ups, using identical cameras, zoom, material and studio lighting. Rendered PNGs are evidence, never replacement geometry.
 
 ```sh
 npm run dev
-# http://localhost:5173/public/3d-character-viewer/index.html?sculpt=8
 npm run sculpt:bake
 npm run sculpt:check
 npm test
 PAGES_BASE=/freakshow-projection/ npm run build
-node tests/carved-curls-browser.js
+FREAKSHOW_WEBKIT_EXECUTABLE=/path/to/webkit node tests/sculpt-cleanup-browser.js
 ```
 
-`npm run test:sculpt` builds and runs the current browser comparison. Older browser-test entry points forward to it. `FREAKSHOW_WEBKIT_EXECUTABLE` adds WebKit; `FREAKSHOW_TEST_PORT` selects a local port. `FREAKSHOW_BASE_URL` selects the actual deployed HTTPS site, and `FREAKSHOW_REMOTE_WEBKIT_ONLY=1` selects WebKit for the cloud proxy. TLS verification remains enabled.
+`npm run test:sculpt` builds and runs the current comparison. Tests check cache/source identity, preserved clump count and roots, crown coverage, closed connected hair, silhouette bounds against 3b89be9, exact hairline function, finite geometry, bounded fairing, symmetric angry brow direction, unchanged separate face parts and teeth, enamel containment, orbit/zoom, comparison switching, phone layout, gallery image decoding, and console/asset failures. The cache makes normal review fast; procedural source rebuilding remains available with `?generate=1`.
 
-Checks cover source/cache identity; exact preservation of all skin positions, normals, colors and indices; unchanged separate facial meshes/transforms; preserved skull height and hairline; frontal clearance; greater lateral bulk and rear volume; fewer than half the previous logical curls; no strand sweeps or flyaways; one connected closed hair mesh; embedded roots; actual crown coverage; finite geometry; the mobile triangle budget; globe and enamel containment; comparison states; real mouse orbit/zoom; phone layouts; frozen standalone viewer; gallery decoding; and JavaScript/asset errors.
-
-The generated geometry is cached for responsive review. Static rendering pauses at idle. Phone browser emulation is not a physical-iPhone performance or thermal measurement. No facial animation or production integration is part of this pass.
+The mesh is kept within the existing mobile triangle budget. Idle rendering pauses. Browser phone emulation does not establish physical-iPhone thermal or performance behavior. Visual review, not successful compilation or polygon counts, determines artistic acceptance.

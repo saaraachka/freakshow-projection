@@ -1,6 +1,6 @@
 import * as THREE from "../character-3d/vendor/three.module.js";
-import { scalpDistance } from "./cranial-refinement.js?sculpt=8";
-import { ellipsoid } from "./implicit-skin.js?sculpt=8";
+import { scalpDistance } from "./cranial-refinement.js?sculpt=9";
+import { ellipsoid } from "./implicit-skin.js?sculpt=9";
 const smooth = THREE.MathUtils.smoothstep;
 const smin = (a, b, k) => {
   const h = Math.max(k - Math.abs(a - b), 0) / k;

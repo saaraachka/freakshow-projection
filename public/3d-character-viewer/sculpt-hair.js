@@ -1,3 +1,4 @@
+import { fairSurface } from "./sculpt-fairing.js?sculpt=9";
 import * as THREE from "../character-3d/vendor/three.module.js";
 import {
   scalpPoint,
@@ -5,10 +6,10 @@ import {
   scalpHairField,
   hairline,
   hairlineMask,
-} from "./hair-support.js?sculpt=8";
-import { volumeMesh } from "./volume-mesh.js?sculpt=8";
-import { ellipsoid } from "./implicit-skin.js?sculpt=8";
-export { hairline, scalpHairField } from "./hair-support.js?sculpt=8";
+} from "./hair-support.js?sculpt=9";
+import { volumeMesh } from "./volume-mesh.js?sculpt=9";
+import { ellipsoid } from "./implicit-skin.js?sculpt=9";
+export { hairline, scalpHairField } from "./hair-support.js?sculpt=9";
 const smooth = THREE.MathUtils.smoothstep;
 const smin = (a, b, k) => {
   const h = Math.max(k - Math.abs(a - b), 0) / k;
@@ -423,5 +424,12 @@ export async function createHairGeometry() {
     wireFlyaways: 0,
     discardedUnrootedComponents: 0,
   };
-  return g;
+  return fairSurface(g, {
+    pairs: 12,
+    limit: 0.018,
+    reverseWeight: -0.43,
+    preserveFieldNormals: true,
+    normalPasses: 4,
+    weight: (x, y, z) => 0.35 + 0.65 * smooth(z, -0.45, 0.35),
+  });
 }

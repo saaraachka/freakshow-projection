@@ -1,0 +1,316 @@
+{
+  "revision": "angry-fairing-9",
+  "runs": [
+    {
+      "engine": "chromium",
+      "baseline": "carved-curls-8",
+      "revision": "angry-fairing-9",
+      "geometry": {
+        "hairTopology": {
+          "components": 1,
+          "nonManifoldEdges": 0
+        },
+        "strandSweeps": 0,
+        "wireFlyaways": 0,
+        "discarded": 0,
+        "crownSamples": 5762,
+        "uncovered": 0,
+        "eyes": [
+          {
+            "name": "LeftSeatedGlobe",
+            "vertices": 825,
+            "maxRadiusError": 0.01199999272823335,
+            "visibleGlobe": true
+          },
+          {
+            "name": "RightSeatedGlobe",
+            "vertices": 825,
+            "maxRadiusError": 0.01199999272823335,
+            "visibleGlobe": true
+          }
+        ],
+        "unchangedOtherParts": true,
+        "skinFairing": {
+          "pairs": 6,
+          "limit": 0.004,
+          "maxDisplacement": 0.004000039911709994,
+          "rejected": 77,
+          "topologyPreserved": true
+        },
+        "hairFairing": {
+          "pairs": 12,
+          "limit": 0.018,
+          "maxDisplacement": 0.018000011061937837,
+          "rejected": 1972,
+          "topologyPreserved": true
+        },
+        "browFits": [
+          {
+            "count": 248,
+            "slope": 0.5088079824736096
+          },
+          {
+            "count": 246,
+            "slope": 0.5034737993395548
+          }
+        ],
+        "skullRise": 0,
+        "hairlineRise": 0,
+        "frontalHairRise": -0.0000921487808227539,
+        "sideWidthRatio": 0.9996774009840624,
+        "sideBulkRatio": 0.9995677807592397,
+        "rearDepthRatio": 0.9999604363311171,
+        "bounds": {
+          "skinTop": 1.5263783931732178,
+          "backDepth": 1.8469572067260742,
+          "hairTop": 1.892474889755249,
+          "hairWidth": 3.4757649898529053,
+          "side95": 1.6417235136032104,
+          "frontHairLow": 0.9949830770492554,
+          "hairline": 1.058752481620391
+        },
+        "visibleEnamel": 363,
+        "outsideCavity": 0,
+        "worstCavity": -0.0023669491997449195,
+        "examples": [],
+        "crownsUnchanged": true,
+        "finite": true,
+        "clumps": 51,
+        "zones": [
+          "frontal-crest",
+          "crown-whorl",
+          "left-temple",
+          "right-temple",
+          "occipital",
+          "back-center",
+          "nape",
+          "posterior-crest",
+          "left-upper-fan",
+          "right-upper-fan",
+          "central-quiff"
+        ],
+        "roots": [
+          -0.08541069504236531,
+          -0.07043598885718916,
+          -0.06672772249101289,
+          -0.07102080405124801,
+          -0.07554837771297998,
+          -0.08733015767685348,
+          -0.07899154425596226,
+          -0.4513237751563622,
+          -0.29357794675539023,
+          -0.13130995483140734,
+          -0.10733325432043975,
+          -0.17362146578069457,
+          -0.37336129128867696,
+          -0.06364623589993032,
+          -0.07930998223581037,
+          -0.07125048282736027,
+          -0.06872962135401978,
+          -0.08018743263098185,
+          -0.06575381507431469,
+          -0.08280067970692184,
+          -0.08151726498867418,
+          -0.08158923347762723,
+          -0.07916823479826134,
+          -0.06460894993304625,
+          -0.08811664322945906,
+          -0.07969622692416262,
+          -0.07879222343354628,
+          -0.06262095940824167,
+          -0.06380871515992112,
+          -0.06629930231165715,
+          -0.07295134988945348,
+          -0.07364122890857705,
+          -0.06084259375104219,
+          -0.044263522913659786,
+          -0.06137339693814038,
+          -0.060123072270115846,
+          -0.04228838422595477,
+          -0.143495134034706,
+          -0.13574195922567367,
+          -0.04209456505605991,
+          -0.04197338179001077,
+          -0.04496517328239438,
+          -0.05923633444850858,
+          -0.05965279202642218,
+          -0.04462145248929017,
+          -0.0702288910368683,
+          -0.07531963154402177,
+          -0.07737529409232535,
+          -0.08676070148100695,
+          -0.08695024235552826,
+          -0.17822569815516975
+        ],
+        "triangles": 349478,
+        "skinVertices": 82720,
+        "cacheHash": "a3458b22e532f1cb6b91ec8d0ec8a5b79fd230d6c06328285354c582eb08b045",
+        "hairCacheHash": "a3458b22e532f1cb6b91ec8d0ec8a5b79fd230d6c06328285354c582eb08b045"
+      },
+      "mobile": {
+        "fits": true,
+        "rendered": "angry-fairing-9",
+        "dpr": 1
+      },
+      "consoleErrors": [],
+      "failedAssets": [],
+      "physicalIPhoneTested": false
+    },
+    {
+      "engine": "webkit",
+      "baseline": "carved-curls-8",
+      "revision": "angry-fairing-9",
+      "geometry": {
+        "hairTopology": {
+          "components": 1,
+          "nonManifoldEdges": 0
+        },
+        "strandSweeps": 0,
+        "wireFlyaways": 0,
+        "discarded": 0,
+        "crownSamples": 5762,
+        "uncovered": 0,
+        "eyes": [
+          {
+            "name": "LeftSeatedGlobe",
+            "vertices": 825,
+            "maxRadiusError": 0.01199999272823335,
+            "visibleGlobe": true
+          },
+          {
+            "name": "RightSeatedGlobe",
+            "vertices": 825,
+            "maxRadiusError": 0.01199999272823335,
+            "visibleGlobe": true
+          }
+        ],
+        "unchangedOtherParts": true,
+        "skinFairing": {
+          "pairs": 6,
+          "limit": 0.004,
+          "maxDisplacement": 0.004000039911709994,
+          "rejected": 77,
+          "topologyPreserved": true
+        },
+        "hairFairing": {
+          "pairs": 12,
+          "limit": 0.018,
+          "maxDisplacement": 0.018000011061937837,
+          "rejected": 1972,
+          "topologyPreserved": true
+        },
+        "browFits": [
+          {
+            "count": 248,
+            "slope": 0.5088079824736096
+          },
+          {
+            "count": 246,
+            "slope": 0.5034737993395548
+          }
+        ],
+        "skullRise": 0,
+        "hairlineRise": 0,
+        "frontalHairRise": -0.0000921487808227539,
+        "sideWidthRatio": 0.9996774009840624,
+        "sideBulkRatio": 0.9995677807592397,
+        "rearDepthRatio": 0.9999604363311171,
+        "bounds": {
+          "skinTop": 1.5263783931732178,
+          "backDepth": 1.8469572067260742,
+          "hairTop": 1.892474889755249,
+          "hairWidth": 3.4757649898529053,
+          "side95": 1.6417235136032104,
+          "frontHairLow": 0.9949830770492554,
+          "hairline": 1.058752481620391
+        },
+        "visibleEnamel": 363,
+        "outsideCavity": 0,
+        "worstCavity": -0.0023669491997449195,
+        "examples": [],
+        "crownsUnchanged": true,
+        "finite": true,
+        "clumps": 51,
+        "zones": [
+          "frontal-crest",
+          "crown-whorl",
+          "left-temple",
+          "right-temple",
+          "occipital",
+          "back-center",
+          "nape",
+          "posterior-crest",
+          "left-upper-fan",
+          "right-upper-fan",
+          "central-quiff"
+        ],
+        "roots": [
+          -0.08541069504236531,
+          -0.07043598885718916,
+          -0.06672772249101289,
+          -0.07102080405124801,
+          -0.07554837771297998,
+          -0.08733015767685348,
+          -0.07899154425596226,
+          -0.4513237751563622,
+          -0.29357794675539023,
+          -0.13130995483140734,
+          -0.10733325432043975,
+          -0.17362146578069457,
+          -0.37336129128867696,
+          -0.06364623589993032,
+          -0.07930998223581037,
+          -0.07125048282736027,
+          -0.06872962135401978,
+          -0.08018743263098185,
+          -0.06575381507431469,
+          -0.08280067970692184,
+          -0.08151726498867418,
+          -0.08158923347762723,
+          -0.07916823479826134,
+          -0.06460894993304625,
+          -0.08811664322945906,
+          -0.07969622692416262,
+          -0.07879222343354628,
+          -0.06262095940824167,
+          -0.06380871515992112,
+          -0.06629930231165715,
+          -0.07295134988945348,
+          -0.07364122890857705,
+          -0.06084259375104219,
+          -0.044263522913659786,
+          -0.06137339693814038,
+          -0.060123072270115846,
+          -0.04228838422595477,
+          -0.143495134034706,
+          -0.13574195922567367,
+          -0.04209456505605991,
+          -0.04197338179001077,
+          -0.04496517328239438,
+          -0.05923633444850858,
+          -0.05965279202642218,
+          -0.04462145248929017,
+          -0.0702288910368683,
+          -0.07531963154402177,
+          -0.07737529409232535,
+          -0.08676070148100695,
+          -0.08695024235552826,
+          -0.17822569815516975
+        ],
+        "triangles": 349478,
+        "skinVertices": 82720,
+        "cacheHash": "a3458b22e532f1cb6b91ec8d0ec8a5b79fd230d6c06328285354c582eb08b045",
+        "hairCacheHash": "a3458b22e532f1cb6b91ec8d0ec8a5b79fd230d6c06328285354c582eb08b045"
+      },
+      "mobile": {
+        "fits": true,
+        "rendered": "angry-fairing-9",
+        "dpr": 1
+      },
+      "consoleErrors": [],
+      "failedAssets": [],
+      "physicalIPhoneTested": false
+    }
+  ],
+  "physicalIPhoneTested": false
+}

@@ -11,6 +11,7 @@ export const sources = [
   "implicit-skin.js",
   "cranial-refinement.js",
   "surface-nets.js",
+  "sculpt-fairing.js",
   "sculpt-hair.js",
   "hair-support.js",
   "volume-mesh.js",
@@ -30,7 +31,7 @@ export async function sourceHash() {
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   const hash = await sourceHash(),
     manifest = {
-      revision: "carved-curls-8",
+      revision: "angry-fairing-9",
       sourceHash: hash,
       parts: {},
     };

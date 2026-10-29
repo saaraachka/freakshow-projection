@@ -1,0 +1,18 @@
+{
+  "revision": "carved-curls-8",
+  "sourceHash": "18a316fd06bd8ff3df214c8585dcf66670f207f5eb512054267fe4f21a7a5f45",
+  "parts": {
+    "skin": {
+      "file": "skin-18a316fd06bd.bin.gz",
+      "triangles": 163916,
+      "vertices": 81960,
+      "bytes": 2499546
+    },
+    "hair": {
+      "file": "hair-18a316fd06bd.bin.gz",
+      "triangles": 137208,
+      "vertices": 68592,
+      "bytes": 1953677
+    }
+  }
+}
