@@ -88,7 +88,6 @@ try {
     return document.images.length;
   });
   assert.ok(images >= 24);
-  await gallery.locator("video").evaluate((v) => v.load());
   await gallery.waitForFunction(
     () => document.querySelector("video").readyState >= 1,
     null,
