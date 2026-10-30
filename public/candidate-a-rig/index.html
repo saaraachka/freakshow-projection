@@ -197,6 +197,18 @@
       </div>
       <aside>
         <h2>Expressions</h2>
+        <label style="display: block; margin-bottom: 16px"
+          >Grin → frown <output id="mouth-mood-value">Sinister grin</output
+          ><input
+            id="mouth-mood"
+            aria-label="Smile to frown"
+            type="range"
+            min="0"
+            max="1"
+            step=".01"
+            value="0"
+            style="display: block; width: 100%"
+        /></label>
         <div id="presets"></div>
         <details>
           <summary>Individual controls · bounded ranges</summary>
@@ -212,14 +224,17 @@
     </main>
     <footer>
       <p id="limits">
-        Event review build · five supported expressions. Jaw: 0–6°. Surprised is
-        softly open, not a pursed O; Neutral retains this clown’s character.
-        Full closure, full blink and extreme pursing are restricted. Rehearsal
-        uses timed gestures only—no microphone or audio analysis. Production and
-        prior checkpoints are unchanged.
+        Six-expression development build · continuous smile-to-frown control.
+        Jaw: 0–6°. Surprised is softly open, not a pursed O; Neutral relaxes the
+        smile; Frown lowers the corners and surrounding tissue. Full closure,
+        full blink and extreme pursing are restricted. Rehearsal uses timed
+        gestures only—no microphone or audio analysis. Production and prior
+        checkpoints are unchanged.
       </p>
       <p>
         <a href="./review.html">Batch visual review and limitations</a> ·
+        <a href="../candidate-a-rig-v1/index.html">Prior five-expression rig</a>
+        ·
         <a href="../candidate-a-cage/index.html">Protected jaw-stage viewer</a>
         ·
         <a href="../sculpt-comparison/index.html">Original visual comparison</a>

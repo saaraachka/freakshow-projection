@@ -3,7 +3,7 @@
   <meta charset="utf-8" /><meta
     name="viewport"
     content="width=device-width,initial-scale=1"
-  /><title>Candidate A · Event rig review</title
+  /><title>Candidate A · Six expressions and frown</title
   ><style>
     body {
       background: #191d24;
@@ -20,75 +20,84 @@
       width: 100%;
       height: auto;
     }
-    table {
-      border-collapse: collapse;
-    }
-    td,
-    th {
-      padding: 9px;
-      border-bottom: 1px solid #49505b;
-      text-align: left;
-    }
   </style>
-  <h1>Candidate A · Bounded facial performance rig</h1>
-  <p><a href="./index.html">Open the interactive viewer</a></p>
+  <h1>Candidate A · Six-expression review</h1>
   <p>
-    Original Candidate A skin and teeth; the protected jaw cage remains
-    unchanged. Production FREAKSHOW is unchanged. The approved wide grin is the
-    exact default and reset state.
-  </p>
-  <h2>Five enabled expressions</h2>
-  <p>
-    Default sinister grin, Neutral, Angry, Surprised, and Manic laughter.
-    Neutral reduces facial tension and tooth exposure; it is not a fully closed
-    human neutral. Surprised uses raised brows, wider eyes, a 6° jaw opening,
-    and mild rounding; it is not a pursed O. Manic laughter uses the largest
-    previously inspected jaw opening, 6°.
+    <a href="./index.html">Open the interactive viewer</a> ·
+    <a href="../candidate-a-rig-v1/index.html">Preserved five-expression rig</a>
   </p>
   <p>
-    Smirk, Snarl and Scream are retained as experimental targets, disabled and
-    excluded from all automatic playback. Full lip closure, strong pursing and
-    full blinking are excluded.
+    The approved original sinister grin remains the exact default and reset. No
+    visible skin replacement, remeshing, jaw-mechanism edit, dental transform
+    edit, or production integration.
   </p>
-  <h2>Rehearsal</h2>
+  <h2>Independent smile-to-frown motion</h2>
   <p>
-    Kick, Snare, Clap, and Hi-hat / other buttons (or keys 1–4) trigger short
-    eased gestures and return to the exact approved grin. Percussion rehearsal
-    schedules these gestures; it does not listen to audio. The automatic
-    expression cycle has varied transition and hold times. A new button press
-    can interrupt an existing transition.
-  </p>
-  <h2>Consolidated release batch</h2>
-  <p>
-    125 geometry samples: all enabled endpoints; 25%, 50% and 75% blends between
-    every preset pair; gesture samples; individual control limits; and 48
-    deterministic combined-control samples. No invalid coordinates or triangle
-    reversals relative to rest. Minimum signed area ratio: 0.3665. Original rest
-    positions, normals, indices, and dental transforms restore exactly.
+    The main slider moves from the original grin through a reduced smile,
+    approximately level corners, a slight downturn, and a full stylized frown.
+    Upper and lower lip bodies and the inner cavity share a broad perioral
+    displacement rather than a vertical aperture scale. The corners have broader
+    independent depression support, and the lower influence fades into the chin
+    to limit jaw-outline distortion. Brow channels do not set the mouth mood.
   </p>
   <p>
-    Actual endpoint renders below were inspected at matched front, three-quarter
-    and profile cameras. The visible tooth escape from the rejected
-    strong-rounding pose is absent in these enabled endpoint views. These checks
-    do not constitute a proof of global self-intersection freedom for every
-    possible continuous control combination.
+    Neutral now relaxes the mouth and covers more teeth; Angry lowers the
+    corners and raises the upper lip; Surprised reduces the smile while opening
+    the existing jaw channel. The sixth preset, Unhappy / creepy frown, lowers
+    the corners, relaxes the cheeks and slightly lifts the inner brows. Original
+    Manic laughter and the wide grin remain available. The prior three
+    experimental targets remain disabled.
   </p>
   <p>
-    Browser interaction checks passed for interruptible transitions, cycling,
-    rapid gestures, percussion rehearsal, mobile-width preset interaction, and
-    pixel-identical return to the default camera/rest state. No JavaScript or
-    failed asset responses. The cloud software-rendered frame sample measured 41
-    ms median / 102 ms p95; this is not an iPhone hardware performance
-    guarantee.
+    This is a stylized tooth-bearing frown, not a completely sealed human
+    neutral. The jaw remains limited to 0–6°, and Surprised remains softly open
+    rather than a pursed O. Strong lip pursing and full blink remain excluded.
+  </p>
+  <h2>Matched endpoints</h2>
+  <img
+    src="review/endpoints.jpg"
+    alt="Six expressions, matched front, three-quarter and profile"
+  />
+  <h2>Representative midpoint transitions</h2>
+  <img
+    src="review/blends.jpg"
+    alt="Halfway grin to frown, Neutral to Angry and Angry to Surprised, front and three-quarter"
+  />
+  <h2>Same 3° jaw, changing only mouth mood</h2>
+  <p>
+    Left to right: full grin, reduced smile, relaxed mouth, slight frown, full
+    frown. Brows are unchanged in these samples.
+  </p>
+  <img
+    src="review/open-mouth-range.jpg"
+    alt="Five smile-to-frown samples with identical partially open jaw and brows"
+  />
+  <h2>Validation</h2>
+  <p>
+    142 consolidated geometry samples: all six endpoints; three interior samples
+    for every preset pair; rehearsal gesture samples; individual control bounds;
+    48 deterministic combined-control poses. No invalid coordinates or triangle
+    reversals relative to rest. Minimum signed area ratio 0.0847. Original
+    position/normal/index buffers and dental transforms restore exactly. This
+    sampling is not a proof of all-pose global collision freedom.
+  </p>
+  <p>
+    Actual endpoint, midpoint and fixed-jaw range renders were inspected. A
+    first broad influence pulled the jaw outline down excessively; the released
+    influence has a lower anchor and smaller maximum displacement. The visible
+    upper/lower lips retain separate contours, teeth remain behind the lips in
+    these inspected poses, and no new conspicuous tooth escape or disconnected
+    mouth feature was seen in the selected views.
+  </p>
+  <p>
+    Interruptible transitions, preset cycling, rapid gestures, percussion
+    rehearsal, reset pixels and mobile-width interaction passed without JS or
+    asset errors. Cloud software frame sample: 32 ms median / 53 ms p95; this is
+    not an iPhone hardware benchmark. All 27 normal unit tests, cache checks and
+    the protected 26-file Candidate A asset check passed.
   </p>
   <p>
     <a href="review/geometry.json">Geometry receipt</a> ·
-    <a href="review/interaction.json">Browser receipt</a> ·
-    <a href="../candidate-a-cage/index.html">Prior protected cage viewer</a>
+    <a href="review/interaction.json">Browser receipt</a>
   </p>
-  <h2>Matched endpoint review</h2>
-  <img
-    src="review/endpoints.jpg"
-    alt="Five enabled expressions, each rendered at matched front, three-quarter and profile cameras"
-  />
 </html>

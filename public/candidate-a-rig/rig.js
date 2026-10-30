@@ -16,12 +16,13 @@ const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)),
 export const controls = {
   jawOpen: ["Jaw opening (degrees)", 0, 6, 0],
   mouthClose: ["Reduce tooth exposure", 0, 0.65, 0],
-  grin: ["Relax grin", 0, 0.65, 0],
+  smileToFrown: ["Sinister grin → frown", 0, 1, 0],
+  grin: ["Additional smile relaxation", 0, 0.65, 0],
   lipRound: ["Soft rounding", 0, 0.1, 0],
   mouthWide: ["Mouth stretch", 0, 0.35, 0],
   mouthA: ["Lip separation", 0, 0.4, 0],
-  cornerLeft: ["Left corner", -0.25, 0.5, 0],
-  cornerRight: ["Right corner", -0.25, 0.5, 0],
+  cornerLeft: ["Left corner: down / up", -1, 0.5, 0],
+  cornerRight: ["Right corner: down / up", -1, 0.5, 0],
   lipCompress: ["Lip compression", 0, 0.2, 0],
   upperLipRaise: ["Upper lip lift", 0, 0.5, 0],
   browRelax: ["Brow relaxation", 0, 0.75, 0],
@@ -44,8 +45,9 @@ export const zero = () =>
 export const presets = {
   "Default sinister grin": {},
   Neutral: {
-    mouthClose: 0.6,
-    grin: 0.5,
+    smileToFrown: 0.5,
+    mouthClose: 0.58,
+    grin: 0.1,
     browRelax: 0.65,
     browRaise: 0.12,
     cheekRaise: -0.2,
@@ -54,16 +56,20 @@ export const presets = {
     browAnger: 0.8,
     outerRaise: 0.3,
     squint: 0.35,
-    cornerLeft: 0.15,
-    cornerRight: 0.15,
-    cheekRaise: 0.25,
+    smileToFrown: 0.8,
+    mouthClose: 0.15,
+    upperLipRaise: 0.3,
+    cornerLeft: -0.05,
+    cornerRight: -0.05,
+    cheekRaise: 0.1,
   },
   Surprised: {
     jawOpen: 6,
     browRaise: 0.7,
     innerRaise: 0.35,
     eyeOpen: 0.8,
-    grin: 0.25,
+    smileToFrown: 0.45,
+    grin: 0.1,
     lipRound: 0.08,
     cheekRaise: -0.15,
   },
@@ -74,6 +80,17 @@ export const presets = {
     cornerLeft: 0.4,
     cornerRight: 0.4,
     squint: 0.25,
+  },
+  "Unhappy / creepy frown": {
+    smileToFrown: 1,
+    mouthClose: 0.35,
+    cornerLeft: 0,
+    cornerRight: 0,
+    cheekRaise: -0.25,
+    browRelax: 0.55,
+    innerRaise: 0.3,
+    eyeOpen: 0.15,
+    lipCompress: 0.1,
   },
 };
 // Retained for future development, never scheduled or applied by this viewer.
@@ -114,6 +131,10 @@ export function constrain(input = {}) {
   const q = zero();
   for (const [key, c] of Object.entries(controls))
     q[key] = clamp(Number(input[key]) || 0, c[1], c[2]);
+  // Prevent stacking a full bilateral frown and full independent depressors.
+  const cornerLimit = 1 - 0.85 * q.smileToFrown;
+  q.cornerLeft = Math.max(q.cornerLeft, -cornerLimit);
+  q.cornerRight = Math.max(q.cornerRight, -cornerLimit);
   const budget = (keys, limit) => {
     const total = keys.reduce(
       (n, k) =>
@@ -161,6 +182,8 @@ export function bindRig(character) {
   for (const name of Object.keys(controls))
     if (!["jawOpen", "gazeX", "gazeY"].includes(name))
       fields[name] = new Float32Array(P.length);
+  fields.cornerLeftDown = new Float32Array(P.length);
+  fields.cornerRightDown = new Float32Array(P.length);
   // Smooth, anatomy-local control fields on the original sculpt. No target rest
   // shape is transferred; original topology, material groups and teeth survive.
   for (let i = 0; i < count; i++) {
@@ -186,6 +209,28 @@ export function bindRig(character) {
       body = G((Math.abs(v) - 0.12 * span) / 0.1),
       corner = G((a - 0.62) / 0.13) * G(v / 0.15) * front;
     const delta = (name, dx, dy, dz) => fields[name].set([dx, dy, dz], k);
+    // A broad, depth-supported perioral shear. The upper/lower lip and
+    // vestibule share the same vertical displacement in the mouth band:
+    // thickness is retained instead of scaling/flattening the opening.
+    // Calm transition zones are above the muzzle, below the chin, and lateral
+    // to the commissures. The approved zero state is never edited.
+    const tissue =
+      smooth(z, -0.28, 0.22) *
+      (1 - smooth(a, 0.66, 0.92)) *
+      smooth(y, -1.2, -0.43) *
+      (1 - smooth(y, -0.18, -0.025));
+    const nasalGuard =
+      1 -
+      (1 - smooth(a, 0.18, 0.28)) *
+        smooth(y, -0.26, -0.14) *
+        smooth(z, 0.5, 0.6);
+    const descent = 0.34 * (a / 0.65) ** 2 * tissue * nasalGuard;
+    delta("smileToFrown", 0, -descent, 0);
+    // Broad depressor ownership, separate from the original, retained
+    // small positive-corner lift. Negative control values move tissue down.
+    const depress = 0.32 * G((a - 0.6) / 0.23) * tissue * nasalGuard;
+    delta("cornerLeftDown", 0, depress * smooth(-x, 0, 0.15), 0);
+    delta("cornerRightDown", 0, depress * smooth(x, 0, 0.15), 0);
     // Closure translates each lip body towards contact; the broad cheek support
     // relaxes the grin without replacing the approved zero state.
     const closure = mouth,
@@ -312,8 +357,14 @@ export function bindRig(character) {
       active = Object.keys(fields).filter((k) => Math.abs(q[k]) > 0.000001);
     if (active.length) {
       for (const key of active) {
-        const f = fields[key],
-          w = q[key];
+        const f =
+            (key === "cornerLeft" || key === "cornerRight") && q[key] < 0
+              ? fields[key + "Down"]
+              : fields[key],
+          w =
+            key === "smileToFrown"
+              ? (0.58 * q[key] - 0.24 * q[key] * q[key]) / 0.34
+              : q[key];
         for (let j = 0; j < p.length; j++) p[j] += f[j] * w;
       }
       g.computeVertexNormals();

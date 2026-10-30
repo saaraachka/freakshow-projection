@@ -1,0 +1,33 @@
+{
+  "sourceCommit": "bcf1c0efb6c4e3b5552899d3911eb33d348b70f8",
+  "files": [
+    {
+      "path": "public/candidate-a-rig-v1/app.js",
+      "sha256": "233cd9d695fdf1f8836d513227ab21ba762f2a4a409794135d844881ea3f9865"
+    },
+    {
+      "path": "public/candidate-a-rig-v1/index.html",
+      "sha256": "769fbe9ba783a43d9d0b6322df04ed83138dc5c7c614870b45416b9e75181871"
+    },
+    {
+      "path": "public/candidate-a-rig-v1/review/endpoints.jpg",
+      "sha256": "2cc0652ea95a9c655d0143fd36372ba8f0cd928948faf20755052c8eea832fd5"
+    },
+    {
+      "path": "public/candidate-a-rig-v1/review/geometry.json",
+      "sha256": "b9a89778dfb9c967475b378889da1386e40d06b3caaeca2575d73163418858d2"
+    },
+    {
+      "path": "public/candidate-a-rig-v1/review/interaction.json",
+      "sha256": "7b917df1bcd00bf0da20f13825f6076526f465037db9cae9487ef343c3be712d"
+    },
+    {
+      "path": "public/candidate-a-rig-v1/review.html",
+      "sha256": "341d11537a71b5cedf36a6f075b88b7c1f453643e61a7f5e4438ef674f593ba2"
+    },
+    {
+      "path": "public/candidate-a-rig-v1/rig.js",
+      "sha256": "531c0a76154ddb7b70b69f95b91a11a8deccaa92376bb0444f82905801ff93bc"
+    }
+  ]
+}

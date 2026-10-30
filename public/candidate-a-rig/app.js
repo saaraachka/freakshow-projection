@@ -78,6 +78,14 @@ resize();
 setView();
 orbit.addEventListener("change", () => (dirty = true));
 function sync() {
+  $("mouth-mood").value = current.smileToFrown;
+  $("mouth-mood-value").textContent = [
+    "Sinister grin",
+    "Reduced smile",
+    "Relaxed / level",
+    "Almost frown",
+    "Full frown",
+  ][Math.round(current.smileToFrown * 4)];
   for (const key of Object.keys(controls)) {
     $(key).value = current[key];
     $(`${key}-value`).textContent = current[key].toFixed(
@@ -167,6 +175,11 @@ for (const [key, [label, min, max, value]] of Object.entries(controls)) {
   l.append(o, i);
   $("channels").append(l);
 }
+$("mouth-mood").oninput = () => {
+  transition = sequence = null;
+  gestureName = null;
+  pose({ ...current, smileToFrown: +$("mouth-mood").value });
+};
 for (const b of document.querySelectorAll("[data-view]"))
   b.onclick = () => setView(b.dataset.view);
 $("clay").onchange = () => {
@@ -211,7 +224,7 @@ try {
   scene.add(character.root);
   rig = bindRig(character);
   $("status").textContent =
-    "Candidate A · five bounded expressions · smooth transitions · percussion rehearsal";
+    "Candidate A · six expressions · smile-to-frown control · smooth transitions · percussion rehearsal";
   pose(zero());
 } catch (e) {
   $("status").textContent = e.message;
@@ -263,8 +276,8 @@ function frame(now) {
     if (sequence === "slow") {
       const names = Object.keys(presets),
         i = seqIndex++ % names.length,
-        durations = [1.1, 0.85, 0.6, 1.25, 0.75],
-        holds = [1.1, 1.5, 1.25, 1.4, 1.0];
+        durations = [1.1, 0.85, 0.6, 1.25, 0.75, 1.15],
+        holds = [1.1, 1.5, 1.25, 1.4, 1.0, 1.6];
       to(presets[names[i]], +$("duration").value * durations[i]);
       $("activity").textContent = names[i];
       next = now + (+$("duration").value * durations[i] + holds[i]) * 1000;
