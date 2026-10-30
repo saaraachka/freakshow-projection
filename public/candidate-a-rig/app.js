@@ -9,7 +9,7 @@ import {
   gestures,
   constrain,
   zero,
-} from "./rig.js";
+} from "./rig.js?release=smile-frown-1";
 const $ = (id) => document.getElementById(id),
   renderer = new THREE.WebGLRenderer({
     canvas: $("prototype"),
