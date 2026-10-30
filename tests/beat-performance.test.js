@@ -117,28 +117,28 @@ test("irregular onsets cannot repeatedly resync or choose new emotions; low conf
     c.trigger("clap", t, 1);
     c.sample(t, false);
   }
-  assert.ok(c.currentExpression === "Angry");
+  assert.equal(c.lastPhrase, Math.floor(c.beatClock.at(79 * 0.071) / 2));
   assert.equal(c.beatClock.revision, 1);
 });
-test("main expressions change only every eight beats with 1.5-beat smooth transitions", () => {
+test("main expressions change every two beats with one-beat smooth transitions", () => {
   const c = make();
   c.start(0);
   const sec = 60 / 135;
   assert.equal(c.currentExpression, "Default sinister grin");
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 20; i++) {
     const b = i / 10;
     c.trigger("snare", b * sec, 1, { manual: true });
     c.sample(b * sec, false);
     assert.equal(c.currentExpression, "Default sinister grin");
   }
-  c.sample(8 * sec, false);
+  c.sample(2 * sec, false);
   assert.equal(c.currentExpression, "Angry");
-  assert.equal(c.baseAt(8 * sec).browAnger, 0);
-  assert.ok(c.baseAt(8.75 * sec).browAnger > 0.35);
-  assert.equal(c.baseAt(9.5 * sec).browAnger, 0.8);
-  c.sample(16 * sec, false);
+  assert.equal(c.baseAt(2 * sec).browAnger, 0);
+  assert.ok(c.baseAt(2.5 * sec).browAnger > 0.35);
+  assert.equal(c.baseAt(3 * sec).browAnger, 0.8);
+  c.sample(4 * sec, false);
   assert.equal(c.currentExpression, "Unhappy / creepy frown");
-  c.sample(24 * sec, false);
+  c.sample(6 * sec, false);
   assert.equal(c.currentExpression, "Manic laughter");
 });
 test("rapid accents are bounded, never replace emotions, and release back to the held pose", () => {
@@ -167,18 +167,17 @@ test("optional and random order preserve scheduled boundaries and avoid immediat
   c.start(0);
   let name = c.currentExpression;
   for (let phrase = 1; phrase < 40; phrase++) {
-    c.sample((phrase * 8 * 60) / 135, false);
+    c.sample((phrase * 2 * 60) / 135, false);
     assert.notEqual(c.currentExpression, name);
     name = c.currentExpression;
   }
 });
-test("old hit-triggered behavior remains available separately", () => {
+test("Live Show mode switches cannot restore older hit-triggered timing", () => {
   const c = make();
   c.setMode("legacy", 0);
-  c.trigger("snare", 1, 1, { manual: true });
-  assert.equal(c.sample(1.08, false).pose.jawOpen, 6);
-  c.setMode("beat", 2);
-  assert.equal(c.automatic, true);
+  assert.equal(c.mode, "beat");
+  assert.equal(c.phraseBeats, 2);
+  assert.equal(c.transitionBeats, 1);
 });
 
 test("syncopated breakbeats add accents without adding emotional switches", () => {
@@ -204,5 +203,30 @@ test("syncopated breakbeats add accents without adding emotional switches", () =
       prior = c.currentExpression;
     }
   }
-  assert.deepEqual(history, [8, 16, 24]);
+  assert.deepEqual(
+    history,
+    Array.from({ length: 15 }, (_, i) => (i + 1) * 2),
+  );
+});
+
+test("timing stays locked through attempted edits, presets, sync and tempo changes", () => {
+  const c = make();
+  c.phraseBeats = 16;
+  c.transitionBeats = 2;
+  c.start(0);
+  c.beatClock.setBpm(120, 0);
+  c.sample(1, false);
+  assert.equal(c.currentExpression, "Angry");
+  const before = c.baseAt(1.25);
+  c.beatClock.setBpm(140, 1.25);
+  assert.deepEqual(c.baseAt(1.25), before);
+  assert.equal(c.phraseBeats, 2);
+  assert.equal(c.transitionBeats, 1);
+  c.preset(presets.Neutral, 2, 0.01);
+  assert.equal(c.phraseTransition.duration, 1);
+  c.setMode("legacy", 2.1);
+  c.phraseBeats = 8;
+  assert.equal(c.phraseBeats, 2);
+  assert.equal(c.transitionBeats, 1);
+  assert.equal(c.mode, "beat");
 });

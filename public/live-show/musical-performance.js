@@ -55,8 +55,11 @@ export class MusicalPerformance extends FacialPerformance {
     this.tracker = new TempoTracker();
     this.mode = "beat";
     this.automatic = true;
-    this.phraseBeats = 8;
-    this.transitionBeats = 1.5;
+    Object.defineProperties(this, {
+      mode: { get: () => "beat", set: () => {}, enumerable: true },
+      phraseBeats: { get: () => 2, set: () => {}, enumerable: true },
+      transitionBeats: { get: () => 1, set: () => {}, enumerable: true },
+    });
     this.accentIntensity = 0.6;
     this.energy = 0.3;
     this.energyTime = null;
@@ -96,9 +99,9 @@ export class MusicalPerformance extends FacialPerformance {
     this.base = pose;
     this.accents = [];
     this.phraseTransition = null;
-    this.mode = mode;
+    this.mode = "beat";
     this.automatic = false;
-    if (mode === "beat") this.start(t, true);
+    this.start(t, true);
   }
   sequence() {
     return [
@@ -130,11 +133,12 @@ export class MusicalPerformance extends FacialPerformance {
     this.twitch = null;
     this.accents = [];
     this.voices = [];
-    this.transition = {
+    this.transition = null;
+    this.phraseTransition = {
       from,
       to: this.constrain({ ...this.zero(), ...pose }),
-      start: t,
-      duration: Math.max(0.05, duration),
+      start: this.beatClock.at(t),
+      duration: 1,
     };
     this.currentExpression =
       Object.keys(this.presets).find(

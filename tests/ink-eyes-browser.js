@@ -55,6 +55,10 @@ try {
         a.controller.reset();
         a.controller.base = { ...a.controller.zero(), ...pose };
         document.querySelector("#idle").checked = false;
+        document.querySelector("#headPulseIntensity").value = "0";
+        document
+          .querySelector("#headPulseIntensity")
+          .dispatchEvent(new Event("change"));
         document.querySelector("#pulseEnabled").checked = false;
         a.eyePulse.sample = () => pulse;
         document.querySelector("#pulseEnabled").checked = true;
@@ -176,7 +180,10 @@ try {
   }
   assert.ok(pulseSamples.some((s) => s.amount > 0.3));
   assert.ok(pulseSamples.some((s) => s.amount < 0.1));
-  assert.ok(new Set(pulseSamples.map(s=>s.name)).size>=2,"Phrase transition did not occur while eye pulses ran");
+  assert.ok(
+    new Set(pulseSamples.map((s) => s.name)).size >= 2,
+    "Phrase transition did not occur while eye pulses ran",
+  );
   await p.click("#testPulse");
   await p.click("#fullscreen");
   assert.ok(await p.evaluate(() => !!document.fullscreenElement));

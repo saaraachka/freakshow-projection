@@ -194,3 +194,12 @@ Irises/pupils are drawn by the existing eyeball's material on its curved/corneal
 The projector receives rendering settings and eye state alongside facial poses. Controller communication runs independently of GPU completion. Real-time throughput still depends on device/GPU; the single shared-geometry outline pass avoids full-screen postprocessing. The previous working show remains at `public/live-show/rollback-1a23303/index.html` and tag `checkpoint/beat-synchronized-live-show-1`.
 
 Checks: `npm test`, `node tests/ink-eyes-browser.js` (Chromium; use `SHOW_WEBKIT=1` for WebKit), file-playback and offline browser checks. Captures cover all six expressions, gaze/blink, front/three-quarter eye placement, small/large dilation, original/ink switching and projector/fullscreen.
+
+
+### Locked expression timing + synchronized whole-head impact (current)
+
+Live Show timing is permanently **2 beats per expression / 1 beat per transition**, including manual preset transitions. The adjustable timing inputs are removed; BPM, Auto Sync and mode changes cannot alter these values. The earlier hit-triggered timing is available only in the preserved rollback viewer.
+
+A shared kick/BPM event gate triggers eyes and the outer character group together: 50 ms attack, 280 ms release. A short shared refractory guard prevents a kick and fallback clock from doubling the same impact. **Head pulse intensity** is the only new control: Off / Subtle (2%) / Medium (4%, default) / Strong (6%). The scale is absolute and uniform, not accumulated: every complete pulse returns to exactly 1.00. Old breathing-scale and accent-scale additions are excluded; position/rotation idle motion remains. Eye size/intensity settings and the existing shared pulse source remain available, while pulse attack/release are fixed to keep peaks aligned.
+
+The previous ink/eyes Live Show remains at `public/live-show/rollback-b9adc84/index.html` and tag `checkpoint/ink-eyes-live-show-1`. Rig, facial geometry, dental mechanics, expression presets, eye shaders and ink rendering are unchanged. Run `npm test` and `npm run test:live` for the current locked-timing/head-pulse checks. Browser captures test 120/130/135/140 BPM, uniform scaling, shared head/eye peaks, all intensity options and fullscreen.

@@ -38,7 +38,38 @@
       }
     }
   </style>
-  <h1>Candidate A · animated ink illustration + beat-reactive eyes</h1>
+  <h1>Candidate A · locked 2-beat acting + whole-head bass impact</h1>
+  <p>
+    Current Live Show: expression targets change every <strong>2 beats</strong>,
+    with a <strong>1-beat transition</strong>. Timing controls are removed and
+    these values cannot be overwritten by BPM, presets or mode switches.
+  </p>
+  <p>
+    The complete original character group scales uniformly from 1.00 to 1.04
+    (Medium) on the same event that drives the eyes. Shared timing: 50 ms attack
+    / 280 ms release. A duplicate-event guard avoids clock/kick double attacks;
+    rest scale is absolute, with no breathing-scale addition or accumulated
+    growth.
+  </p>
+  <p>
+    <a href="./rollback-b9adc84/index.html"
+      >Previous working ink/eye show (b9adc84)</a
+    >
+  </p>
+  <div class="pair">
+    <img
+      src="./review/head-rest.jpg"
+      alt="Unchanged ink-rendered character at exactly 1.00 scale"
+    /><img
+      src="./review/head-peak.jpg"
+      alt="The complete character at exactly 1.04 scale, with synchronized dilated pupils"
+    />
+  </div>
+  <p>
+    Head intensity: Off / Subtle 2% / Medium 4% / Strong 6%. Facial geometry,
+    rig, expression targets and ink shaders are unchanged. Head pulses do not
+    restart expression transitions.
+  </p>
   <p>
     <a href="./index.html">Open Live Show</a> ·
     <a href="./rollback-1a23303/index.html">Previous BPM show (1a23303)</a> ·
@@ -98,10 +129,22 @@
     pulses for static inspection. Musical phrase emotions and percussion accents
     remain independent.
   </p>
-  <h2>Verification</h2>
+  <h2>Locked timing and whole-head checks</h2>
+  <p>
+    56 unit tests and Chromium/WebKit live checks verify 120, 130, 135 and 140
+    BPM; uniform XYZ scaling; exact 1.00 rest and 1.04 Medium peak; matching
+    head/eye event timestamps and normalized curves; all four intensity
+    settings; expression changes during pulses; fullscreen; unchanged shared
+    geometry.
+  </p>
+  <p>
+    <a href="./review/head-chromium.json">Head pulse Chromium data</a> ·
+    <a href="./review/head-webkit.json">Head pulse WebKit data</a>
+  </p>
+  <h2>Prior ink/eye verification</h2>
   <ul>
     <li>
-      52 unit tests, including bounded pulse timing, strength, retriggers and
+      56 unit tests, including bounded pulse timing, strength, retriggers and
       continuous 130/135/140 BPM pulse trains.
     </li>
     <li>

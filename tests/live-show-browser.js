@@ -1,3 +1,4 @@
+// Historical hit-triggered rollback checks; npm run test:live tests the current show.
 import { chromium, webkit } from "playwright";
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -62,7 +63,7 @@ try {
         },
       });
     });
-  await p.goto(new URL("public/live-show/index.html", base).href);
+  await p.goto(new URL("public/live-show/rollback-b9adc84/index.html", base).href);
   await p.waitForFunction(() => window.freakshowLive?.ready, null, {
     timeout: 180000,
   });

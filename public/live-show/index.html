@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#000" />
     <title>FREAKSHOW · Live Show</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="./show.css?release=ink-5" />
+    <link rel="stylesheet" href="./show.css?release=head-6" />
     <script type="importmap">
       { "imports": { "three": "../character-3d/vendor/three.module.js" } }
     </script>
@@ -30,7 +30,7 @@
       <p id="load" role="status">Loading approved Candidate A…</p>
       <div class="beatHud">
         <p id="bpmReadout">135.0 BPM</p>
-        <p id="beatCounter" role="status">Beat 1/4 · Phrase 1/8</p>
+        <p id="beatCounter" role="status">Beat 1/4 · Phrase 1/2</p>
         <p id="emotion">Default sinister grin</p>
       </div>
       <section>
@@ -88,7 +88,15 @@
         </details>
       </section>
       <section>
-        <h2>Beat-reactive eyes</h2>
+        <h2>Head and eye pulses</h2>
+        <label
+          >Head pulse intensity<select id="headPulseIntensity">
+            <option value="0">Off</option>
+            <option value=".02">Subtle · 2%</option>
+            <option value=".04" selected>Medium · 4%</option>
+            <option value=".06">Strong · 6%</option>
+          </select></label
+        >
         <label
           ><input id="pulseEnabled" type="checkbox" checked /> Eye pulses</label
         >
@@ -130,26 +138,9 @@
               step=".05"
               value=".8"
           /></label>
-          <label
-            >Pulse attack (ms)
-            <input
-              id="pulseAttack"
-              type="range"
-              min="20"
-              max="150"
-              step="5"
-              value="50"
-          /></label>
-          <label
-            >Pulse release (ms)
-            <input
-              id="pulseRelease"
-              type="range"
-              min="100"
-              max="600"
-              step="10"
-              value="260"
-          /></label>
+          <p class="hint">
+            Head and eyes share a 50 ms attack and 280 ms release.
+          </p>
         </details>
       </section>
       <section>
@@ -177,26 +168,9 @@
         </div>
         <label><input id="autoSync" type="checkbox" /> Auto Sync</label>
         <p id="syncConfidence">Manual clock</p>
-        <label
-          >Expression duration
-          <select id="phraseBeats">
-            <option>2</option>
-            <option>4</option>
-            <option selected>8</option>
-            <option>16</option>
-          </select>
-          beats</label
-        >
-        <label
-          >Transition <output id="transitionValue">1.5 beats</output
-          ><input
-            id="transitionBeats"
-            type="range"
-            min=".5"
-            max="2"
-            step=".25"
-            value="1.5"
-        /></label>
+        <p id="lockedTiming">
+          Expression timing locked: 2 beats · 1-beat transition
+        </p>
         <label
           >Rhythmic accent intensity <output id="accentValue">60%</output
           ><input
@@ -226,8 +200,8 @@
           <label
             >Performance behavior<select id="behavior">
               <option value="beat">BPM-synchronized · phrase emotions</option>
-              <option value="legacy">
-                Previous · hit-triggered expressions
+              <option value="legacy" disabled>
+                Previous mode · available in rollback
               </option>
             </select></label
           >
@@ -381,6 +355,6 @@
         · <a href="../../?mode=song" target="_top">Song Lab</a>
       </footer>
     </aside>
-    <script type="module" src="./show.js?release=ink-5"></script>
+    <script type="module" src="./show.js?release=head-6"></script>
   </body>
 </html>

@@ -7,14 +7,17 @@ import {
   presets,
   controls,
 } from "../candidate-a-rig/rig.js?release=inner-seal-1";
-import { Rehearsal } from "./performance.js?release=ink-5";
-import { LiveInput } from "./input.js?release=ink-5";
-import { MusicalPerformance } from "./musical-performance.js?release=ink-5";
-import { AudioTimeline } from "./beat.js?release=ink-5";
-import { EyePulse } from "./eye-pulse.js?release=ink-5";
-import { EyeDetails } from "./eye-details.js?release=ink-5";
-import { InkRenderer } from "./ink-renderer.js?release=ink-5";
+import { Rehearsal } from "./performance.js?release=head-6";
+import { LiveInput } from "./input.js?release=head-6";
+import { MusicalPerformance } from "./musical-performance.js?release=head-6";
+import { AudioTimeline } from "./beat.js?release=head-6";
+import { EyePulse } from "./eye-pulse.js?release=head-6";
+import { EyeDetails } from "./eye-details.js?release=head-6";
+import { InkRenderer } from "./ink-renderer.js?release=head-6";
+import { RhythmPulse } from "./rhythm-pulse.js?release=head-6";
 const eyePulse = new EyePulse();
+const rhythm = new RhythmPulse(eyePulse);
+let rhythmActive = true;
 let eyeDetails,
   ink,
   lastEyeAmount = 0,
@@ -152,6 +155,7 @@ $("audioFile").onchange = async () => {
   $("automatic").checked = controller.automatic;
   $("reactive").checked = true;
   $("pulseEnabled").checked = true;
+  rhythmActive = true;
   fileURL = URL.createObjectURL(file);
   filePlayer = document.createElement("audio");
   const player = filePlayer;
@@ -186,8 +190,8 @@ $("audioFile").onchange = async () => {
 };
 function kickEye(t, strength) {
   lastKickTime = t;
-  if ($("pulseEnabled").checked && $("pulseSource").value === "kick")
-    eyePulse.trigger(t, strength);
+  if (rhythmActive && $("pulseSource").value === "kick")
+    rhythm.trigger(t, strength);
 }
 function triggerEvent(kind, t, strength, manual, driveEyes = true) {
   if (kind === "kick" && driveEyes) kickEye(t, strength);
@@ -253,6 +257,7 @@ for (const key of ["attack", "hold", "release"]) {
   };
 }
 $("rehearsal").onclick = () => {
+  rhythmActive = true;
   if (!rehearsal.running && controller.mode === "beat") {
     controller.start(clock(), true);
     $("automatic").checked = true;
@@ -310,16 +315,6 @@ $("autoSync").onchange = () => {
   controller.autoSync = $("autoSync").checked;
   controller.tracker.clear();
   if (!controller.autoSync) controller.beatClock.setPhaseRate(0, clock());
-};
-$("phraseBeats").onchange = () => {
-  controller.phraseBeats = Number($("phraseBeats").value);
-  controller.lastPhrase = Math.floor(
-    controller.beatClock.at(clock()) / controller.phraseBeats,
-  );
-};
-$("transitionBeats").oninput = () => {
-  controller.transitionBeats = Number($("transitionBeats").value);
-  $("transitionValue").textContent = controller.transitionBeats + " beats";
 };
 $("accentIntensity").oninput = () => {
   controller.accentIntensity = Number($("accentIntensity").value);
@@ -387,7 +382,7 @@ function applyVisual(v) {
     channel.postMessage({ type: "visual", visual: visualSettings() });
 }
 function eyeAmount(t) {
-  if (!$("pulseEnabled").checked) return 0;
+  if (!rhythmActive) return 0;
   const b = controller.beatClock.read(t, controller.phraseBeats);
   if (controller.beatClock.revision !== lastPulseRevision) {
     lastPulseRevision = controller.beatClock.revision;
@@ -406,30 +401,24 @@ function eyeAmount(t) {
   if (beat !== lastPulseBeat) {
     lastPulseBeat = beat;
     if (fallback)
-      eyePulse.trigger(t - (b.phase * 60) / controller.beatClock.bpm, 1);
+      rhythm.trigger(t - (b.phase * 60) / controller.beatClock.bpm, 1);
   }
-  return eyePulse.sample(t);
+  return $("pulseEnabled").checked ? eyePulse.sample(t) : 0;
 }
-for (const id of [
-  "irisSize",
-  "pupilSize",
-  "pulseIntensity",
-  "pulseAttack",
-  "pulseRelease",
-])
+for (const id of ["irisSize", "pupilSize", "pulseIntensity"])
   $(id).oninput = () => {
     if (eyeDetails) {
       eyeDetails.irisSize = Number($("irisSize").value);
       eyeDetails.pupilSize = Number($("pupilSize").value);
     }
     eyePulse.intensity = Number($("pulseIntensity").value);
-    eyePulse.attack = Number($("pulseAttack").value) / 1000;
-    eyePulse.release = Number($("pulseRelease").value) / 1000;
+
     dirty = true;
   };
 $("testPulse").onclick = () => {
   $("pulseEnabled").checked = true;
-  eyePulse.trigger(clock(), 1);
+  rhythmActive = true;
+  rhythm.trigger(clock(), 1);
   lastKickTime = clock();
 };
 for (const id of [
@@ -458,6 +447,10 @@ $("renderMode").onchange = () => {
     $("renderMode").value === "ink" ? "#cec6b0" : "#000000";
   $("outline").dispatchEvent(new Event("input"));
 };
+$("headPulseIntensity").onchange = () => {
+  rhythmActive = true;
+  dirty = true;
+};
 function setClean(value) {
   document.body.classList.toggle("clean", value);
   $("controls").hidden = value;
@@ -465,7 +458,8 @@ function setClean(value) {
   $("hide").setAttribute("aria-expanded", String(!value));
 }
 function reset() {
-  eyePulse.reset();
+  rhythm.reset();
+  rhythmActive = false;
   $("pulseEnabled").checked = false;
   lastEyeAmount = 0;
   eyeDetails?.update(zero(), 0);
@@ -531,6 +525,7 @@ $("sensitivity").oninput = () => {
 $("reactive").onchange = () => {
   controller.clearAccents();
   if ($("reactive").checked) {
+    rhythmActive = true;
     rehearsal.stop();
     $("rehearsal").textContent = "Start rehearsal";
     demonstrating = false;
@@ -556,6 +551,7 @@ async function refreshDevices() {
 navigator.mediaDevices?.addEventListener?.("devicechange", refreshDevices);
 refreshDevices();
 function gesture(kind) {
+  rhythmActive = true;
   rehearsal.stop();
   $("rehearsal").textContent = "Start rehearsal";
   demonstrating = false;
@@ -699,13 +695,16 @@ function render() {
   }
 }
 function motion(t, head, idle) {
+  if (!projectorId) eyeAmount(t);
   return {
     y: idle ? (0.012 + 0.008 * controller.energy) * Math.sin(t * 0.3) : 0,
     x: idle ? 0.013 * Math.sin(t * 0.34) - head.recoil : -head.recoil,
     ry: (idle ? 0.035 * Math.sin(t * 0.22) : 0) + head.turn,
     rz: (idle ? 0.012 * Math.sin(t * 0.18) : 0) + head.tilt,
     z: -head.recoil,
-    scale: 1 + (idle ? 0.003 * Math.sin(t * 0.6) : 0) + head.pulse,
+    scale: rhythmActive
+      ? rhythm.scale(t, Number($("headPulseIntensity").value))
+      : 1,
   };
 }
 function applyMotion(m) {
@@ -830,6 +829,7 @@ try {
     rig,
     eyeDetails,
     eyePulse,
+    rhythm,
     ink,
     character,
     controller,

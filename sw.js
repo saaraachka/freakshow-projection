@@ -1,4 +1,4 @@
-const CACHE = "freakshow-live-ink-5";
+const CACHE = "freakshow-live-head-6";
 const ROOT = new URL("./", self.location.href);
 const ASSETS = [
   "./public/live-show/index.html",
@@ -9,6 +9,7 @@ const ASSETS = [
   "./public/live-show/performance.js",
   "./public/live-show/beat.js",
   "./public/live-show/eye-pulse.js",
+  "./public/live-show/rhythm-pulse.js",
   "./public/live-show/eye-details.js",
   "./public/live-show/ink-renderer.js",
   "./public/live-show/musical-performance.js",

@@ -64,8 +64,8 @@ try {
   });
   assert.deepEqual(initial, {
     bpm: 135,
-    phrase: 8,
-    transition: 1.5,
+    phrase: 2,
+    transition: 1,
     automatic: true,
     mode: "beat",
     hats: false,
@@ -97,7 +97,7 @@ try {
     );
   }
   assert.ok(new Set(performanceSamples.map((s) => s.name)).size >= 2);
-  assert.ok(new Set(performanceSamples.map((s) => s.name)).size <= 3);
+  assert.ok(new Set(performanceSamples.map((s) => s.name)).size <= 4);
   assert.ok(performanceSamples.at(-1).events >= 5);
   await p.screenshot({ path: dir + "/rehearsal.png" });
   await p.click("#rehearsal");
@@ -106,13 +106,7 @@ try {
     performanceSamples.map((s) => s.name),
   );
   await p.locator("summary").filter({ hasText: "Sequence options" }).click();
-  await p.selectOption("#behavior", "legacy");
-  await p.click('[data-gesture="snare"]');
-  assert.equal(
-    await p.evaluate(() => freakshowLive.controller.events.at(-1).expression),
-    "Surprised",
-  );
-  await p.selectOption("#behavior", "beat");
+  assert.ok(await p.locator('#behavior option[value="legacy"]').isDisabled());
   await p.click('[data-preset="Angry"]');
   assert.equal(await p.isChecked("#automatic"), false);
   await p.click('[data-gesture="snare"]');
