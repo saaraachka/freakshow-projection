@@ -1,0 +1,114 @@
+{
+  "purpose": "Static art-direction comparison only. No existing baseline or geometry changes.",
+  "original": {
+    "commit": "fed4cd183f3dafdd3d086e09f260322a80ec74b6",
+    "archive": "public/3d-character-viewer/baseline-fed4cd1/",
+    "audit": {
+      "procedural-head.js": {
+        "byteIdentical": true,
+        "onlyImportPathRelocated": false,
+        "sha256": "6a8d8c55dbf60c1a5132d1fc8cc46b67f41c9079e37e71340eb73fdfa9e2b039"
+      },
+      "implicit-skin.js": {
+        "byteIdentical": false,
+        "onlyImportPathRelocated": true,
+        "sha256": "5b418905ed537bbeb4f1785d140f460fa8755e74c70e67d8a90c3c71612ba60e"
+      },
+      "cranial-refinement.js": {
+        "byteIdentical": false,
+        "onlyImportPathRelocated": true,
+        "sha256": "857f3e898b821f08e9031a1b6e344f7766167a392078304badbc6199b16c0fd0"
+      },
+      "sculpt-dentition.js": {
+        "byteIdentical": true,
+        "onlyImportPathRelocated": false,
+        "sha256": "05591725280c44805fb6bc2a305a5cdcf5d96be501f45c54d702c8c2eb587953"
+      },
+      "sculpt-hair.js": {
+        "byteIdentical": false,
+        "onlyImportPathRelocated": true,
+        "sha256": "f24a353810924f97d7584ac79113bd184ac520ef011c062aac56dbc11aa89696"
+      },
+      "sculpt-fairing.js": {
+        "byteIdentical": false,
+        "onlyImportPathRelocated": true,
+        "sha256": "5f50115c382ad8fad683242b0eeea7aba11bddff297705376f70fe1f8085c46f"
+      },
+      "generated/manifest.json": {
+        "byteIdentical": true,
+        "onlyImportPathRelocated": false,
+        "sha256": "226f7b54beb3a6bac56cdfc5ad9f9edff24b3bc87e2a060cedb1d29e64a904c9"
+      },
+      "generated/skin-a3458b22e532.bin.gz": {
+        "byteIdentical": true,
+        "onlyImportPathRelocated": false,
+        "sha256": "d737b085872fc91c4505fd8edae826e1a3a5eb10d917b82b839c6d6f001085ba"
+      },
+      "generated/hair-a3458b22e532.bin.gz": {
+        "byteIdentical": true,
+        "onlyImportPathRelocated": false,
+        "sha256": "527364a7b0d4f538c9d08750c68673f14fcd00c55fcb91d5ac58218d2a37a4a7"
+      }
+    },
+    "designDefinition": {
+      "lipHalfSpan": 0.665,
+      "lipCenterHalfHeight": 0.125,
+      "mouthLine": "-0.49 + 0.23*(x/0.65)^2 + 0.035*x"
+    }
+  },
+  "local17": {
+    "preservedIn": "4932b4f:public/3d-character-viewer/boundary-remesh-local-17/",
+    "assetSha256": "03286cd28cc3ebf8c9fd065be417bc28c8fec2cac07b0d3e5ffeaf35d7a1fe49",
+    "identicalToExpressionRigRest": true,
+    "embeddedMetadata": {
+      "stage": "STATIC_NEUTRAL_UNREVIEWED",
+      "method": "exact retained boundaries; arc-length domain; global biharmonic thin-plate surface",
+      "annuli": [
+        {
+          "kind": "skin",
+          "vertices": 2557,
+          "triangles": 4576,
+          "technique": "constrained boundary domain; global thin-plate finite-element solve"
+        },
+        {
+          "kind": "vestibule",
+          "vertices": 2013,
+          "triangles": 3654,
+          "technique": "constrained boundary domain; global thin-plate finite-element solve"
+        }
+      ],
+      "deformationEnabled": false,
+      "originalCache": "456c274ebec1f7979b223ac92a29b1d68528da5f10d47d78ed4c11d4bbb4e434"
+    },
+    "sidecarHistoricalStage": "FAILED_STATIC_NEUTRAL_VISUAL_GATE",
+    "upstreamBuildInput": "lip-base-local-13/expression-generated/face-456c274ebec1.bin.gz: neutralPosition/neutralNormal",
+    "actualInnerRim": {
+      "width": 0.66,
+      "verticalExtent": 0.011239843330274168,
+      "vertices": 160
+    },
+    "metadataNote": "Historical stage flags are provenance, not a newly run remesh or validation."
+  },
+  "expressionRig": {
+    "commit": "a8af356",
+    "publication": "64fd616",
+    "loader": "expression-cache.js loads boundary-neutral.json.gz instead of the original sculpted skin",
+    "rest": "hidden-cage-driver restores that loaded skin; no stored original-wide-grin mesh is restored",
+    "grinChannel": "small displacement on the narrowed rest, not an original-wide-grin target"
+  },
+  "gestureReview": {
+    "commit": "f17f295",
+    "default": "expressionChannels.rest()",
+    "sameDefaultAsExpressionRig": true
+  },
+  "dentalPresentation": {
+    "original": "static dental group",
+    "expressionRig": "mandibular group at JAW_PIVOT [0,-.025,-.235], LOWER_DENTAL_SEAT [0,-.012,-.024], posed by jawPose. Crown geometry not reshaped by this comparison."
+  },
+  "parts": "Native archived models. No hybridization or edits; later B/C retain existing hair support refinement.",
+  "protectedRoutesUnchanged": [
+    "production",
+    "surprised-mild-local-30",
+    "gesture-review"
+  ]
+}
