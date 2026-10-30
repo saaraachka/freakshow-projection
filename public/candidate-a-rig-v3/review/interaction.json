@@ -1,0 +1,17 @@
+{
+  "continuous": true,
+  "targetReached": true,
+  "cycleRuns": true,
+  "rapidRuns": true,
+  "rehearsalRuns": true,
+  "resetPixelsIdentical": true,
+  "experimentalDisabled": 3,
+  "performanceSample": {
+    "samples": 55,
+    "medianMs": 33.29999998211861,
+    "p95Ms": 65.5,
+    "note": "Cloud software renderer; not an iPhone hardware benchmark."
+  },
+  "errors": [],
+  "failedRequests": []
+}

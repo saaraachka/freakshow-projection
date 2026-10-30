@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "triangles": 14840,
+    "step": 0.01,
+    "regionVertices": 659,
+    "renderedGeometry": false
+  },
+  "rows": [
+    {
+      "name": "Neutral",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 2086,
+        "candidatePairs": 353,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 12,
+      "coverage": {
+        "changed": 157,
+        "maxShift": 0.021494823976998128
+      }
+    },
+    {
+      "name": "Angry",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 2096,
+        "candidatePairs": 331,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 47,
+      "coverage": {
+        "changed": 22,
+        "maxShift": 0.0011551489542005143
+      }
+    },
+    {
+      "name": "Frown",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 2140,
+        "candidatePairs": 376,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 20,
+      "coverage": {
+        "changed": 136,
+        "maxShift": 0.019338017600301405
+      }
+    },
+    {
+      "name": "grin",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 3158,
+        "candidatePairs": 68,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 50,
+      "coverage": {
+        "changed": 0,
+        "maxShift": 0
+      }
+    },
+    {
+      "name": "Manic",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 3239,
+        "candidatePairs": 64,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 49,
+      "coverage": {
+        "changed": 0,
+        "maxShift": 0
+      }
+    },
+    {
+      "name": "grin-frown 0.25",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 2740,
+        "candidatePairs": 87,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 42,
+      "coverage": {
+        "changed": 0,
+        "maxShift": 0
+      }
+    },
+    {
+      "name": "grin-frown 0.5",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 2117,
+        "candidatePairs": 276,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 35,
+      "coverage": {
+        "changed": 73,
+        "maxShift": 0.006762659915488159
+      }
+    },
+    {
+      "name": "grin-frown 0.75",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 2085,
+        "candidatePairs": 342,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 26,
+      "coverage": {
+        "changed": 107,
+        "maxShift": 0.014845528642793523
+      }
+    },
+    {
+      "name": "open frown",
+      "self": {
+        "scope": "Changed tooth-neck wall against retained skin; shared-vertex adjacency excluded",
+        "triangles": 2083,
+        "candidatePairs": 386,
+        "intersections": 0,
+        "examples": []
+      },
+      "secondaryHits": 0,
+      "intendedDentalHits": 20,
+      "coverage": {
+        "changed": 155,
+        "maxShift": 0.027123862122759634
+      }
+    }
+  ]
+}

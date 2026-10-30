@@ -3,7 +3,7 @@
   <meta charset="utf-8" /><meta
     name="viewport"
     content="width=device-width,initial-scale=1"
-  /><title>Candidate A · Lower-lip and chin review</title
+  /><title>Candidate A · Lower-incisor seal review</title
   ><style>
     body {
       background: #191d24;
@@ -21,102 +21,100 @@
       height: auto;
     }
     p {
-      max-width: 1100px;
+      max-width: 1150px;
     }
   </style>
-  <h1>Candidate A · Lower-lip / chin correction</h1>
+  <h1>Candidate A · Lower-incisor coverage correction</h1>
   <p>
-    <a href="./index.html?release=lower-profile-1"
-      >Interactive corrected viewer</a
+    <a href="./index.html?release=inner-seal-1">Interactive corrected viewer</a>
+    ·
+    <a href="../candidate-a-rig-v3/index.html"
+      >Unchanged deployed rollback: 2567f5d</a
+    >
+  </p>
+  <h2>Exact source of the apparent slit</h2>
+  <p>
+    The skin is a closed indexed manifold: no boundary edge or disconnected
+    patch was found. A probe through Neutral’s visible fragment hit the seated
+    lower incisor at Z≈0.431 before the continuous skin wall at Z≈0.423. Shelf
+    reduction had moved a small anterior tooth-neck wall behind the incisor.
+    This was dental penetration, not a missing-face seam or an incorrectly
+    seated tooth.
+  </p>
+  <h2>Focused correction</h2>
+  <p>
+    The original shelf correction is retained. An anatomically bounded clearance
+    field now drives the existing continuous wall just ahead of the original
+    lower dental surface. It samples the original teeth in the jaw’s rest frame,
+    follows the existing jaw rotation, and fades smoothly into adjacent tissue.
+    The contact envelope is faired across tooth-neck details to avoid imprinting
+    individual enamel shapes.
+  </p>
+  <p>
+    No new visible geometry, floating patch, black strip, tooth overlay, tooth
+    relocation, or mouth remesh is used. The lip crest, chin and recorded corner
+    landmarks are unchanged from the uncommitted shelf correction. The original
+    grin is pixel-identical; the contact field is inactive in both original grin
+    and Manic laughter.
+  </p>
+  <h2>Diagnostic before / after</h2>
+  <p>
+    Before is the preserved uncommitted shelf-corrected surface, not a rollback
+    to the deployed shelf. Lower teeth are orange, lower gums blue, upper teeth
+    yellow. The fragments beneath the lower lip disappear; teeth remain visible
+    through the intended opening.
+  </p>
+  <img
+    src="review/seal-detail.jpg?release=inner-seal-1"
+    alt="Before and after diagnostic and clay closeups: lower-incisor fragments removed from below the lip"
+  />
+  <h2>Matched Neutral, Angry, Frown</h2>
+  <p>
+    Each camera is a before/after pair: front, three-quarter, profile. Same
+    lighting, camera and zoom. The reduced outer profile is retained.
+  </p>
+  <img
+    src="review/endpoints.jpg?release=inner-seal-1"
+    alt="Neutral Angry and Frown before and after the seal correction, front three-quarter and profile"
+  />
+  <h2>Consolidated validation</h2>
+  <p>
+    142 endpoint, blend, gesture and bounded-control samples: no nonfinite
+    coordinates or triangle reversals. Original rest position/normal/index and
+    dental transform reset remain exact. The default grin pixel-matches the
+    preserved local source at the matched front camera.
+  </p>
+  <p>
+    Nine focused states additionally test the changed wall against retained skin
+    for triangle self-intersection, excluding shared-vertex manifold adjacency.
+    No intersections were found. Frontal ray samples through the former slit
+    have no unintended lower-dental hits in Neutral, Angry, Frown or sampled
+    grin-to-frown blends. Teeth are still visible through the intended opening
+    in original grin, Manic laughter and open-jaw Frown.
+  </p>
+  <p>
+    Neutral changes 157 wall vertices, maximum displacement about 0.0215 model
+    units; these are below the preserved lip crest. Grin and Manic have zero
+    contact displacement. The fixed lip crest, chin and recorded corner
+    positions match the unsealed local reference exactly.
+  </p>
+  <p>
+    Interruptible transitions, cycle, rapid rehearsal, gesture return, reset
+    pixels and mobile-width controls pass without JavaScript/asset errors. The
+    normal 27 unit tests, cache checks and protected Candidate A asset inventory
+    pass. Sampling is not a proof of collision freedom for every possible pose
+    or viewing ray; the self-intersection check is local to the changed wall.
+    The existing 0–6° jaw range and stylized tooth-bearing Neutral remain.
+  </p>
+  <p>
+    <a href="review/seal-checks.json?release=inner-seal-1"
+      >Seal / local intersection receipt</a
     >
     ·
-    <a href="../candidate-a-rig-v2/index.html"
-      >Unchanged prior six-expression viewer</a
+    <a href="review/profile-comparison.json?release=inner-seal-1"
+      >Fixed profile landmarks</a
     >
-  </p>
-  <p>
-    One focused expression-only correction. Original sinister grin unchanged; no
-    remeshing, skin replacement, jaw/cage edit, dental transform edit,
-    hair/skull edit, or production integration.
-  </p>
-  <h2>What changed</h2>
-  <p>
-    The rounded lower-lip body moves slightly backward in unsmiling/frowning
-    poses. The tissue beneath the lip receives broader support and the central
-    chin pad moves modestly forward. These offsets fade in with mouth mood and
-    vanish completely at the original grin. Chin width is unchanged.
-  </p>
-  <p>
-    The maximum frown drop is smaller, the corners move slightly inward as well
-    as down, and independent corner depression is gentler. Neutral and Frown use
-    a little more of the existing bounded lip-close channel. The dental arches
-    and jaw motion are unchanged.
-  </p>
-  <h2>Matched before / after</h2>
-  <p>
-    Rows: original grin, Neutral, Surprised, Frown. Each camera is a
-    before/after pair, left to right: front, three-quarter, profile. Same
-    lighting, clay material, camera and zoom.
-  </p>
-  <img
-    src="review/endpoints.jpg?release=lower-profile-1"
-    alt="Four expressions before and after, front, three-quarter and profile"
-  />
-  <h2>Lower-face profile detail</h2>
-  <p>
-    Before on the left, corrected on the right. The projection step is visibly
-    smaller while the lower lip retains a rounded crest.
-  </p>
-  <img
-    src="review/profile-detail.jpg?release=lower-profile-1"
-    alt="Neutral, Surprised and Frown profile details before and after"
-  />
-  <h2>Interpolation checks</h2>
-  <img
-    src="review/blends.jpg?release=lower-profile-1"
-    alt="Representative halfway blends from front and three-quarter"
-  />
-  <h2>Fixed jaw opening, changing mouth mood</h2>
-  <img
-    src="review/open-mouth-range.jpg?release=lower-profile-1"
-    alt="Five grin to frown samples with jaw fixed at three degrees"
-  />
-  <h2>Verification and limits</h2>
-  <p>
-    142 geometry samples had no nonfinite coordinates or triangle reversals
-    relative to rest; minimum signed area ratio 0.1984. Original geometry,
-    normals, indices and dental transforms restore exactly. The original grin
-    also pixel-matches the prior six-expression viewer at the matched front
-    camera.
-  </p>
-  <p>
-    Central lip-to-chin depth-step proxy: Neutral 0.0847 → 0.0185; Frown 0.0821
-    → 0.0167; Surprised 0.1146 → 0.0486. Coordinates are model units, not a
-    substitute for visual review. Original grin 0.0804 → 0.0804, unchanged.
-  </p>
-  <p>
-    Actual core endpoints were inspected at front, three-quarter and profile,
-    with supporting checks of Angry/Manic and representative blends. Browser
-    interruption, cycling, rehearsal, rapid gestures, exact reset and
-    mobile-width controls passed without JS/asset errors. All 27 normal unit
-    tests, cache checks, and the protected 26-file original Candidate A
-    inventory passed.
-  </p>
-  <p>
-    This remains a stylized tooth-bearing Neutral/Frown with a 0–6° jaw range,
-    not guaranteed fully sealed lips. Sampling does not certify global collision
-    freedom for every possible control combination. The prior six-expression
-    runtime is preserved byte-for-byte in a separate route.
-  </p>
-  <p>
-    <a href="review/profile-comparison.json?release=lower-profile-1"
-      >Profile comparison receipt</a
-    >
-    ·
-    <a href="review/geometry.json?release=lower-profile-1">Geometry receipt</a>
-    ·
-    <a href="review/interaction.json?release=lower-profile-1"
-      >Browser receipt</a
-    >
+    · <a href="review/geometry.json?release=inner-seal-1">Geometry batch</a> ·
+    <a href="review/interaction.json?release=inner-seal-1">Browser checks</a>
   </p>
 </html>

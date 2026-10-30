@@ -1,0 +1,49 @@
+{
+  "sourceCommit": "2567f5dfe624f4586f6d0368af80313e6d3c1903",
+  "files": [
+    {
+      "path": "public/candidate-a-rig-v3/app.js",
+      "sha256": "d882906fa88cd2e7ec18f903125f11a7beed556b6edc80af1cfc27b1a9c924c0"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/index.html",
+      "sha256": "b17a9f09560900a6e7484c52059ee1a6ccc465aae176811f7597ec689096204d"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review/blends.jpg",
+      "sha256": "39a7dca5103b4c505b01d037c74f4da26f0beff145ecf7bd6419173d4885c956"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review/endpoints.jpg",
+      "sha256": "ca9c41fe642f4b97ffc42a3824af429f4e4400e3c00fe54b105cd8219faaa77e"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review/geometry.json",
+      "sha256": "558fbacfd0623aad052ff2833890e6cb5e657d921a506cc68e68677648495b43"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review/interaction.json",
+      "sha256": "ec323023d695b2bf540d373932726ebb4123ef129bf28ba523875789601504a4"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review/open-mouth-range.jpg",
+      "sha256": "2f75ac4e9be220600695d0f307ae45cfddc594b3b60abf80d30bc25500620a1a"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review/profile-comparison.json",
+      "sha256": "68bfeed86c349925e07376a0f39f25003dc4ae2fb75c973b32eb1278302aedca"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review/profile-detail.jpg",
+      "sha256": "d69d190af0083fe5ca1410eed0c42a92f37dab3177645b068f03eb8480f70465"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/review.html",
+      "sha256": "3c692100dad807840ab13877c45e44a19ccdea3aabff596542a40aa332c64902"
+    },
+    {
+      "path": "public/candidate-a-rig-v3/rig.js",
+      "sha256": "e06697fd72b5d33ff147d67269b4b553f5e40cea28a04cbb6c123d4bcb7d4305"
+    }
+  ]
+}

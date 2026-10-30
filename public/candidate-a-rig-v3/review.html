@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>Candidate A · Lower-lip and chin review</title
+  ><style>
+    body {
+      background: #191d24;
+      color: #e6e0d5;
+      font: 16px system-ui;
+      max-width: 1800px;
+      margin: 24px auto;
+      padding: 18px;
+    }
+    a {
+      color: #c6dda5;
+    }
+    img {
+      width: 100%;
+      height: auto;
+    }
+    p {
+      max-width: 1100px;
+    }
+  </style>
+  <h1>Candidate A · Lower-lip / chin correction</h1>
+  <p>
+    <a href="./index.html?release=lower-profile-1"
+      >Interactive corrected viewer</a
+    >
+    ·
+    <a href="../candidate-a-rig-v2/index.html"
+      >Unchanged prior six-expression viewer</a
+    >
+  </p>
+  <p>
+    One focused expression-only correction. Original sinister grin unchanged; no
+    remeshing, skin replacement, jaw/cage edit, dental transform edit,
+    hair/skull edit, or production integration.
+  </p>
+  <h2>What changed</h2>
+  <p>
+    The rounded lower-lip body moves slightly backward in unsmiling/frowning
+    poses. The tissue beneath the lip receives broader support and the central
+    chin pad moves modestly forward. These offsets fade in with mouth mood and
+    vanish completely at the original grin. Chin width is unchanged.
+  </p>
+  <p>
+    The maximum frown drop is smaller, the corners move slightly inward as well
+    as down, and independent corner depression is gentler. Neutral and Frown use
+    a little more of the existing bounded lip-close channel. The dental arches
+    and jaw motion are unchanged.
+  </p>
+  <h2>Matched before / after</h2>
+  <p>
+    Rows: original grin, Neutral, Surprised, Frown. Each camera is a
+    before/after pair, left to right: front, three-quarter, profile. Same
+    lighting, clay material, camera and zoom.
+  </p>
+  <img
+    src="review/endpoints.jpg?release=lower-profile-1"
+    alt="Four expressions before and after, front, three-quarter and profile"
+  />
+  <h2>Lower-face profile detail</h2>
+  <p>
+    Before on the left, corrected on the right. The projection step is visibly
+    smaller while the lower lip retains a rounded crest.
+  </p>
+  <img
+    src="review/profile-detail.jpg?release=lower-profile-1"
+    alt="Neutral, Surprised and Frown profile details before and after"
+  />
+  <h2>Interpolation checks</h2>
+  <img
+    src="review/blends.jpg?release=lower-profile-1"
+    alt="Representative halfway blends from front and three-quarter"
+  />
+  <h2>Fixed jaw opening, changing mouth mood</h2>
+  <img
+    src="review/open-mouth-range.jpg?release=lower-profile-1"
+    alt="Five grin to frown samples with jaw fixed at three degrees"
+  />
+  <h2>Verification and limits</h2>
+  <p>
+    142 geometry samples had no nonfinite coordinates or triangle reversals
+    relative to rest; minimum signed area ratio 0.1984. Original geometry,
+    normals, indices and dental transforms restore exactly. The original grin
+    also pixel-matches the prior six-expression viewer at the matched front
+    camera.
+  </p>
+  <p>
+    Central lip-to-chin depth-step proxy: Neutral 0.0847 → 0.0185; Frown 0.0821
+    → 0.0167; Surprised 0.1146 → 0.0486. Coordinates are model units, not a
+    substitute for visual review. Original grin 0.0804 → 0.0804, unchanged.
+  </p>
+  <p>
+    Actual core endpoints were inspected at front, three-quarter and profile,
+    with supporting checks of Angry/Manic and representative blends. Browser
+    interruption, cycling, rehearsal, rapid gestures, exact reset and
+    mobile-width controls passed without JS/asset errors. All 27 normal unit
+    tests, cache checks, and the protected 26-file original Candidate A
+    inventory passed.
+  </p>
+  <p>
+    This remains a stylized tooth-bearing Neutral/Frown with a 0–6° jaw range,
+    not guaranteed fully sealed lips. Sampling does not certify global collision
+    freedom for every possible control combination. The prior six-expression
+    runtime is preserved byte-for-byte in a separate route.
+  </p>
+  <p>
+    <a href="review/profile-comparison.json?release=lower-profile-1"
+      >Profile comparison receipt</a
+    >
+    ·
+    <a href="review/geometry.json?release=lower-profile-1">Geometry receipt</a>
+    ·
+    <a href="review/interaction.json?release=lower-profile-1"
+      >Browser receipt</a
+    >
+  </p>
+</html>

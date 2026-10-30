@@ -1,3 +1,4 @@
+import { bindDentalCoverage } from "./dental-coverage.js?release=inner-seal-1";
 import * as THREE from "three";
 import { bindCandidateACage } from "../candidate-a-cage/jaw-cage.js";
 import {
@@ -185,6 +186,7 @@ export function bindRig(character) {
   fields.cornerLeftDown = new Float32Array(P.length);
   fields.cornerRightDown = new Float32Array(P.length);
   fields.lowerProfile = new Float32Array(P.length);
+  const shelfOwnership = new Float32Array(count);
   // Smooth, anatomy-local control fields on the original sculpt. No target rest
   // shape is transferred; original topology, material groups and teeth survive.
   for (let i = 0; i < count; i++) {
@@ -232,21 +234,35 @@ export function bindRig(character) {
       (1 - smooth(Math.abs(v), 0.13, 0.3)) *
       front;
     delta("smileToFrown", -0.035 * Math.sign(x) * cornerFrame, -descent, 0);
-    // Carry the rounded lower-lip body inward as a volume, not a thin edge.
-    // The fold and central chin gain gentle support; jaw width is unchanged.
-    // This corrective is expression-only and is identically zero at rest.
+    // Replace the overlapping lip/fold/chin lobes inside one local region.
+    // Outside this region retain 2567f5d exactly, including the commissures.
     const lipDistance = y - (lip.lower - 0.035);
-    const lipBody =
+    const priorLipBody =
       (1 - smooth(Math.abs(lipDistance), 0.065, 0.23)) *
       (1 - smooth(a, 0.43, 0.72)) *
       front;
-    const foldSupport = G((y - (lip.lower - 0.17)) / 0.11) * G(x / 0.4) * front;
-    const chinSupport = G((y + 0.97) / 0.17) * G(x / 0.34) * front;
+    const priorFold = G((y - (lip.lower - 0.17)) / 0.11) * G(x / 0.4) * front;
+    const priorChin = G((y + 0.97) / 0.17) * G(x / 0.34) * front;
+    const priorProfile =
+      -0.048 * priorLipBody + 0.017 * priorFold + 0.022 * priorChin;
+    const d = y - lip.lower;
+    const local =
+      (1 - smooth(a, 0.35, 0.6)) *
+      front *
+      smooth(y, -1.12, -0.97) *
+      (1 - smooth(d, 0.005, 0.075));
+    // A broad, rounded cushion with a monotone fade into the sublabial skin.
+    // No second positive fold/chin ridge and no additional correction layer.
+    const cushion =
+      G((d + 0.035) / 0.105) *
+      smooth(d, -0.18, -0.13) *
+      (1 - smooth(d, 0.005, 0.065));
+    shelfOwnership[i] = local * cushion;
     delta(
       "lowerProfile",
       0,
-      0,
-      -0.048 * lipBody + 0.017 * foldSupport + 0.022 * chinSupport,
+      -0.12 * d * local * cushion,
+      priorProfile * (1 - local) - 0.078 * cushion * local,
     );
     // Broad depressor ownership, separate from the original, retained
     // small positive-corner lift. Negative control values move tissue down.
@@ -367,6 +383,7 @@ export function bindRig(character) {
     delta("squint", ...lidShift(-0.28));
     delta("blink", ...lidShift(-0.97));
   }
+  const coverage = bindDentalCoverage(character, P, N, lipLandmarks);
   const caps = [];
   character.root.traverse((o) => {
     if (o.isMesh && ["CurvedAcidGreenIris", "CurvedPupil"].includes(o.name)) {
@@ -388,26 +405,40 @@ export function bindRig(character) {
     const p = g.attributes.position.array,
       active = Object.keys(fields).filter((k) => Math.abs(q[k]) > 0.000001);
     if (active.length) {
+      const profileWeight = smooth(q.smileToFrown, 0, 0.5);
       for (const key of active) {
         const f =
-            (key === "cornerLeft" || key === "cornerRight") && q[key] < 0
-              ? fields[key + "Down"]
-              : fields[key],
-          w =
-            key === "smileToFrown"
-              ? (0.68 * q[key] - 0.49 * q[key] ** 2 + 0.1 * q[key] ** 3) / 0.29
-              : q[key];
-        for (let j = 0; j < p.length; j++) p[j] += f[j] * w;
+          (key === "cornerLeft" || key === "cornerRight") && q[key] < 0
+            ? fields[key + "Down"]
+            : fields[key];
+        const w =
+          key === "smileToFrown"
+            ? (0.68 * q[key] - 0.49 * q[key] ** 2 + 0.1 * q[key] ** 3) / 0.29
+            : q[key];
+        // Give the local profile sole ownership of forward lip displacement
+        // in relaxed/frowning poses; do not sum the old small forward offsets.
+        const forwardLip =
+          profileWeight && ["mouthClose", "grin", "lipRound"].includes(key);
+        for (let i = 0; i < count; i++) {
+          const j = i * 3;
+          p[j] += f[j] * w;
+          p[j + 1] += f[j + 1] * w;
+          p[j + 2] +=
+            f[j + 2] *
+            w *
+            (forwardLip ? 1 - profileWeight * shelfOwnership[i] : 1);
+        }
       }
-      const profileWeight = smooth(q.smileToFrown, 0, 0.5);
       if (profileWeight) {
         const f = fields.lowerProfile;
         for (let j = 0; j < p.length; j++) p[j] += f[j] * profileWeight;
       }
+      coverage.apply(p, q.jawOpen, profileWeight);
       g.computeVertexNormals();
       g.attributes.position.needsUpdate = true;
       g.computeBoundingSphere();
     }
+    if (!active.length) coverage.apply(p, q.jawOpen, 0);
     for (const cap of caps) {
       const arr = cap.mesh.geometry.attributes.position.array;
       if (q.gazeX === 0 && q.gazeY === 0) arr.set(cap.rest);
@@ -432,6 +463,7 @@ export function bindRig(character) {
     set,
     jaw,
     fields,
+    coverage,
     rest: P,
     restNormals: N,
     get current() {
