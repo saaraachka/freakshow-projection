@@ -1,0 +1,27 @@
+{
+  "namedPresets": true,
+  "blend": true,
+  "resetCancelsEvents": true,
+  "deterministicTransitions": true,
+  "pauseScrub": true,
+  "mobile": true,
+  "benchmark": {
+    "controllerMs": [
+      6.5999999940395355,
+      21.19999998807907,
+      14.800000011920929,
+      17.900000005960464,
+      17.19999998807907,
+      18.80000001192093,
+      21.299999982118607,
+      18.5,
+      27.399999976158142,
+      16.799999982118607,
+      36.30000001192093,
+      17.099999994039536
+    ],
+    "renderSubmissionMs": 1.0999999940395355,
+    "gpuWaitMs": 0.10000002384185791
+  },
+  "errors": []
+}

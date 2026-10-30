@@ -1,0 +1,165 @@
+{
+  "samples": [
+    {
+      "category": "kick",
+      "phase": "rest",
+      "t": 0,
+      "amount": 0
+    },
+    {
+      "category": "kick",
+      "phase": "initial",
+      "t": 0.022000000000000002,
+      "amount": 0.19046400000000002
+    },
+    {
+      "category": "kick",
+      "phase": "peak",
+      "t": 0.055,
+      "amount": 0.6
+    },
+    {
+      "category": "kick",
+      "phase": "return",
+      "t": 0.185,
+      "amount": 0.14110162499999987
+    },
+    {
+      "category": "kick",
+      "phase": "settled",
+      "t": 0.256,
+      "amount": 0
+    },
+    {
+      "category": "snare",
+      "phase": "rest",
+      "t": 0,
+      "amount": 0
+    },
+    {
+      "category": "snare",
+      "phase": "initial",
+      "t": 0.016,
+      "amount": 0.25395200000000007
+    },
+    {
+      "category": "snare",
+      "phase": "peak",
+      "t": 0.04,
+      "amount": 0.8
+    },
+    {
+      "category": "snare",
+      "phase": "return",
+      "t": 0.157,
+      "amount": 0.18813549999999984
+    },
+    {
+      "category": "snare",
+      "phase": "settled",
+      "t": 0.221,
+      "amount": 0
+    },
+    {
+      "category": "clap",
+      "phase": "rest",
+      "t": 0,
+      "amount": 0
+    },
+    {
+      "category": "clap",
+      "phase": "initial",
+      "t": 0.018,
+      "amount": 0.0698368
+    },
+    {
+      "category": "clap",
+      "phase": "peak",
+      "t": 0.045,
+      "amount": 0.22
+    },
+    {
+      "category": "clap",
+      "phase": "return",
+      "t": 0.123,
+      "amount": 0.05173726249999996
+    },
+    {
+      "category": "clap",
+      "phase": "settled",
+      "t": 0.16599999999999998,
+      "amount": 0
+    },
+    {
+      "category": "percussion",
+      "phase": "rest",
+      "t": 0,
+      "amount": 0
+    },
+    {
+      "category": "percussion",
+      "phase": "initial",
+      "t": 0.036,
+      "amount": 0.1333248
+    },
+    {
+      "category": "percussion",
+      "phase": "peak",
+      "t": 0.09,
+      "amount": 0.42
+    },
+    {
+      "category": "percussion",
+      "phase": "return",
+      "t": 0.2655,
+      "amount": 0.09877113749999991
+    },
+    {
+      "category": "percussion",
+      "phase": "settled",
+      "t": 0.361,
+      "amount": 0
+    }
+  ],
+  "resetChecks": [
+    {
+      "base": "rest",
+      "exact": true
+    },
+    {
+      "base": "neutral",
+      "exact": true
+    },
+    {
+      "base": "angry",
+      "exact": true
+    },
+    {
+      "base": "surprised",
+      "exact": true
+    }
+  ],
+  "controllerMs": [
+    14.799999982118607,
+    58.60000002384186,
+    68.7000000178814,
+    63.10000002384186,
+    17.099999994039536,
+    17.5,
+    95.7999999821186,
+    21.400000005960464,
+    52.599999994039536,
+    13.600000023841858,
+    11.699999988079071,
+    22.400000005960464,
+    17.900000005960464,
+    27.400000005960464,
+    12.400000005960464,
+    14.099999994039536,
+    20.899999976158142,
+    25.400000005960464,
+    32.79999998211861,
+    10.400000005960464
+  ],
+  "errors": []
+}

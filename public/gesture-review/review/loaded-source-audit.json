@@ -1,0 +1,26 @@
+{
+  "procedural-head.js": {
+    "sha256": "b7aa0447dc7dadaa2da3b292a34e372528fdf772765dcd02a50f70b1b796fdfa",
+    "matchesApproved": true
+  },
+  "expression-channels.js": {
+    "sha256": "98c5ddb025076f8a032722081e8f7d59b893d3d50b7f6ec4395bbae4b41b78fe",
+    "matchesApproved": true
+  },
+  "hidden-cage-driver.js": {
+    "sha256": "b6e3b9a45abd1b877f047c0ad977b451efa343da4c39804b878888c84445cb2e",
+    "matchesApproved": true
+  },
+  "hidden-cage-map.json.gz": {
+    "sha256": "c91643d70466468bef061fa5d3b1a6acd811f082a7c74aad59346401b1fd6622",
+    "matchesApproved": true
+  },
+  "mouth-kinematics.js": {
+    "sha256": "4f624eae69dac92dcc50bae35517d0a437dc9b84219b17cfa9a7e68abed7cbef",
+    "matchesApproved": true
+  },
+  "boundary-neutral.json.gz": {
+    "sha256": "03286cd28cc3ebf8c9fd065be417bc28c8fec2cac07b0d3e5ffeaf35d7a1fe49",
+    "matchesApproved": true
+  }
+}
