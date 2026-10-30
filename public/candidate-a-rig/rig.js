@@ -46,7 +46,7 @@ export const presets = {
   "Default sinister grin": {},
   Neutral: {
     smileToFrown: 0.5,
-    mouthClose: 0.58,
+    mouthClose: 0.62,
     grin: 0.1,
     browRelax: 0.65,
     browRaise: 0.12,
@@ -83,7 +83,7 @@ export const presets = {
   },
   "Unhappy / creepy frown": {
     smileToFrown: 1,
-    mouthClose: 0.35,
+    mouthClose: 0.52,
     cornerLeft: 0,
     cornerRight: 0,
     cheekRaise: -0.25,
@@ -184,6 +184,7 @@ export function bindRig(character) {
       fields[name] = new Float32Array(P.length);
   fields.cornerLeftDown = new Float32Array(P.length);
   fields.cornerRightDown = new Float32Array(P.length);
+  fields.lowerProfile = new Float32Array(P.length);
   // Smooth, anatomy-local control fields on the original sculpt. No target rest
   // shape is transferred; original topology, material groups and teeth survive.
   for (let i = 0; i < count; i++) {
@@ -224,13 +225,44 @@ export function bindRig(character) {
       (1 - smooth(a, 0.18, 0.28)) *
         smooth(y, -0.26, -0.14) *
         smooth(z, 0.5, 0.6);
-    const descent = 0.34 * (a / 0.65) ** 2 * tissue * nasalGuard;
-    delta("smileToFrown", 0, -descent, 0);
+    const descent = 0.29 * (a / 0.65) ** 2 * tissue * nasalGuard;
+    const cornerFrame =
+      smooth(a, 0.22, 0.57) *
+      (1 - smooth(a, 0.66, 0.85)) *
+      (1 - smooth(Math.abs(v), 0.13, 0.3)) *
+      front;
+    delta("smileToFrown", -0.035 * Math.sign(x) * cornerFrame, -descent, 0);
+    // Carry the rounded lower-lip body inward as a volume, not a thin edge.
+    // The fold and central chin gain gentle support; jaw width is unchanged.
+    // This corrective is expression-only and is identically zero at rest.
+    const lipDistance = y - (lip.lower - 0.035);
+    const lipBody =
+      (1 - smooth(Math.abs(lipDistance), 0.065, 0.23)) *
+      (1 - smooth(a, 0.43, 0.72)) *
+      front;
+    const foldSupport = G((y - (lip.lower - 0.17)) / 0.11) * G(x / 0.4) * front;
+    const chinSupport = G((y + 0.97) / 0.17) * G(x / 0.34) * front;
+    delta(
+      "lowerProfile",
+      0,
+      0,
+      -0.048 * lipBody + 0.017 * foldSupport + 0.022 * chinSupport,
+    );
     // Broad depressor ownership, separate from the original, retained
     // small positive-corner lift. Negative control values move tissue down.
-    const depress = 0.32 * G((a - 0.6) / 0.23) * tissue * nasalGuard;
-    delta("cornerLeftDown", 0, depress * smooth(-x, 0, 0.15), 0);
-    delta("cornerRightDown", 0, depress * smooth(x, 0, 0.15), 0);
+    const depress = 0.27 * G((a - 0.6) / 0.23) * tissue * nasalGuard;
+    delta(
+      "cornerLeftDown",
+      -0.024 * cornerFrame * smooth(-x, 0, 0.15),
+      depress * smooth(-x, 0, 0.15),
+      0,
+    );
+    delta(
+      "cornerRightDown",
+      0.024 * cornerFrame * smooth(x, 0, 0.15),
+      depress * smooth(x, 0, 0.15),
+      0,
+    );
     // Closure translates each lip body towards contact; the broad cheek support
     // relaxes the grin without replacing the approved zero state.
     const closure = mouth,
@@ -363,9 +395,14 @@ export function bindRig(character) {
               : fields[key],
           w =
             key === "smileToFrown"
-              ? (0.58 * q[key] - 0.24 * q[key] * q[key]) / 0.34
+              ? (0.68 * q[key] - 0.49 * q[key] ** 2 + 0.1 * q[key] ** 3) / 0.29
               : q[key];
         for (let j = 0; j < p.length; j++) p[j] += f[j] * w;
+      }
+      const profileWeight = smooth(q.smileToFrown, 0, 0.5);
+      if (profileWeight) {
+        const f = fields.lowerProfile;
+        for (let j = 0; j < p.length; j++) p[j] += f[j] * profileWeight;
       }
       g.computeVertexNormals();
       g.attributes.position.needsUpdate = true;

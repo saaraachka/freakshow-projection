@@ -7,9 +7,9 @@
   "resetPixelsIdentical": true,
   "experimentalDisabled": 3,
   "performanceSample": {
-    "samples": 56,
-    "medianMs": 31.900000005960464,
-    "p95Ms": 52.69999998807907,
+    "samples": 55,
+    "medianMs": 33.29999998211861,
+    "p95Ms": 65.5,
     "note": "Cloud software renderer; not an iPhone hardware benchmark."
   },
   "errors": [],

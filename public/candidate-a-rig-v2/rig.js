@@ -1,0 +1,404 @@
+import * as THREE from "three";
+import { bindCandidateACage } from "../candidate-a-cage/jaw-cage.js";
+import {
+  mouthLine,
+  eyeLandmark,
+  lipLandmarks,
+} from "../3d-character-viewer/baseline-fed4cd1/implicit-skin.js";
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)),
+  smooth = (x, a, b) => {
+    let t = clamp((x - a) / (b - a));
+    return t * t * t * (10 + t * (-15 + 6 * t));
+  },
+  G = (x) => Math.exp(-x * x);
+// Supported release limits. Full pursing, full closure and full blink are not
+// exposed. Original fields are retained below, but inputs are bounded here.
+export const controls = {
+  jawOpen: ["Jaw opening (degrees)", 0, 6, 0],
+  mouthClose: ["Reduce tooth exposure", 0, 0.65, 0],
+  smileToFrown: ["Sinister grin → frown", 0, 1, 0],
+  grin: ["Additional smile relaxation", 0, 0.65, 0],
+  lipRound: ["Soft rounding", 0, 0.1, 0],
+  mouthWide: ["Mouth stretch", 0, 0.35, 0],
+  mouthA: ["Lip separation", 0, 0.4, 0],
+  cornerLeft: ["Left corner: down / up", -1, 0.5, 0],
+  cornerRight: ["Right corner: down / up", -1, 0.5, 0],
+  lipCompress: ["Lip compression", 0, 0.2, 0],
+  upperLipRaise: ["Upper lip lift", 0, 0.5, 0],
+  browRelax: ["Brow relaxation", 0, 0.75, 0],
+  browRaise: ["Both brows raised", 0, 0.7, 0],
+  innerRaise: ["Inner brow lift", 0, 0.35, 0],
+  browAnger: ["Inner brows down", 0, 0.8, 0],
+  outerRaise: ["Outer brow lift", 0, 0.4, 0],
+  browLeft: ["Left brow lift", 0, 0.6, 0],
+  browRight: ["Right brow lift", 0, 0.6, 0],
+  eyeOpen: ["Eyes wider", 0, 0.8, 0],
+  squint: ["Eyelid narrowing", 0, 0.4, 0],
+  blink: ["Soft lid motion", 0, 0.3, 0],
+  cheekRaise: ["Cheek lift", -0.25, 0.65, 0],
+  nasolabial: ["Nasolabial tension", -0.4, 0.6, 0],
+  gazeX: ["Gaze left / right", -0.6, 0.6, 0],
+  gazeY: ["Gaze down / up", -0.6, 0.6, 0],
+};
+export const zero = () =>
+  Object.fromEntries(Object.keys(controls).map((k) => [k, 0]));
+export const presets = {
+  "Default sinister grin": {},
+  Neutral: {
+    smileToFrown: 0.5,
+    mouthClose: 0.58,
+    grin: 0.1,
+    browRelax: 0.65,
+    browRaise: 0.12,
+    cheekRaise: -0.2,
+  },
+  Angry: {
+    browAnger: 0.8,
+    outerRaise: 0.3,
+    squint: 0.35,
+    smileToFrown: 0.8,
+    mouthClose: 0.15,
+    upperLipRaise: 0.3,
+    cornerLeft: -0.05,
+    cornerRight: -0.05,
+    cheekRaise: 0.1,
+  },
+  Surprised: {
+    jawOpen: 6,
+    browRaise: 0.7,
+    innerRaise: 0.35,
+    eyeOpen: 0.8,
+    smileToFrown: 0.45,
+    grin: 0.1,
+    lipRound: 0.08,
+    cheekRaise: -0.15,
+  },
+  "Manic laughter": {
+    jawOpen: 6,
+    browRaise: 0.35,
+    cheekRaise: 0.65,
+    cornerLeft: 0.4,
+    cornerRight: 0.4,
+    squint: 0.25,
+  },
+  "Unhappy / creepy frown": {
+    smileToFrown: 1,
+    mouthClose: 0.35,
+    cornerLeft: 0,
+    cornerRight: 0,
+    cheekRaise: -0.25,
+    browRelax: 0.55,
+    innerRaise: 0.3,
+    eyeOpen: 0.15,
+    lipCompress: 0.1,
+  },
+};
+// Retained for future development, never scheduled or applied by this viewer.
+export const experimentalPresets = {
+  "Evil smirk": {
+    cornerLeft: 0.65,
+    cornerRight: -0.18,
+    browLeft: 0.6,
+    squint: 0.25,
+    cheekRaise: 0.2,
+  },
+  Snarl: {
+    jawOpen: 1.2,
+    upperLipRaise: 0.8,
+    browAnger: 0.55,
+    nasolabial: 0.7,
+    squint: 0.3,
+  },
+  Scream: {
+    jawOpen: 6,
+    mouthA: 0.65,
+    eyeOpen: 1,
+    browRaise: 0.8,
+    innerRaise: 0.4,
+    grin: 0.2,
+  },
+};
+export const gestures = {
+  kick: { jawOpen: 3, browAnger: 0.22, eyeOpen: 0.1 },
+  snare: { jawOpen: 5, browRaise: 0.32, eyeOpen: 0.35, cheekRaise: 0.2 },
+  clap: { jawOpen: 2, cornerLeft: 0.3, cornerRight: 0.3, cheekRaise: 0.45 },
+  hat: { jawOpen: 0.8, squint: 0.25, browRaise: 0.15 },
+};
+// Scale competing fields together rather than permit arbitrary sliders to add
+// several maximum-strength deformations on the same tissue. This preserves
+// neutral at zero and continuity at the supported envelope.
+export function constrain(input = {}) {
+  const q = zero();
+  for (const [key, c] of Object.entries(controls))
+    q[key] = clamp(Number(input[key]) || 0, c[1], c[2]);
+  // Prevent stacking a full bilateral frown and full independent depressors.
+  const cornerLimit = 1 - 0.85 * q.smileToFrown;
+  q.cornerLeft = Math.max(q.cornerLeft, -cornerLimit);
+  q.cornerRight = Math.max(q.cornerRight, -cornerLimit);
+  const budget = (keys, limit) => {
+    const total = keys.reduce(
+      (n, k) =>
+        n + Math.abs(q[k]) / Math.max(Math.abs(controls[k][1]), controls[k][2]),
+      0,
+    );
+    if (total > limit) for (const k of keys) q[k] *= limit / total;
+  };
+  budget(
+    [
+      "mouthClose",
+      "grin",
+      "lipRound",
+      "mouthWide",
+      "mouthA",
+      "lipCompress",
+      "upperLipRaise",
+      "cornerLeft",
+      "cornerRight",
+    ],
+    2.3,
+  );
+  budget(
+    [
+      "browRelax",
+      "browRaise",
+      "innerRaise",
+      "browAnger",
+      "outerRaise",
+      "browLeft",
+      "browRight",
+    ],
+    2.4,
+  );
+  budget(["eyeOpen", "squint", "blink"], 1.25);
+  return q;
+}
+export function bindRig(character) {
+  const jaw = bindCandidateACage(character),
+    g = character.face.geometry,
+    P = jaw.rest,
+    N = jaw.restNormals,
+    count = P.length / 3,
+    fields = {};
+  for (const name of Object.keys(controls))
+    if (!["jawOpen", "gazeX", "gazeY"].includes(name))
+      fields[name] = new Float32Array(P.length);
+  fields.cornerLeftDown = new Float32Array(P.length);
+  fields.cornerRightDown = new Float32Array(P.length);
+  // Smooth, anatomy-local control fields on the original sculpt. No target rest
+  // shape is transferred; original topology, material groups and teeth survive.
+  for (let i = 0; i < count; i++) {
+    const k = i * 3,
+      x = P[k],
+      y = P[k + 1],
+      z = P[k + 2],
+      a = Math.abs(x),
+      front = smooth(z, 0.12, 0.38),
+      side = 1 - smooth(a, 0.72, 0.9),
+      c = mouthLine(x),
+      v = y - c,
+      span = Math.sqrt(Math.max(0, 1 - (x / 0.665) ** 2)),
+      lip = lipLandmarks(x);
+    const mouth =
+      front *
+      side *
+      (1 - smooth(a, 0.62, 0.82)) *
+      (1 - smooth(Math.abs(v), 0.2, 0.38)) *
+      (1 - smooth(y, -0.14, -0.04));
+    const upper = smooth(v, -0.025, 0.035),
+      lower = 1 - upper,
+      body = G((Math.abs(v) - 0.12 * span) / 0.1),
+      corner = G((a - 0.62) / 0.13) * G(v / 0.15) * front;
+    const delta = (name, dx, dy, dz) => fields[name].set([dx, dy, dz], k);
+    // A broad, depth-supported perioral shear. The upper/lower lip and
+    // vestibule share the same vertical displacement in the mouth band:
+    // thickness is retained instead of scaling/flattening the opening.
+    // Calm transition zones are above the muzzle, below the chin, and lateral
+    // to the commissures. The approved zero state is never edited.
+    const tissue =
+      smooth(z, -0.28, 0.22) *
+      (1 - smooth(a, 0.66, 0.92)) *
+      smooth(y, -1.2, -0.43) *
+      (1 - smooth(y, -0.18, -0.025));
+    const nasalGuard =
+      1 -
+      (1 - smooth(a, 0.18, 0.28)) *
+        smooth(y, -0.26, -0.14) *
+        smooth(z, 0.5, 0.6);
+    const descent = 0.34 * (a / 0.65) ** 2 * tissue * nasalGuard;
+    delta("smileToFrown", 0, -descent, 0);
+    // Broad depressor ownership, separate from the original, retained
+    // small positive-corner lift. Negative control values move tissue down.
+    const depress = 0.32 * G((a - 0.6) / 0.23) * tissue * nasalGuard;
+    delta("cornerLeftDown", 0, depress * smooth(-x, 0, 0.15), 0);
+    delta("cornerRightDown", 0, depress * smooth(x, 0, 0.15), 0);
+    // Closure translates each lip body towards contact; the broad cheek support
+    // relaxes the grin without replacing the approved zero state.
+    const closure = mouth,
+      meet = -0.43;
+    const h = 0.125 * span,
+      epsilon = 0.012,
+      softClip =
+        0.5 *
+        (Math.sqrt((v + h) ** 2 + epsilon ** 2) -
+          Math.sqrt((v - h) ** 2 + epsilon ** 2));
+    delta(
+      "mouthClose",
+      0,
+      closure * (-0.98 * softClip + (meet - c) * 0.4),
+      mouth * 0.008 * body,
+    );
+    delta(
+      "grin",
+      -x * 0.075 * mouth,
+      -0.065 * (a / 0.665) ** 2 * mouth,
+      0.004 * mouth,
+    );
+    delta(
+      "lipRound",
+      -x * 0.6 * mouth,
+      (-0.12 * (a / 0.665) ** 2 + 0.012 * Math.tanh(v / 0.04) * body) * mouth,
+      (0.028 * upper + 0.012 * lower) * body * mouth,
+    );
+    delta(
+      "mouthWide",
+      x * 0.065 * mouth,
+      0.008 * Math.sign(v) * mouth,
+      -0.008 * mouth,
+    );
+    delta("mouthA", -x * 0.015 * mouth, 0.022 * Math.sign(v) * body * mouth, 0);
+    delta(
+      "lipCompress",
+      0,
+      -0.01 * Math.sign(v) * body * mouth,
+      -0.008 * body * mouth,
+    );
+    delta(
+      "upperLipRaise",
+      0,
+      0.045 * mouth * upper * G(x / 0.5),
+      -0.006 * mouth * upper,
+    );
+    delta(
+      "cornerLeft",
+      0,
+      0.05 * corner * (x < 0 ? 1 : 0),
+      0.004 * corner * (x < 0 ? 1 : 0),
+    );
+    delta(
+      "cornerRight",
+      0,
+      0.05 * corner * (x > 0 ? 1 : 0),
+      0.004 * corner * (x > 0 ? 1 : 0),
+    );
+    const cheek = G((a - 0.59) / 0.19) * G((y + 0.11) / 0.22) * front;
+    delta("cheekRaise", 0, 0.035 * cheek, 0.012 * cheek);
+    const fold =
+      G((a - (0.23 + 0.88 * clamp(-y - 0.1, 0, 0.5))) / 0.11) *
+      G((y + 0.28) / 0.2) *
+      front;
+    delta("nasolabial", 0, 0.013 * fold, 0.01 * fold);
+    const browY = 0.445 + 0.52 * (a - 0.35),
+      brow =
+        G((y - browY) / 0.16) *
+        smooth(a, 0.1, 0.21) *
+        (1 - smooth(a, 0.61, 0.77)) *
+        front,
+      inner = 1 - smooth(a, 0.2, 0.48),
+      outer = smooth(a, 0.3, 0.6);
+    delta("browRelax", 0, -0.45 * (a - 0.35) * brow, 0);
+    delta("browRaise", 0, 0.075 * brow, -0.008 * brow);
+    delta("innerRaise", 0, 0.075 * brow * inner, -0.01 * brow * inner);
+    delta("browAnger", 0, -0.036 * brow * inner, 0.008 * brow * inner);
+    delta("outerRaise", 0, 0.045 * brow * outer, 0);
+    delta("browLeft", 0, x < 0 ? 0.065 * brow : 0, 0);
+    delta("browRight", 0, x > 0 ? 0.065 * brow : 0, 0);
+    const e = eyeLandmark(x < 0 ? -1 : 1),
+      dx = x - e.x,
+      dy = y - e.y - e.tilt * dx,
+      eq = Math.hypot(dx / e.width, dy / e.height),
+      rim =
+        G((eq - 1) / 0.85) *
+        smooth(z, e.z + 0.08, e.z + 0.18) *
+        (1 - smooth(Math.abs(dx), 0.19, 0.29));
+    // Rotate lid tissue over its globe instead of letting its edge sink inward.
+    const lidShift = (amount) => {
+      const move = amount * rim * dy,
+        ny = y + move,
+        rx = x - e.x,
+        old = Math.sqrt(Math.max(0.001, 0.242 ** 2 - rx * rx - (y - e.y) ** 2)),
+        next = Math.sqrt(
+          Math.max(0.001, 0.242 ** 2 - rx * rx - (ny - e.y) ** 2),
+        );
+      return [0, move, (next - old) * rim];
+    };
+    delta("eyeOpen", ...lidShift(0.6));
+    delta("squint", ...lidShift(-0.28));
+    delta("blink", ...lidShift(-0.97));
+  }
+  const caps = [];
+  character.root.traverse((o) => {
+    if (o.isMesh && ["CurvedAcidGreenIris", "CurvedPupil"].includes(o.name)) {
+      const arr = o.geometry.attributes.position.array;
+      let sx = 0;
+      for (let i = 0; i < arr.length; i += 3) sx += arr[i];
+      const e = eyeLandmark(sx < 0 ? -1 : 1);
+      caps.push({
+        mesh: o,
+        rest: arr.slice(),
+        center: new THREE.Vector3(e.x, e.y, e.z),
+      });
+    }
+  });
+  let current = zero();
+  function set(input = {}) {
+    const q = constrain(input);
+    jaw.set(q.jawOpen);
+    const p = g.attributes.position.array,
+      active = Object.keys(fields).filter((k) => Math.abs(q[k]) > 0.000001);
+    if (active.length) {
+      for (const key of active) {
+        const f =
+            (key === "cornerLeft" || key === "cornerRight") && q[key] < 0
+              ? fields[key + "Down"]
+              : fields[key],
+          w =
+            key === "smileToFrown"
+              ? (0.58 * q[key] - 0.24 * q[key] * q[key]) / 0.34
+              : q[key];
+        for (let j = 0; j < p.length; j++) p[j] += f[j] * w;
+      }
+      g.computeVertexNormals();
+      g.attributes.position.needsUpdate = true;
+      g.computeBoundingSphere();
+    }
+    for (const cap of caps) {
+      const arr = cap.mesh.geometry.attributes.position.array;
+      if (q.gazeX === 0 && q.gazeY === 0) arr.set(cap.rest);
+      else {
+        const rot = new THREE.Euler(-q.gazeY * 0.16, q.gazeX * 0.2, 0),
+          v = new THREE.Vector3();
+        for (let j = 0; j < arr.length; j += 3) {
+          v.fromArray(cap.rest, j)
+            .sub(cap.center)
+            .applyEuler(rot)
+            .add(cap.center)
+            .toArray(arr, j);
+        }
+      }
+      cap.mesh.geometry.attributes.position.needsUpdate = true;
+    }
+    current = q;
+    return q;
+  }
+  set();
+  return {
+    set,
+    jaw,
+    fields,
+    rest: P,
+    restNormals: N,
+    get current() {
+      return { ...current };
+    },
+  };
+}

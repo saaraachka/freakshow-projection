@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>Candidate A · Six expressions and frown</title
+  ><style>
+    body {
+      background: #191d24;
+      color: #e6e0d5;
+      font: 16px system-ui;
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 15px;
+    }
+    a {
+      color: #c6dda5;
+    }
+    img {
+      width: 100%;
+      height: auto;
+    }
+  </style>
+  <h1>Candidate A · Six-expression review</h1>
+  <p>
+    <a href="./index.html?release=smile-frown-1">Open the interactive viewer</a> ·
+    <a href="../candidate-a-rig-v1/index.html">Preserved five-expression rig</a>
+  </p>
+  <p>
+    The approved original sinister grin remains the exact default and reset. No
+    visible skin replacement, remeshing, jaw-mechanism edit, dental transform
+    edit, or production integration.
+  </p>
+  <h2>Independent smile-to-frown motion</h2>
+  <p>
+    The main slider moves from the original grin through a reduced smile,
+    approximately level corners, a slight downturn, and a full stylized frown.
+    Upper and lower lip bodies and the inner cavity share a broad perioral
+    displacement rather than a vertical aperture scale. The corners have broader
+    independent depression support, and the lower influence fades into the chin
+    to limit jaw-outline distortion. Brow channels do not set the mouth mood.
+  </p>
+  <p>
+    Neutral now relaxes the mouth and covers more teeth; Angry lowers the
+    corners and raises the upper lip; Surprised reduces the smile while opening
+    the existing jaw channel. The sixth preset, Unhappy / creepy frown, lowers
+    the corners, relaxes the cheeks and slightly lifts the inner brows. Original
+    Manic laughter and the wide grin remain available. The prior three
+    experimental targets remain disabled.
+  </p>
+  <p>
+    This is a stylized tooth-bearing frown, not a completely sealed human
+    neutral. The jaw remains limited to 0–6°, and Surprised remains softly open
+    rather than a pursed O. Strong lip pursing and full blink remain excluded.
+  </p>
+  <h2>Matched endpoints</h2>
+  <img
+    src="review/endpoints.jpg?release=smile-frown-1"
+    alt="Six expressions, matched front, three-quarter and profile"
+  />
+  <h2>Representative midpoint transitions</h2>
+  <img
+    src="review/blends.jpg?release=smile-frown-1"
+    alt="Halfway grin to frown, Neutral to Angry and Angry to Surprised, front and three-quarter"
+  />
+  <h2>Same 3° jaw, changing only mouth mood</h2>
+  <p>
+    Left to right: full grin, reduced smile, relaxed mouth, slight frown, full
+    frown. Brows are unchanged in these samples.
+  </p>
+  <img
+    src="review/open-mouth-range.jpg?release=smile-frown-1"
+    alt="Five smile-to-frown samples with identical partially open jaw and brows"
+  />
+  <h2>Validation</h2>
+  <p>
+    142 consolidated geometry samples: all six endpoints; three interior samples
+    for every preset pair; rehearsal gesture samples; individual control bounds;
+    48 deterministic combined-control poses. No invalid coordinates or triangle
+    reversals relative to rest. Minimum signed area ratio 0.0847. Original
+    position/normal/index buffers and dental transforms restore exactly. This
+    sampling is not a proof of all-pose global collision freedom.
+  </p>
+  <p>
+    Actual endpoint, midpoint and fixed-jaw range renders were inspected. A
+    first broad influence pulled the jaw outline down excessively; the released
+    influence has a lower anchor and smaller maximum displacement. The visible
+    upper/lower lips retain separate contours, teeth remain behind the lips in
+    these inspected poses, and no new conspicuous tooth escape or disconnected
+    mouth feature was seen in the selected views.
+  </p>
+  <p>
+    Interruptible transitions, preset cycling, rapid gestures, percussion
+    rehearsal, reset pixels and mobile-width interaction passed without JS or
+    asset errors. Cloud software frame sample: 32 ms median / 53 ms p95; this is
+    not an iPhone hardware benchmark. All 27 normal unit tests, cache checks and
+    the protected 26-file Candidate A asset check passed.
+  </p>
+  <p>
+    <a href="review/geometry.json?release=smile-frown-1">Geometry receipt</a> ·
+    <a href="review/interaction.json?release=smile-frown-1">Browser receipt</a>
+  </p>
+</html>

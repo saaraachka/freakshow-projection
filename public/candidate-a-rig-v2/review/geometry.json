@@ -1,0 +1,9 @@
+{
+  "restExact": true,
+  "returned": true,
+  "topologyUnchanged": true,
+  "teethRestored": true,
+  "sampleCount": 142,
+  "minSignedAreaRatio": 0.08471304519345,
+  "failures": []
+}

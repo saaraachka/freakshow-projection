@@ -3,15 +3,15 @@
   <meta charset="utf-8" /><meta
     name="viewport"
     content="width=device-width,initial-scale=1"
-  /><title>Candidate A · Six expressions and frown</title
+  /><title>Candidate A · Lower-lip and chin review</title
   ><style>
     body {
       background: #191d24;
       color: #e6e0d5;
       font: 16px system-ui;
-      max-width: 1200px;
+      max-width: 1800px;
       margin: 24px auto;
-      padding: 15px;
+      padding: 18px;
     }
     a {
       color: #c6dda5;
@@ -20,84 +20,103 @@
       width: 100%;
       height: auto;
     }
+    p {
+      max-width: 1100px;
+    }
   </style>
-  <h1>Candidate A · Six-expression review</h1>
+  <h1>Candidate A · Lower-lip / chin correction</h1>
   <p>
-    <a href="./index.html?release=smile-frown-1">Open the interactive viewer</a> ·
-    <a href="../candidate-a-rig-v1/index.html">Preserved five-expression rig</a>
+    <a href="./index.html?release=lower-profile-1"
+      >Interactive corrected viewer</a
+    >
+    ·
+    <a href="../candidate-a-rig-v2/index.html"
+      >Unchanged prior six-expression viewer</a
+    >
   </p>
   <p>
-    The approved original sinister grin remains the exact default and reset. No
-    visible skin replacement, remeshing, jaw-mechanism edit, dental transform
-    edit, or production integration.
+    One focused expression-only correction. Original sinister grin unchanged; no
+    remeshing, skin replacement, jaw/cage edit, dental transform edit,
+    hair/skull edit, or production integration.
   </p>
-  <h2>Independent smile-to-frown motion</h2>
+  <h2>What changed</h2>
   <p>
-    The main slider moves from the original grin through a reduced smile,
-    approximately level corners, a slight downturn, and a full stylized frown.
-    Upper and lower lip bodies and the inner cavity share a broad perioral
-    displacement rather than a vertical aperture scale. The corners have broader
-    independent depression support, and the lower influence fades into the chin
-    to limit jaw-outline distortion. Brow channels do not set the mouth mood.
+    The rounded lower-lip body moves slightly backward in unsmiling/frowning
+    poses. The tissue beneath the lip receives broader support and the central
+    chin pad moves modestly forward. These offsets fade in with mouth mood and
+    vanish completely at the original grin. Chin width is unchanged.
   </p>
   <p>
-    Neutral now relaxes the mouth and covers more teeth; Angry lowers the
-    corners and raises the upper lip; Surprised reduces the smile while opening
-    the existing jaw channel. The sixth preset, Unhappy / creepy frown, lowers
-    the corners, relaxes the cheeks and slightly lifts the inner brows. Original
-    Manic laughter and the wide grin remain available. The prior three
-    experimental targets remain disabled.
+    The maximum frown drop is smaller, the corners move slightly inward as well
+    as down, and independent corner depression is gentler. Neutral and Frown use
+    a little more of the existing bounded lip-close channel. The dental arches
+    and jaw motion are unchanged.
   </p>
+  <h2>Matched before / after</h2>
   <p>
-    This is a stylized tooth-bearing frown, not a completely sealed human
-    neutral. The jaw remains limited to 0–6°, and Surprised remains softly open
-    rather than a pursed O. Strong lip pursing and full blink remain excluded.
-  </p>
-  <h2>Matched endpoints</h2>
-  <img
-    src="review/endpoints.jpg?release=smile-frown-1"
-    alt="Six expressions, matched front, three-quarter and profile"
-  />
-  <h2>Representative midpoint transitions</h2>
-  <img
-    src="review/blends.jpg?release=smile-frown-1"
-    alt="Halfway grin to frown, Neutral to Angry and Angry to Surprised, front and three-quarter"
-  />
-  <h2>Same 3° jaw, changing only mouth mood</h2>
-  <p>
-    Left to right: full grin, reduced smile, relaxed mouth, slight frown, full
-    frown. Brows are unchanged in these samples.
+    Rows: original grin, Neutral, Surprised, Frown. Each camera is a
+    before/after pair, left to right: front, three-quarter, profile. Same
+    lighting, clay material, camera and zoom.
   </p>
   <img
-    src="review/open-mouth-range.jpg?release=smile-frown-1"
-    alt="Five smile-to-frown samples with identical partially open jaw and brows"
+    src="review/endpoints.jpg?release=lower-profile-1"
+    alt="Four expressions before and after, front, three-quarter and profile"
   />
-  <h2>Validation</h2>
+  <h2>Lower-face profile detail</h2>
   <p>
-    142 consolidated geometry samples: all six endpoints; three interior samples
-    for every preset pair; rehearsal gesture samples; individual control bounds;
-    48 deterministic combined-control poses. No invalid coordinates or triangle
-    reversals relative to rest. Minimum signed area ratio 0.0847. Original
-    position/normal/index buffers and dental transforms restore exactly. This
-    sampling is not a proof of all-pose global collision freedom.
+    Before on the left, corrected on the right. The projection step is visibly
+    smaller while the lower lip retains a rounded crest.
+  </p>
+  <img
+    src="review/profile-detail.jpg?release=lower-profile-1"
+    alt="Neutral, Surprised and Frown profile details before and after"
+  />
+  <h2>Interpolation checks</h2>
+  <img
+    src="review/blends.jpg?release=lower-profile-1"
+    alt="Representative halfway blends from front and three-quarter"
+  />
+  <h2>Fixed jaw opening, changing mouth mood</h2>
+  <img
+    src="review/open-mouth-range.jpg?release=lower-profile-1"
+    alt="Five grin to frown samples with jaw fixed at three degrees"
+  />
+  <h2>Verification and limits</h2>
+  <p>
+    142 geometry samples had no nonfinite coordinates or triangle reversals
+    relative to rest; minimum signed area ratio 0.1984. Original geometry,
+    normals, indices and dental transforms restore exactly. The original grin
+    also pixel-matches the prior six-expression viewer at the matched front
+    camera.
   </p>
   <p>
-    Actual endpoint, midpoint and fixed-jaw range renders were inspected. A
-    first broad influence pulled the jaw outline down excessively; the released
-    influence has a lower anchor and smaller maximum displacement. The visible
-    upper/lower lips retain separate contours, teeth remain behind the lips in
-    these inspected poses, and no new conspicuous tooth escape or disconnected
-    mouth feature was seen in the selected views.
+    Central lip-to-chin depth-step proxy: Neutral 0.0847 → 0.0185; Frown 0.0821
+    → 0.0167; Surprised 0.1146 → 0.0486. Coordinates are model units, not a
+    substitute for visual review. Original grin 0.0804 → 0.0804, unchanged.
   </p>
   <p>
-    Interruptible transitions, preset cycling, rapid gestures, percussion
-    rehearsal, reset pixels and mobile-width interaction passed without JS or
-    asset errors. Cloud software frame sample: 32 ms median / 53 ms p95; this is
-    not an iPhone hardware benchmark. All 27 normal unit tests, cache checks and
-    the protected 26-file Candidate A asset check passed.
+    Actual core endpoints were inspected at front, three-quarter and profile,
+    with supporting checks of Angry/Manic and representative blends. Browser
+    interruption, cycling, rehearsal, rapid gestures, exact reset and
+    mobile-width controls passed without JS/asset errors. All 27 normal unit
+    tests, cache checks, and the protected 26-file original Candidate A
+    inventory passed.
   </p>
   <p>
-    <a href="review/geometry.json?release=smile-frown-1">Geometry receipt</a> ·
-    <a href="review/interaction.json?release=smile-frown-1">Browser receipt</a>
+    This remains a stylized tooth-bearing Neutral/Frown with a 0–6° jaw range,
+    not guaranteed fully sealed lips. Sampling does not certify global collision
+    freedom for every possible control combination. The prior six-expression
+    runtime is preserved byte-for-byte in a separate route.
+  </p>
+  <p>
+    <a href="review/profile-comparison.json?release=lower-profile-1"
+      >Profile comparison receipt</a
+    >
+    ·
+    <a href="review/geometry.json?release=lower-profile-1">Geometry receipt</a>
+    ·
+    <a href="review/interaction.json?release=lower-profile-1"
+      >Browser receipt</a
+    >
   </p>
 </html>

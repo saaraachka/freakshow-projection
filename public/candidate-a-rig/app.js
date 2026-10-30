@@ -9,7 +9,7 @@ import {
   gestures,
   constrain,
   zero,
-} from "./rig.js?release=smile-frown-1";
+} from "./rig.js?release=lower-profile-1";
 const $ = (id) => document.getElementById(id),
   renderer = new THREE.WebGLRenderer({
     canvas: $("prototype"),
@@ -224,7 +224,7 @@ try {
   scene.add(character.root);
   rig = bindRig(character);
   $("status").textContent =
-    "Candidate A · six expressions · smile-to-frown control · smooth transitions · percussion rehearsal";
+    "Candidate A · six expressions · expression-specific lip/chin support · smooth transitions · percussion rehearsal";
   pose(zero());
 } catch (e) {
   $("status").textContent = e.message;
