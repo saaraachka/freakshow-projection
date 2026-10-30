@@ -1,4 +1,4 @@
-const CACHE = "freakshow-live-head-6";
+const CACHE = "freakshow-live-iris-7";
 const ROOT = new URL("./", self.location.href);
 const ASSETS = [
   "./public/live-show/index.html",

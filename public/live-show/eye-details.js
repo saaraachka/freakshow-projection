@@ -52,11 +52,11 @@ export class EyeDetails {
   }
   update(pose, pulse) {
     this.dilation = pulse;
-    const iris = 0.071 * this.irisSize * (1 + 0.1 * pulse);
+    const iris = 0.071 * this.irisSize * (1 + 0.4 * pulse);
     this.uniforms.uIris.value = iris;
     this.uniforms.uPupil.value = Math.min(
-      iris * 0.76,
-      0.026 * this.pupilSize * (1 + 1.4 * pulse),
+      0.071 * this.irisSize * 0.76,
+      0.026 * this.pupilSize,
     );
     const rotation = new THREE.Matrix4().makeRotationFromEuler(
       new THREE.Euler(-(pose.gazeY || 0) * 0.16, (pose.gazeX || 0) * 0.2, 0),

@@ -7,14 +7,14 @@ import {
   presets,
   controls,
 } from "../candidate-a-rig/rig.js?release=inner-seal-1";
-import { Rehearsal } from "./performance.js?release=head-6";
-import { LiveInput } from "./input.js?release=head-6";
-import { MusicalPerformance } from "./musical-performance.js?release=head-6";
-import { AudioTimeline } from "./beat.js?release=head-6";
-import { EyePulse } from "./eye-pulse.js?release=head-6";
-import { EyeDetails } from "./eye-details.js?release=head-6";
-import { InkRenderer } from "./ink-renderer.js?release=head-6";
-import { RhythmPulse } from "./rhythm-pulse.js?release=head-6";
+import { Rehearsal } from "./performance.js?release=iris-7";
+import { LiveInput } from "./input.js?release=iris-7";
+import { MusicalPerformance } from "./musical-performance.js?release=iris-7";
+import { AudioTimeline } from "./beat.js?release=iris-7";
+import { EyePulse } from "./eye-pulse.js?release=iris-7";
+import { EyeDetails } from "./eye-details.js?release=iris-7";
+import { InkRenderer } from "./ink-renderer.js?release=iris-7";
+import { RhythmPulse } from "./rhythm-pulse.js?release=iris-7";
 const eyePulse = new EyePulse();
 const rhythm = new RhythmPulse(eyePulse);
 let rhythmActive = true;

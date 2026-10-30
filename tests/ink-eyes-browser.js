@@ -102,7 +102,7 @@ try {
   await p.locator("#stage").screenshot({ path: dir + "/eyes-small.png" });
   await p.click("#reveal");
   const small = await p.evaluate(
-    () => freakshowLive.eyeDetails.uniforms.uPupil.value,
+    () => ({ pupil: freakshowLive.eyeDetails.uniforms.uPupil.value, iris: freakshowLive.eyeDetails.uniforms.uIris.value }),
   );
   await freeze({ gazeX: 0.5, gazeY: 0.25 }, 1);
   await p.waitForTimeout(150);
@@ -113,7 +113,8 @@ try {
     iris: freakshowLive.eyeDetails.uniforms.uIris.value,
     pupil: freakshowLive.eyeDetails.uniforms.uPupil.value,
   }));
-  assert.ok(large.pupil > small * 2);
+  assert.equal(large.pupil, small.pupil);
+  assert.ok(large.iris > small.iris * 1.39);
   assert.ok(large.pupil < large.iris * 0.77);
 
   for (const [label, angle, gaze, pulse, blink] of [
