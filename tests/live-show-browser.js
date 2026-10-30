@@ -67,6 +67,8 @@ try {
     timeout: 180000,
   });
   console.log("3D ready");
+  await p.locator("summary").filter({hasText:"Sequence options"}).click();
+  await p.selectOption("#behavior","legacy");
   await p.click("#reset");
   const rest = await p.evaluate(() => {
     const a = freakshowLive,
@@ -242,7 +244,7 @@ try {
   }
   await p.click("#demo");
   await p.waitForTimeout(1200);
-  assert.ok(await p.evaluate(() => freakshowLive.demo));
+  assert.ok(await p.evaluate(() => freakshowLive.rehearsal.running));
   await p.click("#reset");
   // Real rejection path: no input device required for manual gestures/rendering.
   await p.evaluate(() =>

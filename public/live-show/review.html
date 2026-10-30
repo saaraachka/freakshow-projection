@@ -1,94 +1,106 @@
-<!doctype html><meta charset="utf-8" /><meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
-/><title>FREAKSHOW · Live Show release review</title
-><style>
-  body {
-    max-width: 1120px;
-    margin: 24px auto;
-    padding: 16px;
-    background: #111216;
-    color: #eee4d4;
-    font: 16px/1.5 system-ui;
-  }
-  a {
-    color: #edbd88;
-  }
-  img {
-    max-width: 100%;
-    display: block;
-    margin: 20px 0;
-  }
-  small {
-    color: #bcb4a8;
-  }
-</style>
-<h1>Candidate A · Live Show</h1>
-<p>
-  <a href="./index.html">Open the live show</a> ·
-  <a href="../../?mode=live">Open inside FREAKSHOW</a> ·
-  <a href="../candidate-a-rig/index.html?release=0924235"
-    >Unchanged approved rig viewer</a
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>FREAKSHOW · Beat-synchronized performance review</title>
+  <style>
+    body {
+      max-width: 1120px;
+      margin: 24px auto;
+      padding: 16px;
+      background: #111216;
+      color: #eee4d4;
+      font: 16px/1.5 system-ui;
+    }
+    a {
+      color: #edbd88;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+      margin: 20px 0;
+    }
+    small {
+      color: #bcb4a8;
+    }
+  </style>
+  <h1>Candidate A · BPM-synchronized Live Show</h1>
+  <p>
+    <a href="./index.html">Open Live Show</a> ·
+    <a href="./rollback-6998217/index.html"
+      >Previous hit-triggered show + file playback (6998217)</a
+    >
+    ·
+    <a href="../candidate-a-rig/index.html?release=0924235"
+      >Unchanged approved rig</a
+    >
+  </p>
+  <p>
+    The same six expressions and original Candidate A geometry are retained.
+    Emotions now follow phrases rather than individual hits. Defaults: 135 BPM,
+    eight beats per emotion, 1.5-beat transitions, medium accents, hats off and
+    idle on.
+  </p>
+  <p>
+    Original grin → Angry → creepy frown → Manic laughter. Optional
+    Neutral/Surprised and non-repeating random order are available under
+    Sequence options. Manual expression buttons hold the selected emotion;
+    percussion adds only small bounded accents. No audio or geometry
+    reconstruction was introduced.
+  </p>
+  <h2>Rehearsal and comparison</h2>
+  <p>
+    Use Beat-clock demo without microphone permission. Watch the 1–4 bar count
+    and 1–8 phrase count. Choose previous hit-triggered behavior under Sequence
+    options / compare to see the difference. Microphone and local MP3/WAV
+    playback use the same accent and clock system.
+  </p>
+  <img
+    src="./review/beat-rehearsal.png"
+    alt="Rehearsal with BPM, beat counter and phrase emotion visible"
+  />
+  <h2>Matched emotion + small snare accent</h2>
+  <img
+    src="./review/beat-poses.jpg"
+    alt="Six existing emotions with the same subtle snare accent; original grin, Neutral, Angry, Surprised, Manic and Frown"
+  />
+  <h2>Synchronization</h2>
+  <p>
+    Manual BPM, Tap BPM, beat-1 Resync, ×2/÷2 and ±20 ms phase nudges are
+    provided. Auto Sync estimates periodic percussion with confidence/stability
+    gating, bounded tempo changes and a continuous phase-rate correction. It
+    never resyncs the phrase counter on an onset. Low-confidence input retains
+    the last clock; ambiguous tracks may need tap/manual timing.
+  </p>
+  <h2>Verification</h2>
+  <ul>
+    <li>
+      48 unit tests including 120/130/135/140 BPM, tap tempo, drift, phrase
+      boundaries, stable Auto Sync and confidence loss, rapid accents and legacy
+      comparison.
+    </li>
+    <li>
+      Chromium and WebKit: phrase rehearsal, manual tempo, legacy comparison,
+      six preset-plus-accent renders, sampled geometry, synthetic audio
+      pipeline, disconnect/reconnect, exact rest reset and fullscreen.
+    </li>
+    <li>
+      Local WAV/MP3 file-picker, playback, pause, seeking and microphone-free
+      detection regression checks.
+    </li>
+    <li>
+      Approved sculpt inventory and cache checks; offline Live Show/worklet.
+    </li>
+  </ul>
+  <p>
+    <a href="./review/beat-chromium.json">Chromium evidence</a> ·
+    <a href="./review/beat-webkit.json">WebKit evidence</a>
+  </p>
+  <small
+    >Cloud browser tests use synthetic audio, not a physical audio interface.
+    Sampled triangle checks do not establish global collision-free geometry.
+    Existing preset anatomy is unchanged. Beat tracking and instrument
+    classification from mixed microphone audio remain approximate.</small
   >
-</p>
-<p>
-  The original 0924235 sculpt and six-expression rig are reused without geometry
-  changes. Each musical attack selects one existing expression with a smooth attack, hold and release to the original grin. New events redirect the current pose without resetting or stacking presets. Audio sample analysis runs in the audio worklet, independently of
-  rendering. The failed local mouth prototypes are excluded.
-</p>
-<img
-  src="./review/grin.jpg"
-  alt="Approved Candidate A sinister grin on the black projection stage"
-/>
-<h2>Expression mappings and rehearsal</h2>
-<p>Kick → Angry · Snare → Surprised · Clap → Unhappy / creepy frown · Melody → Manic laughter · Hi-hat → Eye twitch. Every event can be reassigned to any of the six existing presets, including Neutral. Open “Edit sound → expression mappings” for intensity, cooldown and test buttons. “Gesture timing” exposes attack, hold and release.</p>
-<p>Rehearsal runs without microphone access: 4/4 kick/snare with optional claps and hats, melodic accents, or rapid percussion. The most recent detection and assigned expression are shown separately from the input meter.</p>
-<p><a href="./rollback-09b1889/index.html">Previous Live Show 09b1889 rollback</a></p>
-<h2>Matched gesture and preset peaks</h2>
-<p>
-  Kick, snare, clap, subtle hat, melody, then the six existing presets. These
-  are rendered 3D screenshots using identical camera and lighting; the live
-  character remains an actual 3D mesh.
-</p>
-<img
-  src="./review/poses.jpg"
-  alt="Matched views of the five musical gestures and six approved facial presets"
-/>
-<h2>Consolidated verification</h2>
-<ul>
-  <li>
-    38 unit tests; protected source inventory and sculpt/expression cache
-    checks.
-  </li>
-  <li>
-    Chromium: captured synthetic WAV through real getUserMedia → audio worklet →
-    FFT/onsets → bounded facial gestures. All four major event families
-    detected; hats use a subtle eye twitch by default.
-  </li>
-  <li>
-    WebKit: synthetic MediaStream through the same audio pipeline; manual
-    controls, permission rejection, fullscreen, projector synchronization and
-    exact reset.
-  </li>
-  <li>
-    Six presets, interruptible transitions, rapid expression redirections,
-    automatic demo and manual fallback. Tested peaks and rapid overlap contain
-    no nonfinite vertices or reversed source-relative triangles.
-  </li>
-  <li>
-    GitHub Pages base-path build; offline reload renders 82,720-vertex Candidate
-    A and starts the cached audio worklet. Leaving Live Show stops capture.
-  </li>
-</ul>
-<p>
-  <a href="./review/chromium.json">Chromium observations</a> ·
-  <a href="./review/webkit.json">WebKit observations</a> ·
-  <a href="./review/offline.json">Offline observations</a>
-</p>
-<small
-  >These are cloud browser-engine tests, not physical Windows/macOS
-  audio-interface tests. Instrument labels are onset estimates, not audio source
-  separation. Existing Neutral/Frown/Surprised limitations are unchanged from
-  the approved baseline. Tests establish bounded behavior, not perfect
-  recognition of every song.</small
->
+</html>

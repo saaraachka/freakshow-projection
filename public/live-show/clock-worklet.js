@@ -2,7 +2,7 @@ import { magnitudes, FFT_SIZE } from "../../src/analysis.js";
 import {
   spectralFeatures,
   OnsetDetector,
-} from "./onsets.js?release=audio-file-3";
+} from "./onsets.js?release=beat-4";
 // Detect on the audio thread, not on rendering ticks. Every analysis window is
 // sampled even if WebGL is busy. The output remains silent; no mic monitoring.
 class ShowClock extends AudioWorkletProcessor {

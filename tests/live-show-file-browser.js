@@ -96,8 +96,8 @@ try {
   assert.equal(await p.locator("audio").count(), 0);
   await p.click('[data-gesture="snare"]');
   assert.equal(
-    await p.evaluate(() => freakshowLive.controller.events.at(-1).expression),
-    "Surprised",
+    await p.evaluate(() => freakshowLive.controller.events.at(-1).kind),
+    "snare",
   );
   assert.deepEqual(errors, []);
   await writeFile(

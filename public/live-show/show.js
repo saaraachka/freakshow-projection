@@ -5,14 +5,15 @@ import {
   zero,
   constrain,
   presets,
+  controls,
 } from "../candidate-a-rig/rig.js?release=inner-seal-1";
-import {
-  FacialPerformance,
-  Rehearsal,
-} from "./performance.js?release=audio-file-3";
-import { LiveInput } from "./input.js?release=audio-file-3";
+import { Rehearsal } from "./performance.js?release=beat-4";
+import { LiveInput } from "./input.js?release=beat-4";
+import { MusicalPerformance } from "./musical-performance.js?release=beat-4";
+import { AudioTimeline } from "./beat.js?release=beat-4";
+const timeline = new AudioTimeline();
 const $ = (id) => document.getElementById(id),
-  clock = () => performance.now() / 1000;
+  clock = () => timeline.now(input?.context, performance.now() / 1000);
 const params = new URL(location.href).searchParams,
   projectorId = params.get("projector"),
   id =
@@ -21,7 +22,10 @@ const channel =
   typeof BroadcastChannel !== "undefined"
     ? new BroadcastChannel("freakshow-live-" + id)
     : null;
-const controller = new FacialPerformance({ zero, constrain, presets });
+const controller = new MusicalPerformance(
+  { zero, constrain, presets, controls },
+  performance.now() / 1000,
+);
 const rehearsal = new Rehearsal();
 let fence = null,
   dirty = true;
@@ -45,6 +49,15 @@ let rig,
   disposed = false;
 const input = new LiveInput({
   state: (state, message) => {
+    if (state === "pending") {
+      controller.tracker.clear();
+      controller.beatClock.setPhaseRate(0, clock());
+    }
+    if (state === "off" || state === "error") {
+      controller.tracker.events = [];
+      controller.tracker.confidence = 0;
+      controller.beatClock.setPhaseRate(0, clock());
+    }
     $("status").textContent = message;
     if (state === "off" || state === "error") $("level").value = 0;
     $("status").dataset.state = state;
@@ -54,7 +67,17 @@ const input = new LiveInput({
     );
     $("resume").hidden = state !== "suspended";
   },
-  frame: ({ level, events, time }) => {
+  frame: ({ level, events, time: wall }) => {
+    const time = clock();
+    events = events.map((e) => ({
+      ...e,
+      wallTime: time - (wall - (e.wallTime ?? wall)),
+    }));
+    controller.listen(
+      events.map((e) => ({ ...e, time: e.wallTime })),
+      time,
+      level,
+    );
     $("level").value = Math.min(1, level * 3);
     for (const e of events) {
       const ignored = e.kind === "hat" && !$("hats").checked;
@@ -80,7 +103,7 @@ const input = new LiveInput({
     }
     const e = recent.at(-1);
     $("heard").textContent = e
-      ? `${e.kind === "melody" ? "Tonal note" : e.kind[0].toUpperCase() + e.kind.slice(1)} ${e.ignored ? "· ignored" : $("reactive").checked ? "→ ${controller.mappings[e.kind].expression}" : "· reactions paused"}`
+      ? `${e.kind} ${e.ignored ? "· ignored" : $("reactive").checked ? "→ " + controller.eventLabel(e.kind) : "· accents paused"}`
       : "Listening · no significant onset";
   },
 });
@@ -107,9 +130,11 @@ $("audioFile").onchange = async () => {
   const generation = fileGeneration;
   rehearsal.stop();
   demonstrating = false;
-  $("demo").textContent = "Automatic demo";
+  $("demo").textContent = "Beat-clock demo";
   $("rehearsal").textContent = "Start rehearsal";
-  controller.preset({}, clock(), 0.12);
+  controller.clearAccents();
+  if (controller.mode === "beat") controller.start(clock(), true);
+  $("automatic").checked = controller.automatic;
   $("reactive").checked = true;
   fileURL = URL.createObjectURL(file);
   filePlayer = document.createElement("audio");
@@ -124,14 +149,15 @@ $("audioFile").onchange = async () => {
       "Cannot play this file. Try an MP3 or WAV supported by your browser.";
   };
   player.onseeking = () => {
-    controller.preset({}, clock(), 0.1);
+    controller.clearAccents();
+    if (controller.mode === "beat") controller.start(clock(), true);
     input.detector.reset();
     input.clockNode?.port.postMessage({ reset: true });
   };
-  player.onpause = () => controller.preset({}, clock(), 0.18);
+  player.onpause = () => controller.clearAccents();
   player.onended = () => {
     $("fileStatus").textContent = file.name + " · finished";
-    controller.preset({}, clock(), 0.18);
+    controller.clearAccents();
   };
   await input.start("", player);
   if (generation !== fileGeneration) return;
@@ -144,10 +170,8 @@ $("audioFile").onchange = async () => {
 };
 function triggerEvent(kind, t, strength, manual) {
   if (controller.trigger(kind, t, strength, { manual })) {
-    $("heard").textContent =
-      `${kind} → ${controller.mappings[kind].expression}`;
-    $("lastGesture").textContent =
-      `${kind} → ${controller.mappings[kind].expression}`;
+    $("heard").textContent = `${kind} → ${controller.eventLabel(kind)}`;
+    $("lastGesture").textContent = `${kind} → ${controller.eventLabel(kind)}`;
   }
 }
 for (const [kind, m] of Object.entries(controller.mappings)) {
@@ -207,24 +231,105 @@ for (const key of ["attack", "hold", "release"]) {
   };
 }
 $("rehearsal").onclick = () => {
+  if (!rehearsal.running && controller.mode === "beat") {
+    controller.start(clock(), true);
+    $("automatic").checked = true;
+  }
   if (rehearsal.running) {
     rehearsal.stop();
     controller.preset({}, clock(), 0.18);
   } else {
     demonstrating = false;
-    $("demo").textContent = "Automatic demo";
+    $("demo").textContent = "Beat-clock demo";
     $("reactive").checked = false;
-    rehearsal.start($("pattern").value, clock(), Number($("tempo").value));
+    rehearsal.start($("pattern").value, clock(), controller.beatClock.bpm);
   }
   $("rehearsal").textContent = rehearsal.running
     ? "Stop rehearsal"
     : "Start rehearsal";
 };
-for (const key of ["pattern", "tempo"])
+for (const key of ["pattern"])
   $(key).onchange = () => {
     if (rehearsal.running)
-      rehearsal.start($("pattern").value, clock(), Number($("tempo").value));
+      rehearsal.start($("pattern").value, clock(), controller.beatClock.bpm);
   };
+function manualTempo(value) {
+  controller.autoSync = false;
+  $("autoSync").checked = false;
+  controller.tracker.clear();
+  controller.beatClock.setPhaseRate(0, clock());
+  controller.beatClock.setBpm(value, clock());
+  $("bpm").value = controller.beatClock.bpm.toFixed(1);
+  if (rehearsal.running)
+    rehearsal.start($("pattern").value, clock(), controller.beatClock.bpm);
+}
+$("bpm").onchange = () => manualTempo($("bpm").value);
+$("tap").onclick = () => {
+  controller.autoSync = false;
+  $("autoSync").checked = false;
+  controller.beatClock.setPhaseRate(0, clock());
+  const bpm = controller.beatClock.tap(clock());
+  if (bpm) {
+    $("bpm").value = bpm.toFixed(1);
+    if (rehearsal.running) rehearsal.start($("pattern").value, clock(), bpm);
+  }
+};
+$("doubleBpm").onclick = () => manualTempo(controller.beatClock.bpm * 2);
+$("halfBpm").onclick = () => manualTempo(controller.beatClock.bpm / 2);
+$("resync").onclick = () => {
+  if (controller.automatic) controller.start(clock(), true);
+  else controller.beatClock.resync(clock());
+  if (rehearsal.running)
+    rehearsal.start($("pattern").value, clock(), controller.beatClock.bpm);
+};
+$("nudgeBack").onclick = () => controller.beatClock.nudge(-0.02, clock());
+$("nudgeForward").onclick = () => controller.beatClock.nudge(0.02, clock());
+$("autoSync").onchange = () => {
+  controller.autoSync = $("autoSync").checked;
+  controller.tracker.clear();
+  if (!controller.autoSync) controller.beatClock.setPhaseRate(0, clock());
+};
+$("phraseBeats").onchange = () => {
+  controller.phraseBeats = Number($("phraseBeats").value);
+  controller.lastPhrase = Math.floor(
+    controller.beatClock.at(clock()) / controller.phraseBeats,
+  );
+};
+$("transitionBeats").oninput = () => {
+  controller.transitionBeats = Number($("transitionBeats").value);
+  $("transitionValue").textContent = controller.transitionBeats + " beats";
+};
+$("accentIntensity").oninput = () => {
+  controller.accentIntensity = Number($("accentIntensity").value);
+  $("accentValue").textContent =
+    Math.round(controller.accentIntensity * 100) + "%";
+};
+$("automatic").onchange = () => {
+  if ($("automatic").checked) controller.start(clock(), true);
+  else {
+    const name = controller.currentExpression,
+      pose = controller.baseAt(clock());
+    for (const k of Object.keys(pose))
+      if (k !== "gazeX" && k !== "gazeY")
+        pose[k] *= 0.9 + 0.1 * controller.energy;
+    controller.automatic = false;
+    controller.base = pose;
+    controller.phraseTransition = null;
+    controller.transition = null;
+    controller.currentExpression = name;
+  }
+};
+for (const [id, key] of [
+  ["includeNeutral", "optionalNeutral"],
+  ["includeSurprised", "optionalSurprised"],
+  ["randomOrder", "random"],
+])
+  $(id).onchange = () => (controller[key] = $(id).checked);
+$("behavior").onchange = () => {
+  controller.setMode($("behavior").value, clock());
+  $("automatic").checked = controller.automatic;
+  $("previousSettings").hidden = controller.mode !== "legacy";
+};
 function setClean(value) {
   document.body.classList.toggle("clean", value);
   $("controls").hidden = value;
@@ -238,9 +343,10 @@ function reset() {
   $("rehearsal").textContent = "Start rehearsal";
   demonstrating = false;
   controller.reset();
+  $("automatic").checked = false;
   $("reactive").checked = false;
   $("idle").checked = false;
-  $("demo").textContent = "Automatic demo";
+  $("demo").textContent = "Beat-clock demo";
   document
     .querySelectorAll("[data-preset]")
     .forEach((b) =>
@@ -291,13 +397,12 @@ $("sensitivity").oninput = () => {
   $("sensitivityValue").textContent = input.sensitivity.toFixed(2) + "×";
 };
 $("reactive").onchange = () => {
-  controller.preset({}, clock(), 0.3);
+  controller.clearAccents();
   if ($("reactive").checked) {
     rehearsal.stop();
     $("rehearsal").textContent = "Start rehearsal";
     demonstrating = false;
-    $("demo").textContent = "Automatic demo";
-    controller.preset({}, clock(), 0.35);
+    $("demo").textContent = "Beat-clock demo";
   }
 };
 async function refreshDevices() {
@@ -322,7 +427,7 @@ function gesture(kind) {
   rehearsal.stop();
   $("rehearsal").textContent = "Start rehearsal";
   demonstrating = false;
-  $("demo").textContent = "Automatic demo";
+  $("demo").textContent = "Beat-clock demo";
   triggerEvent(kind, clock(), 1, true);
 }
 document
@@ -338,9 +443,13 @@ for (const [name, pose] of Object.entries(presets)) {
     rehearsal.stop();
     $("rehearsal").textContent = "Start rehearsal";
     demonstrating = false;
-    $("demo").textContent = "Automatic demo";
-    $("reactive").checked = false;
-    controller.preset(pose, clock(), 0.85);
+    $("demo").textContent = "Beat-clock demo";
+    controller.preset(
+      pose,
+      clock(),
+      (60 / controller.beatClock.bpm) * controller.transitionBeats,
+    );
+    $("automatic").checked = false;
     document
       .querySelectorAll("[data-preset]")
       .forEach((x) => x.classList.toggle("selected", x === b));
@@ -349,15 +458,13 @@ for (const [name, pose] of Object.entries(presets)) {
 }
 $("reset").onclick = reset;
 $("demo").onclick = () => {
-  rehearsal.stop();
-  $("rehearsal").textContent = "Start rehearsal";
-  demonstrating = !demonstrating;
-  $("demo").textContent = demonstrating ? "Stop demo" : "Automatic demo";
-  $("reactive").checked = false;
-  if (demonstrating) {
-    demoNext = 0;
-    demoIndex = 0;
-  } else controller.preset({}, clock(), 0.7);
+  if (rehearsal.running) {
+    rehearsal.stop();
+    $("rehearsal").textContent = "Start rehearsal";
+  } else {
+    $("pattern").value = "beat";
+    $("rehearsal").click();
+  }
 };
 $("projector").onclick = () => {
   if (!channel) {
@@ -459,7 +566,7 @@ function render() {
 }
 function motion(t, head, idle) {
   return {
-    y: idle ? 0.02 * Math.sin(t * 0.3) : 0,
+    y: idle ? (0.012 + 0.008 * controller.energy) * Math.sin(t * 0.3) : 0,
     x: idle ? 0.013 * Math.sin(t * 0.34) - head.recoil : -head.recoil,
     ry: (idle ? 0.035 * Math.sin(t * 0.22) : 0) + head.turn,
     rz: (idle ? 0.012 * Math.sin(t * 0.18) : 0) + head.tilt,
@@ -476,15 +583,22 @@ function advanceDemo(t) {
   for (const e of rehearsal.advance(t, {
     claps: $("rehearsalClaps").checked,
     hats: $("rehearsalHats").checked,
-  }))
+  })) {
+    controller.listen([], t, 0.1);
     triggerEvent(e.kind, t, e.strength, true);
-  if (demonstrating && t >= demoNext) {
-    const names = Object.keys(presets),
-      name = names[demoIndex % names.length],
-      duration = [0.9, 1.1, 0.8, 1.25, 0.9, 1.2][demoIndex % 6];
-    controller.preset(presets[name], t, duration);
-    demoNext = t + duration + [1, 1.2, 0.8, 1.1, 0.9, 1.3][demoIndex++ % 6];
   }
+  if (!input.context && !rehearsal.running) controller.listen([], t, 0);
+  controller.update(t);
+  const beat = controller.beatClock.read(t, controller.phraseBeats);
+  $("bpmReadout").textContent = beat.bpm.toFixed(1) + " BPM";
+  if (document.activeElement !== $("bpm")) $("bpm").value = beat.bpm.toFixed(1);
+  $("beatCounter").textContent =
+    `Beat ${beat.barBeat}/4 · Phrase ${beat.phraseBeat}/${controller.phraseBeats}`;
+  $("emotion").textContent = controller.currentExpression;
+  const tracker = controller.tracker;
+  $("syncConfidence").textContent = controller.autoSync
+    ? `${Math.round(tracker.confidence * 100)}% · ${tracker.confidence >= 0.62 && tracker.locked ? "tracking" : tracker.locked ? "low confidence · holding last tempo" : "listening · manual clock continues"}`
+    : "Manual clock";
 }
 function frame() {
   if (disposed) return;
@@ -557,6 +671,7 @@ try {
   character = await createProceduralHead();
   scene.add(character.root);
   rig = bindRig(character);
+  controller.start(clock());
   $("load").textContent = "Candidate A ready · approved sculpt and rig 0924235";
   render();
   window.freakshowLive = {

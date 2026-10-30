@@ -161,7 +161,7 @@ Use current desktop Chrome or Safari on HTTPS/localhost. If an embedded browser 
 Development: `npm run dev`. Production: `PAGES_BASE=/freakshow-projection/ npm run build`. After an online visit, the service worker precaches the show and its approved sculpt dependencies; microphone permissions still belong to the browser. `npm run test:live` runs the consolidated browser check against the dev server on port 5194 by default (`SHOW_BASE` overrides it). `SHOW_WEBKIT=1` uses the environment's WebKit wrapper. The captured PCM fixture is generated synthetic percussion/tones, not a calibration song; WebKit validation uses a synthetic MediaStream and explicit permission rejection, not a physical microphone.
 
 
-### Expression-triggered Live Show
+### Previous hit-triggered Live Show (comparison mode)
 
 Open `public/live-show/index.html` (or `?mode=live` in FREAKSHOW). The protected Candidate A rig and all six presets remain unchanged. Default mappings: kick → Angry, snare → Surprised, clap → Unhappy, melody → Manic laughter, hats → a subtle eye twitch. No event returns to the original sinister grin.
 
@@ -172,3 +172,14 @@ Use **Edit sound → expression mappings** to assign any preset (including Neutr
 Previous show runtime: `public/live-show/rollback-09b1889/index.html`; original source checkpoint: `checkpoint/candidate-a-live-show-1` (`09b1889`). Approved rig and visual checkpoint remain untouched. Browser verification: `npm run test:live` with `SHOW_BASE` set to the running build; synthetic captured PCM is used in cloud tests, not a physical audio interface.
 
 Live Show also accepts local MP3/WAV and other browser-supported audio files. Choose **Play a local audio file**; the native player provides play/pause, seeking and volume. The file stays local and drives the same expression mappings. Disable input before switching back to microphone. File selection/playback tests: `node tests/live-show-file-browser.js`.
+
+
+### BPM-synchronized Live Show (current)
+
+The default performance holds an emotion for **8 beats**, with **1.5-beat transitions** and small independent kick/snare/clap/melody accents. Default tempo is **135 BPM**, idle is on, hats are off, and accent intensity is 60%. Sequence: original grin → Angry → creepy frown → Manic laughter. Optional Neutral/Surprised and non-repeating random order are under **Sequence options / compare**.
+
+Set BPM manually, tap **Tap BPM**, or enable **Auto Sync** for approximate percussion-based tempo/phase tracking from the microphone or a local track. The readout shows confidence; poor confidence retains the current tempo. Auto Sync never resets beat 1. Use **Resync** for that, and ±20 ms to nudge phase. ×2/÷2 resolves tempo ambiguity and switches back to manual timing. Audio-context time drives elapsed time while running, with a monotonic fallback across disconnects/suspension.
+
+**Beat-clock demo** / **Start rehearsal** needs no audio or microphone permission. Phrase duration can be 2/4/8/16 beats. Manual expression buttons stop the automatic sequence but keep accents available. Reset disables the sequence, reactions and idle for the exact original grin. Previous hit-triggered behavior remains selectable; its editable mappings are hidden until that mode is selected. The previous file-enabled viewer is preserved at `public/live-show/rollback-6998217/index.html` and tag `checkpoint/live-show-audio-file-1`.
+
+Validation: `npm test`; `node tests/beat-performance-browser.js` (set `SHOW_WEBKIT=1` for WebKit). Live audio classification and tempo tracking are estimates, not source separation or a guaranteed beat grid for every track.

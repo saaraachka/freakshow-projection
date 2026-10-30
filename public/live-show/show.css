@@ -250,3 +250,41 @@ input[type="file"] {
   font-size: 12px;
   overflow-wrap: anywhere;
 }
+
+input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #615b54;
+  border-radius: 7px;
+  background: #23242a;
+  color: inherit;
+  font: inherit;
+}
+#bpmReadout {
+  font-size: 23px;
+  font-weight: 700;
+  margin: 8px 0;
+}
+#beatCounter {
+  color: #edbd88;
+}
+#syncConfidence {
+  font-size: 12px;
+  color: #bcb4a8;
+}
+
+.beatHud {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #151519;
+  padding: 6px 0;
+  border-bottom: 1px solid #615b54;
+}
+.beatHud p {
+  margin: 4px 0;
+}
+.beatHud #emotion {
+  font-size: 13px;
+  color: #d7ae7c;
+}
