@@ -238,3 +238,15 @@ summary {
   cursor: pointer;
   color: #ddbc92;
 }
+
+audio {
+  width: 100%;
+  margin: 10px 0;
+}
+input[type="file"] {
+  width: 100%;
+}
+#fileStatus {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}

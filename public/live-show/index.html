@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#000" />
     <title>FREAKSHOW · Live Show</title>
-    <link rel="stylesheet" href="./show.css?release=expression-events-2" />
+    <link rel="stylesheet" href="./show.css?release=audio-file-3" />
     <script type="importmap">
       { "imports": { "three": "../character-3d/vendor/three.module.js" } }
     </script>
@@ -29,6 +29,18 @@
       <p id="load" role="status">Loading approved Candidate A…</p>
       <section>
         <h2>Audio input</h2>
+        <label for="audioFile">Play a local audio file</label>
+        <input
+          id="audioFile"
+          type="file"
+          accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac"
+        />
+        <p id="fileStatus" role="status">MP3 / WAV · stays on your device</p>
+        <div id="filePlayback"></div>
+        <p class="hint">
+          The track plays through your speakers and drives the same expression
+          mappings. Pause or seek using the player.
+        </p>
         <label for="device">Microphone / audio interface</label
         ><select id="device">
           <option value="">System default</option>
@@ -70,9 +82,9 @@
           value="1"
         />
         <p class="hint">
-          Audio stays on this device. Input is never played through your
-          speakers. Kick/snare/clap separation from mixed audio is approximate.
-          Adjust sensitivity or use manual triggers.
+          Audio stays on this device. Microphone input is never played through
+          your speakers. Kick/snare/clap separation from mixed audio is
+          approximate. Adjust sensitivity or use manual triggers.
         </p>
       </section>
       <section>
@@ -163,6 +175,6 @@
         · <a href="../../?mode=song" target="_top">Song Lab</a>
       </footer>
     </aside>
-    <script type="module" src="./show.js?release=expression-events-2"></script>
+    <script type="module" src="./show.js?release=audio-file-3"></script>
   </body>
 </html>

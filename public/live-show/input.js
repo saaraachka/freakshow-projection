@@ -1,4 +1,7 @@
-import { spectralFeatures, OnsetDetector } from "./onsets.js?release=expression-events-2";
+import {
+  spectralFeatures,
+  OnsetDetector,
+} from "./onsets.js?release=audio-file-3";
 export class LiveInput {
   constructor({ state, frame }) {
     this.onState = state;
@@ -26,6 +29,8 @@ export class LiveInput {
   }
   async stop(notify = true) {
     ++this.generation;
+    this.media?.pause();
+    this.media = null;
     clearInterval(this.timer);
     this.clockNode?.disconnect();
     this.clockNode = null;
@@ -41,35 +46,42 @@ export class LiveInput {
     if (ctx && ctx.state !== "closed") await ctx.close().catch(() => {});
     if (notify) this.onState("off", "Input off · manual gestures ready");
   }
-  async start(deviceId = "") {
+  async start(deviceId = "", media = null) {
     await this.stop(false);
     const generation = this.generation;
     let context, stream;
     try {
       const Audio = window.AudioContext || window.webkitAudioContext;
-      if (!Audio || !navigator.mediaDevices?.getUserMedia)
+      if (!Audio || (!media && !navigator.mediaDevices?.getUserMedia))
         throw Error(
           "Microphone needs HTTPS and a browser with Web Audio. Manual gestures remain available.",
         );
-      this.onState("pending", "Waiting for microphone permission…");
+      this.onState(
+        "pending",
+        media ? "Preparing local track…" : "Waiting for microphone permission…",
+      );
       context = new Audio({ latencyHint: "interactive" });
       const resumed = context.resume();
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: false,
-        audio: {
-          deviceId: deviceId ? { exact: deviceId } : undefined,
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false,
-        },
-      });
+      stream = media
+        ? null
+        : await navigator.mediaDevices.getUserMedia({
+            video: false,
+            audio: {
+              deviceId: deviceId ? { exact: deviceId } : undefined,
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false,
+            },
+          });
       await resumed;
       if (generation !== this.generation) {
-        stream.getTracks().forEach((t) => t.stop());
+        stream?.getTracks().forEach((t) => t.stop());
         await context.close();
         return;
       }
-      const source = context.createMediaStreamSource(stream),
+      const source = media
+          ? context.createMediaElementSource(media)
+          : context.createMediaStreamSource(stream),
         analyser = context.createAnalyser(),
         mute = context.createGain();
       analyser.fftSize = 2048;
@@ -77,6 +89,8 @@ export class LiveInput {
       mute.gain.value = 0;
       source.connect(analyser);
       analyser.connect(mute).connect(context.destination);
+      if (media) source.connect(context.destination);
+      this.media = media;
       this.context = context;
       this.stream = stream;
       this.source = source;
@@ -88,17 +102,22 @@ export class LiveInput {
       this.pcm = new Float32Array(analyser.fftSize);
       this.detector.reset();
       this.maxLevel = 0;
-      const label = stream.getAudioTracks()[0]?.label || "Audio input";
+      const label = media
+        ? "Local track"
+        : stream.getAudioTracks()[0]?.label || "Audio input";
       context.onstatechange = () => {
         if (this.context === context)
           this.onState(
             context.state === "running" ? "live" : "suspended",
             context.state === "running"
-              ? label + " · live, output muted"
+              ? label +
+                  (media
+                    ? " · playing through speakers"
+                    : " · live, output muted")
               : "Input paused by browser · press Resume input",
           );
       };
-      for (const track of stream.getTracks())
+      for (const track of stream?.getTracks() || [])
         track.onended = () => {
           if (this.stream === stream) {
             this.stop(false);
@@ -115,7 +134,7 @@ export class LiveInput {
       try {
         if (!context.audioWorklet) throw Error("No audio worklet");
         await context.audioWorklet.addModule(
-          new URL("./clock-worklet.js?release=expression-events-2", import.meta.url),
+          new URL("./clock-worklet.js?release=audio-file-3", import.meta.url),
         );
         if (this.context !== context) return;
         const node = new AudioWorkletNode(context, "freakshow-clock");
@@ -154,6 +173,7 @@ export class LiveInput {
         await context.close().catch(() => {});
       if (generation !== this.generation) return;
       this.context = null;
+      this.media = null;
       this.stream = null;
       const message =
         e.name === "NotAllowedError"

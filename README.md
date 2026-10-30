@@ -170,3 +170,5 @@ Use **Edit sound → expression mappings** to assign any preset (including Neutr
 **Rehearsal** needs no microphone: 4/4 backbeat, optional hats/claps, melodic accents, or rapid percussion. **Enable input** starts selected microphone/interface capture; sensitivity adjusts adaptive onset detection. Input is not monitored through speakers. Fullscreen and H hide controls. Reset stops rehearsal/reactivity/idle and restores the exact grin.
 
 Previous show runtime: `public/live-show/rollback-09b1889/index.html`; original source checkpoint: `checkpoint/candidate-a-live-show-1` (`09b1889`). Approved rig and visual checkpoint remain untouched. Browser verification: `npm run test:live` with `SHOW_BASE` set to the running build; synthetic captured PCM is used in cloud tests, not a physical audio interface.
+
+Live Show also accepts local MP3/WAV and other browser-supported audio files. Choose **Play a local audio file**; the native player provides play/pause, seeking and volume. The file stays local and drives the same expression mappings. Disable input before switching back to microphone. File selection/playback tests: `node tests/live-show-file-browser.js`.

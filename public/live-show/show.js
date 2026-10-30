@@ -9,8 +9,8 @@ import {
 import {
   FacialPerformance,
   Rehearsal,
-} from "./performance.js?release=expression-events-2";
-import { LiveInput } from "./input.js?release=expression-events-2";
+} from "./performance.js?release=audio-file-3";
+import { LiveInput } from "./input.js?release=audio-file-3";
 const $ = (id) => document.getElementById(id),
   clock = () => performance.now() / 1000;
 const params = new URL(location.href).searchParams,
@@ -84,6 +84,64 @@ const input = new LiveInput({
       : "Listening · no significant onset";
   },
 });
+let filePlayer = null,
+  fileURL = null,
+  fileGeneration = 0;
+function clearFile(keepSelection = false) {
+  ++fileGeneration;
+  filePlayer?.pause();
+  if (filePlayer) {
+    filePlayer.removeAttribute("src");
+    filePlayer.load();
+  }
+  filePlayer = null;
+  if (fileURL) URL.revokeObjectURL(fileURL);
+  fileURL = null;
+  $("filePlayback").replaceChildren();
+  if (!keepSelection) $("audioFile").value = "";
+}
+$("audioFile").onchange = async () => {
+  const file = $("audioFile").files[0];
+  if (!file) return;
+  clearFile(true);
+  const generation = fileGeneration;
+  rehearsal.stop();
+  demonstrating = false;
+  $("demo").textContent = "Automatic demo";
+  $("rehearsal").textContent = "Start rehearsal";
+  controller.preset({}, clock(), 0.12);
+  $("reactive").checked = true;
+  fileURL = URL.createObjectURL(file);
+  filePlayer = document.createElement("audio");
+  const player = filePlayer;
+  player.controls = true;
+  player.preload = "auto";
+  player.src = fileURL;
+  $("filePlayback").append(player);
+  $("fileStatus").textContent = file.name;
+  player.onerror = () => {
+    $("fileStatus").textContent =
+      "Cannot play this file. Try an MP3 or WAV supported by your browser.";
+  };
+  player.onseeking = () => {
+    controller.preset({}, clock(), 0.1);
+    input.detector.reset();
+    input.clockNode?.port.postMessage({ reset: true });
+  };
+  player.onpause = () => controller.preset({}, clock(), 0.18);
+  player.onended = () => {
+    $("fileStatus").textContent = file.name + " · finished";
+    controller.preset({}, clock(), 0.18);
+  };
+  await input.start("", player);
+  if (generation !== fileGeneration) return;
+  if (input.media === player)
+    try {
+      await player.play();
+    } catch {
+      $("fileStatus").textContent = file.name + " · press Play to start";
+    }
+};
 function triggerEvent(kind, t, strength, manual) {
   if (controller.trigger(kind, t, strength, { manual })) {
     $("heard").textContent =
@@ -215,9 +273,15 @@ async function fullscreen() {
 $("fullscreen").onclick = fullscreen;
 $("hide").onclick = () => setClean(true);
 $("reveal").onclick = () => setClean(false);
-$("connect").onclick = () =>
-  input.start($("device").value).then(refreshDevices);
-$("disconnect").onclick = () => input.stop();
+$("connect").onclick = () => {
+  clearFile();
+  $("fileStatus").textContent = "MP3 / WAV · stays on your device";
+  return input.start($("device").value).then(refreshDevices);
+};
+$("disconnect").onclick = () => {
+  clearFile();
+  return input.stop();
+};
 $("resume").onclick = () => input.resume();
 $("device").onchange = () => {
   if (input.stream) input.start($("device").value).then(refreshDevices);
@@ -341,6 +405,7 @@ window.addEventListener("message", ({ data, origin, source }) => {
     return;
   active = !!data.active;
   if (!active) {
+    clearFile();
     input.stop();
     reset();
   } else lastRender = -100;
@@ -528,6 +593,7 @@ const sequenceTimer = setInterval(() => {
 window.addEventListener("pagehide", () => input.stop(false));
 window.addEventListener("beforeunload", () => {
   disposed = true;
+  clearFile();
   clearInterval(sequenceTimer);
   input.stop(false);
   channel?.close();
