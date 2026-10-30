@@ -1,0 +1,22 @@
+{
+  "vertices": 82720,
+  "triangles": 165436,
+  "boundaryEdges": 0,
+  "nonManifoldEdges": 0,
+  "degenerateTrianglesBelow1eMinus12": 0,
+  "sourceCache": "a3458b22e532f1cb6b91ec8d0ec8a5b79fd230d6c06328285354c582eb08b045",
+  "topology": "Indexed triangulated surface-nets sculpt, no facial edge-loop or skin-weight semantics",
+  "scope": "Limited jaw test possible on original surface; not evidence of expression-ready topology",
+  "reuse": [
+    "Exact Candidate A static surface, hair, eyes, ears, nose, brow and dental crown geometry",
+    "Existing studio/orbit viewer patterns",
+    "TMJ-axis coordinate from protected jaw work; no old dental offset"
+  ],
+  "rejectForCandidateA": [
+    "Local-17 replacement skin and cached neutral morphology",
+    "Hidden cage map and lip station indices bound to Local-17 topology",
+    "Old expression/corrective shapes and dental reseating transforms"
+  ],
+  "prototype": "One limited 0\u20133 degree original-vertex rotation field with smooth tissue weights; upper facial surface anchored; lower enamel, gingiva and tongue rotate rigidly without a seat offset.",
+  "fullExpressionRecommendation": "For substantial articulation, author a purpose-built control cage/edge flow directly around Candidate A, with anatomical lip and eyelid loops and manually checked weights. Bind the unchanged original render surface with rest-offset preservation and pass likeness gates before animation. Do not fit another generic visible donor, infer expression-ready topology from manifoldness, or resume local lip patches."
+}

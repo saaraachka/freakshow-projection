@@ -1,0 +1,20 @@
+{
+  "identity": [
+    {
+      "p": "2ea634688f2334982c00086f97f220a0a7c32442e1264bfa76f64dae02306caf",
+      "n": "7ddbace70c6d53438bf55a232f7a7e16c7e9ff7e9371f0de705254cb3277ca18",
+      "ix": "5708041fdff98a642ce3524df64625cceff723c6ac071f77cbe7df794b423e65"
+    },
+    {
+      "p": "2ea634688f2334982c00086f97f220a0a7c32442e1264bfa76f64dae02306caf",
+      "n": "7ddbace70c6d53438bf55a232f7a7e16c7e9ff7e9371f0de705254cb3277ca18",
+      "ix": "5708041fdff98a642ce3524df64625cceff723c6ac071f77cbe7df794b423e65"
+    }
+  ],
+  "pixels": {
+    "front": true,
+    "three": true,
+    "side": true
+  },
+  "jawNotBound": true
+}
