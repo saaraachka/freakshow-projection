@@ -1,0 +1,20 @@
+{
+  "stage": "FAILED_STATIC_NEUTRAL_VISUAL_GATE",
+  "method": "exact retained boundaries; arc-length domain; global biharmonic thin-plate surface",
+  "annuli": [
+    {
+      "kind": "skin",
+      "vertices": 2557,
+      "triangles": 4576,
+      "technique": "constrained boundary domain; global thin-plate finite-element solve"
+    },
+    {
+      "kind": "vestibule",
+      "vertices": 2013,
+      "triangles": 3654,
+      "technique": "constrained boundary domain; global thin-plate finite-element solve"
+    }
+  ],
+  "deformationEnabled": false,
+  "originalCache": "456c274ebec1f7979b223ac92a29b1d68528da5f10d47d78ed4c11d4bbb4e434"
+}

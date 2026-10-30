@@ -1,0 +1,52 @@
+{
+  "errors": [],
+  "restBufferChecks": [
+    {
+      "position": "da37d6efeb2d51c80ef8d37cdd676610849f4f2861be8ab40d24e9a04592420f",
+      "normal": "91b29831c329892cdf0247ab0aac1cf7c86c32bbc0ec84b88a80da6d5b5c07d2",
+      "index": "7f378bbb45c24753ae660135d996916f05556d45d9003f2956cd6fc24fa57fd4"
+    },
+    {
+      "position": "da37d6efeb2d51c80ef8d37cdd676610849f4f2861be8ab40d24e9a04592420f",
+      "normal": "91b29831c329892cdf0247ab0aac1cf7c86c32bbc0ec84b88a80da6d5b5c07d2",
+      "index": "7f378bbb45c24753ae660135d996916f05556d45d9003f2956cd6fc24fa57fd4"
+    },
+    {
+      "position": "da37d6efeb2d51c80ef8d37cdd676610849f4f2861be8ab40d24e9a04592420f",
+      "normal": "91b29831c329892cdf0247ab0aac1cf7c86c32bbc0ec84b88a80da6d5b5c07d2",
+      "index": "7f378bbb45c24753ae660135d996916f05556d45d9003f2956cd6fc24fa57fd4"
+    }
+  ],
+  "reference": {
+    "position": "da37d6efeb2d51c80ef8d37cdd676610849f4f2861be8ab40d24e9a04592420f",
+    "normal": "91b29831c329892cdf0247ab0aac1cf7c86c32bbc0ec84b88a80da6d5b5c07d2",
+    "index": "7f378bbb45c24753ae660135d996916f05556d45d9003f2956cd6fc24fa57fd4",
+    "morphInfluences": [
+      1,
+      0,
+      0
+    ],
+    "dental": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      -0.025,
+      -0.24,
+      1
+    ]
+  },
+  "poses": [
+    0.175,
+    0.25
+  ]
+}

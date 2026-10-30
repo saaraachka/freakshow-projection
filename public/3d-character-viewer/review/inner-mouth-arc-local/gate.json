@@ -1,0 +1,22 @@
+{
+  "result": "FOCUSED_25_PERCENT_VISUAL_GATE_PASSES_FOR_USER_REVIEW",
+  "canonical": "Exact Local-17 visible skin, original topology",
+  "diagnosis": "Ray probe at opening center hit face triangle 163132, a lower vestibule triangle connecting canonical lower lip source IDs 82840/82839 to wall vertex 86939. Its incorrect upper-side correspondence exposed inner wall as a flat dental band. Teeth/gums were not changed.",
+  "changes": [
+    "Corrected upper/lower cage correspondence for 674 upper and 967 lower vestibule vertices; retained each exact rest offset",
+    "Smoothed upper-lip opening displacement toward a maxilla-anchored field while preserving rest Cupid geometry",
+    "Moved lower-lip cross-sections together by local rigid rotation/translation, adding central separation and dental-arch taper without scaling lip thickness",
+    "Retained prior commissure control and donor pose-unit architecture"
+  ],
+  "observed25": [
+    "Flat vestibule wall no longer blocks the opening; individual teeth are framed by lips",
+    "Upper edge is smoother and retains Cupid bow",
+    "Lower edge has greater central separation and tapers toward corners",
+    "No new corner notch or chin collapse identified in the three requested views",
+    "Lip volume and cheek continuity appear retained within this limited visual review"
+  ],
+  "restVerification": "Position/normal/index SHA-256 match canonical Local-17 before and after 17.5% and 25%; six screenshots only, no new rest screenshot set",
+  "limits": "A focused visual review, not full release approval. No collision/intersection certification, transition movie, full suites or new expression range tested. Existing canonical surface artifacts are unchanged.",
+  "preservation": "Local-17 all-file manifest verified; Local-24 retained intact; protected face asset, controller, jaw/dental source, hair source and donor cage rest/weights/pose deltas unchanged. Production unchanged.",
+  "release": "Local and uncommitted, no push or deployment; awaiting user visual review."
+}
