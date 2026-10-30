@@ -183,3 +183,14 @@ Set BPM manually, tap **Tap BPM**, or enable **Auto Sync** for approximate percu
 **Beat-clock demo** / **Start rehearsal** needs no audio or microphone permission. Phrase duration can be 2/4/8/16 beats. Manual expression buttons stop the automatic sequence but keep accents available. Reset disables the sequence, reactions and idle for the exact original grin. Previous hit-triggered behavior remains selectable; its editable mappings are hidden until that mode is selected. The previous file-enabled viewer is preserved at `public/live-show/rollback-6998217/index.html` and tag `checkpoint/live-show-audio-file-1`.
 
 Validation: `npm test`; `node tests/beat-performance-browser.js` (set `SHOW_WEBKIT=1` for WebKit). Live audio classification and tempo tracking are estimates, not source separation or a guaranteed beat grid for every track.
+
+
+### Ink rendering and beat-reactive eyes
+
+Live Show defaults to **Ink 2D**. It renders the same animated geometry using quantized toon lighting, cream/gray/black palette conversion, view-dependent feature contours, and inverted-hull silhouette shells sharing the live geometry buffers. No facial mesh, jaw, dental transform, expression preset or BPM channel is changed. Ink settings expose outline width, shadow contrast, shading bands, ink amount and background; **Original 3D** restores the original lighting/material appearance, with the new eye details retained.
+
+Irises/pupils are drawn by the existing eyeball's material on its curved/corneal surface, replacing the old visible caps without moving vertices. Shared gaze drives both irises. Pulse defaults: 50 ms attack / 260 ms release, intensity 80%, detected kicks with automatic BPM fallback after two beats without a kick. Pupil expansion is stronger than iris expansion and remains bounded inside the iris. Consecutive kicks begin from the current dilation. Eye pulses are independent of phrase expressions and the percussion-accent toggle. Use **Test pulse**, or choose **BPM clock**. Reset disables pulses for static inspection.
+
+The projector receives rendering settings and eye state alongside facial poses. Controller communication runs independently of GPU completion. Real-time throughput still depends on device/GPU; the single shared-geometry outline pass avoids full-screen postprocessing. The previous working show remains at `public/live-show/rollback-1a23303/index.html` and tag `checkpoint/beat-synchronized-live-show-1`.
+
+Checks: `npm test`, `node tests/ink-eyes-browser.js` (Chromium; use `SHOW_WEBKIT=1` for WebKit), file-playback and offline browser checks. Captures cover all six expressions, gaze/blink, front/three-quarter eye placement, small/large dilation, original/ink switching and projector/fullscreen.

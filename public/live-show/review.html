@@ -3,13 +3,13 @@
   <meta charset="utf-8" /><meta
     name="viewport"
     content="width=device-width,initial-scale=1"
-  /><title>FREAKSHOW · Beat-synchronized performance review</title>
+  /><title>FREAKSHOW · Ink rendering and reactive eyes review</title>
   <style>
     body {
       max-width: 1120px;
       margin: 24px auto;
       padding: 16px;
-      background: #111216;
+      background: #1b1917;
       color: #eee4d4;
       font: 16px/1.5 system-ui;
     }
@@ -21,86 +21,113 @@
       display: block;
       margin: 20px 0;
     }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .pair img {
+      width: 100%;
+    }
     small {
       color: #bcb4a8;
     }
+    @media (max-width: 600px) {
+      .pair {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
-  <h1>Candidate A · BPM-synchronized Live Show</h1>
+  <h1>Candidate A · animated ink illustration + beat-reactive eyes</h1>
   <p>
     <a href="./index.html">Open Live Show</a> ·
-    <a href="./rollback-6998217/index.html"
-      >Previous hit-triggered show + file playback (6998217)</a
-    >
-    ·
+    <a href="./rollback-1a23303/index.html">Previous BPM show (1a23303)</a> ·
     <a href="../candidate-a-rig/index.html?release=0924235"
-      >Unchanged approved rig</a
+      >Protected original facial rig</a
     >
   </p>
   <p>
-    The same six expressions and original Candidate A geometry are retained.
-    Emotions now follow phrases rather than individual hits. Defaults: 135 BPM,
-    eight beats per emotion, 1.5-beat transitions, medium accents, hats off and
-    idle on.
+    The original animated facial geometry, six expressions, jaw/dental mechanics
+    and BPM system remain unchanged. The illustrated look is an actual 3D
+    render: toon lighting, limited cream/gray/black colors, feature contours and
+    shared-geometry inverted-hull silhouettes. No sprites or rendered-image
+    substitutes are used.
   </p>
+  <h2>Small / large pupils</h2>
+  <div class="pair">
+    <img
+      src="./review/eyes-small.jpg"
+      alt="Ink-rendered eyes at resting pupil size with shared gaze"
+    /><img
+      src="./review/eyes-large.jpg"
+      alt="The same curved eyeballs with synchronized enlarged pupils"
+    />
+  </div>
   <p>
-    Original grin → Angry → creepy frown → Manic laughter. Optional
-    Neutral/Surprised and non-repeating random order are available under
-    Sequence options. Manual expression buttons hold the selected emotion;
-    percussion adds only small bounded accents. No audio or geometry
-    reconstruction was introduced.
+    Irises and pupils are shaded directly on the original curved globes; old
+    caps are hidden. Shared gaze rotates their material coordinates. Default
+    dilation uses 50 ms attack / 260 ms release and 80% intensity. Pupils expand
+    more than irises, with an inner-iris size limit. Retriggers begin at the
+    current dilation.
   </p>
-  <h2>Rehearsal and comparison</h2>
-  <p>
-    Use Beat-clock demo without microphone permission. Watch the 1–4 bar count
-    and 1–8 phrase count. Choose previous hit-triggered behavior under Sequence
-    options / compare to see the difference. Microphone and local MP3/WAV
-    playback use the same accent and clock system.
-  </p>
+  <h2>Three-quarter gaze / eyelid check</h2>
+  <div class="pair">
+    <img
+      src="./review/eyes-right.jpg"
+      alt="Curved iris and pupil placement from a right three-quarter angle"
+    /><img
+      src="./review/eyes-blink.jpg"
+      alt="The same eye region beneath narrowed moving eyelids"
+    />
+  </div>
+  <h2>All six expressions in ink</h2>
   <img
-    src="./review/beat-rehearsal.png"
-    alt="Rehearsal with BPM, beat counter and phrase emotion visible"
+    src="./review/ink-expressions.jpg"
+    alt="Grin, Neutral, Angry, Surprised, Manic laughter and Frown using the same ink renderer"
   />
-  <h2>Matched emotion + small snare accent</h2>
+  <h2>Original 3D comparison</h2>
   <img
-    src="./review/beat-poses.jpg"
-    alt="Six existing emotions with the same subtle snare accent; original grin, Neutral, Angry, Surprised, Manic and Frown"
+    src="./review/original-3d.jpg"
+    alt="Original materials and lighting restored, with the new curved eye detail retained"
   />
-  <h2>Synchronization</h2>
   <p>
-    Manual BPM, Tap BPM, beat-1 Resync, ×2/÷2 and ±20 ms phase nudges are
-    provided. Auto Sync estimates periodic percussion with confidence/stability
-    gating, bounded tempo changes and a continuous phase-rate correction. It
-    never resyncs the phrase counter on an onset. Low-confidence input retains
-    the last clock; ambiguous tracks may need tap/manual timing.
+    Choose Original 3D / Ink 2D at any time. Ink controls: outline width,
+    contrast, 2–5 shading bands, ink amount and background. Eye controls:
+    iris/pupil size, pulse amount, attack/release, detected-kick source with
+    automatic BPM fallback, BPM-only source and Test pulse. Reset disables eye
+    pulses for static inspection. Musical phrase emotions and percussion accents
+    remain independent.
   </p>
   <h2>Verification</h2>
   <ul>
     <li>
-      48 unit tests including 120/130/135/140 BPM, tap tempo, drift, phrase
-      boundaries, stable Auto Sync and confidence loss, rapid accents and legacy
-      comparison.
+      52 unit tests, including bounded pulse timing, strength, retriggers and
+      continuous 130/135/140 BPM pulse trains.
     </li>
     <li>
-      Chromium and WebKit: phrase rehearsal, manual tempo, legacy comparison,
-      six preset-plus-accent renders, sampled geometry, synthetic audio
-      pipeline, disconnect/reconnect, exact rest reset and fullscreen.
+      Chromium and WebKit rendered checks: all expressions, front/three-quarter
+      gaze and eyelid views, small/large pupil changes, deterministic static ink
+      frames, original/ink switching, BPM pulses during phrase changes,
+      fullscreen and projector style synchronization.
     </li>
     <li>
-      Local WAV/MP3 file-picker, playback, pause, seeking and microphone-free
-      detection regression checks.
+      Outline shells share the live original position/normal buffers; face rest
+      positions and protected source inventory remain unchanged.
     </li>
     <li>
-      Approved sculpt inventory and cache checks; offline Live Show/worklet.
+      Local WAV/MP3 playback triggers detected-kick eye pulses; offline reload
+      and cached audio worklet remain functional.
     </li>
   </ul>
   <p>
-    <a href="./review/beat-chromium.json">Chromium evidence</a> ·
-    <a href="./review/beat-webkit.json">WebKit evidence</a>
+    <a href="./review/ink-chromium.json">Chromium evidence</a> ·
+    <a href="./review/ink-webkit.json">WebKit evidence</a>
   </p>
   <small
-    >Cloud browser tests use synthetic audio, not a physical audio interface.
-    Sampled triangle checks do not establish global collision-free geometry.
-    Existing preset anatomy is unchanged. Beat tracking and instrument
-    classification from mixed microphone audio remain approximate.</small
+    >Cloud browser checks are not physical projector, iPhone, or audio-interface
+    benchmarks. Ink adds one shared-geometry silhouette pass without full-screen
+    postprocessing. Throughput depends on GPU and display resolution. Existing
+    expression anatomy remains unchanged; no new topology or facial deformation
+    was introduced.</small
   >
 </html>

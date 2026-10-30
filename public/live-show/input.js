@@ -1,7 +1,7 @@
 import {
   spectralFeatures,
   OnsetDetector,
-} from "./onsets.js?release=beat-4";
+} from "./onsets.js?release=ink-5";
 export class LiveInput {
   constructor({ state, frame }) {
     this.onState = state;
@@ -134,7 +134,7 @@ export class LiveInput {
       try {
         if (!context.audioWorklet) throw Error("No audio worklet");
         await context.audioWorklet.addModule(
-          new URL("./clock-worklet.js?release=beat-4", import.meta.url),
+          new URL("./clock-worklet.js?release=ink-5", import.meta.url),
         );
         if (this.context !== context) return;
         const node = new AudioWorkletNode(context, "freakshow-clock");

@@ -62,12 +62,15 @@ try {
     await p.waitForFunction(
       () => document.querySelector("audio").currentTime > 0.3,
     );
+    await p.waitForFunction(()=>document.querySelector('#pulseStatus').textContent==='Detected kick pulses',null,{timeout:15000});
     const result = await p.evaluate(() => ({
       src: document.querySelector("audio").currentSrc,
       time: document.querySelector("audio").currentTime,
       level: freakshowLive.input.maxLevel,
       events: freakshowLive.controller.events.slice(-4),
       micRequests: window.micRequests,
+      eyePulseTime:freakshowLive.eyePulse.state?.time,
+      pulseSource:document.querySelector("#pulseStatus").textContent,
     }));
     assert.equal(result.micRequests, 0);
     assert.ok(result.src.startsWith("blob:"));

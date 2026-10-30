@@ -1,5 +1,5 @@
-import { FacialPerformance, ease } from "./performance.js?release=beat-4";
-import { BeatClock, TempoTracker } from "./beat.js?release=beat-4";
+import { FacialPerformance, ease } from "./performance.js?release=ink-5";
+import { BeatClock, TempoTracker } from "./beat.js?release=ink-5";
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 export const ACCENTS = {
   kick: {

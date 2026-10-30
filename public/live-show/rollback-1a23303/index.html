@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#000" />
+    <title>FREAKSHOW · Live Show</title>
+    <link rel="stylesheet" href="./show.css?release=beat-4" />
+    <script type="importmap">
+      { "imports": { "three": "../../character-3d/vendor/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <canvas
+      id="stage"
+      aria-label="Candidate A audio-reactive 3D clown"
+    ></canvas>
+    <header>
+      <strong>FREAKSHOW <small>LIVE SHOW</small></strong>
+      <div>
+        <button id="fullscreen">Fullscreen</button
+        ><button id="hide" aria-expanded="true">Hide controls</button>
+      </div>
+    </header>
+    <button id="enterProjector" hidden>Enter fullscreen</button>
+    <button id="reveal" hidden>Show controls · H</button>
+    <aside id="controls">
+      <h1>Possessed by percussion.</h1>
+      <p id="load" role="status">Loading approved Candidate A…</p>
+      <div class="beatHud">
+        <p id="bpmReadout">135.0 BPM</p>
+        <p id="beatCounter" role="status">Beat 1/4 · Phrase 1/8</p>
+        <p id="emotion">Default sinister grin</p>
+      </div>
+      <section>
+        <h2>Musical performance</h2>
+
+        <label
+          >BPM
+          <input
+            id="bpm"
+            type="number"
+            min="40"
+            max="300"
+            step=".1"
+            value="135"
+        /></label>
+        <div class="row">
+          <button id="tap">Tap BPM</button
+          ><button id="resync">Resync · beat 1</button>
+        </div>
+        <div class="row">
+          <button id="halfBpm">÷2 BPM</button
+          ><button id="doubleBpm">×2 BPM</button
+          ><button id="nudgeBack">−20 ms</button
+          ><button id="nudgeForward">+20 ms</button>
+        </div>
+        <label><input id="autoSync" type="checkbox" /> Auto Sync</label>
+        <p id="syncConfidence">Manual clock</p>
+        <label
+          >Expression duration
+          <select id="phraseBeats">
+            <option>2</option>
+            <option>4</option>
+            <option selected>8</option>
+            <option>16</option>
+          </select>
+          beats</label
+        >
+        <label
+          >Transition <output id="transitionValue">1.5 beats</output
+          ><input
+            id="transitionBeats"
+            type="range"
+            min=".5"
+            max="2"
+            step=".25"
+            value="1.5"
+        /></label>
+        <label
+          >Rhythmic accent intensity <output id="accentValue">60%</output
+          ><input
+            id="accentIntensity"
+            type="range"
+            min="0"
+            max="1"
+            step=".05"
+            value=".6"
+        /></label>
+        <label
+          ><input id="automatic" type="checkbox" checked /> Automatic expression
+          sequence</label
+        >
+        <details>
+          <summary>Sequence options / compare</summary>
+          <label
+            ><input id="includeNeutral" type="checkbox" /> Include
+            Neutral</label
+          ><label
+            ><input id="includeSurprised" type="checkbox" /> Include
+            Surprised</label
+          ><label
+            ><input id="randomOrder" type="checkbox" /> Random order · no
+            immediate repeats</label
+          >
+          <label
+            >Performance behavior<select id="behavior">
+              <option value="beat">BPM-synchronized · phrase emotions</option>
+              <option value="legacy">
+                Previous · hit-triggered expressions
+              </option>
+            </select></label
+          >
+        </details>
+        <p class="hint">
+          Emotions change on phrase boundaries. Percussion adds small accents.
+          Auto Sync is approximate: low confidence keeps the last reliable
+          clock. Tap or Resync to align with the music.
+        </p>
+        <p id="lastGesture" role="status">
+          No gesture yet · original sinister grin
+        </p>
+        <div id="previousSettings" hidden>
+          <h2>Previous hit-triggered behavior</h2>
+
+          <details>
+            <summary>Edit sound → expression mappings</summary>
+            <div id="mappings"></div>
+          </details>
+          <details>
+            <summary>Gesture timing</summary>
+            <label
+              >Attack <output id="attackValue">45 ms</output
+              ><input id="attack" type="range" min="10" max="500" step="5"
+            /></label>
+            <label
+              >Peak hold <output id="holdValue">75 ms</output
+              ><input id="hold" type="range" min="0" max="500" step="5"
+            /></label>
+            <label
+              >Release <output id="releaseValue">180 ms</output
+              ><input id="release" type="range" min="20" max="1000" step="10"
+            /></label>
+          </details>
+        </div>
+      </section>
+      <section>
+        <h2>Audio input</h2>
+        <label for="audioFile">Play a local audio file</label>
+        <input
+          id="audioFile"
+          type="file"
+          accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac"
+        />
+        <p id="fileStatus" role="status">MP3 / WAV · stays on your device</p>
+        <div id="filePlayback"></div>
+        <p class="hint">
+          The track plays through your speakers and drives the same expression
+          mappings. Pause or seek using the player.
+        </p>
+        <label for="device">Microphone / audio interface</label
+        ><select id="device">
+          <option value="">System default</option>
+        </select>
+        <div class="row">
+          <button id="connect">Enable input</button
+          ><button id="disconnect" disabled>Disable input</button
+          ><button id="resume" hidden>Resume input</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">
+          Input off · manual gestures ready
+        </p>
+        <label for="level">Input level</label
+        ><meter
+          id="level"
+          min="0"
+          max="1"
+          low=".02"
+          high=".75"
+          optimum=".2"
+          value="0"
+        ></meter>
+        <div class="row">
+          <label
+            ><input id="reactive" type="checkbox" checked />
+            Audio-reactive</label
+          ><label><input id="hats" type="checkbox" /> Subtle hi-hats</label>
+        </div>
+        <label for="sensitivity"
+          >Sensitivity <output id="sensitivityValue">1.00×</output></label
+        ><input
+          id="sensitivity"
+          type="range"
+          min=".5"
+          max="2"
+          step=".05"
+          value="1"
+        />
+        <p class="hint">
+          Audio stays on this device. Microphone input is never played through
+          your speakers. Kick/snare/clap separation from mixed audio is
+          approximate. Adjust sensitivity or use manual triggers.
+        </p>
+      </section>
+      <section>
+        <h2>Live gestures</h2>
+        <div class="gestures">
+          <button data-gesture="kick">Kick <kbd>1</kbd></button
+          ><button data-gesture="snare">Snare <kbd>2</kbd></button
+          ><button data-gesture="clap">Clap <kbd>3</kbd></button
+          ><button data-gesture="hat">Hi-hat <kbd>4</kbd></button
+          ><button data-gesture="melody">Melody <kbd>5</kbd></button>
+        </div>
+        <p id="heard" aria-live="off">Waiting for a musical attack</p>
+        <label
+          ><input id="idle" type="checkbox" checked /> Eerie idle motion</label
+        >
+      </section>
+      <section>
+        <h2>Rehearsal · no microphone needed</h2>
+        <select id="pattern" aria-label="Rehearsal pattern">
+          <option value="beat">4/4 kick / snare</option>
+          <option value="melody">Melodic accents</option>
+          <option value="stress">Rapid percussion stress test</option>
+        </select>
+
+        <label
+          ><input id="rehearsalClaps" type="checkbox" /> Alternate clap</label
+        >
+        <label><input id="rehearsalHats" type="checkbox" /> Hi-hats</label>
+        <button id="rehearsal">Start rehearsal</button>
+      </section>
+      <section>
+        <h2>Facial acting</h2>
+        <div id="presets" class="presets"></div>
+        <div class="row">
+          <button id="demo">Beat-clock demo</button
+          ><button id="reset">Reset to grin</button>
+        </div>
+        <p class="hint">
+          Reset pauses reactions and idle motion for the exact approved grin.
+          Demo pauses audio reactions. All poses use the approved rig’s existing
+          limits.
+        </p>
+      </section>
+      <section>
+        <button id="projector">Open projector window</button>
+        <p class="hint">
+          Move that window to the projector, then click Fullscreen there. H
+          hides controls; Esc leaves fullscreen.
+        </p>
+        <p id="projectionStatus"></p>
+      </section>
+      <footer>
+        Candidate A · protected rig 0924235<br /><a
+          href="../../candidate-a-rig/index.html?release=0924235"
+          target="_blank"
+          rel="noopener"
+          >Approved rig viewer</a
+        >
+        · <a href="../../../?mode=song" target="_top">Song Lab</a>
+      </footer>
+    </aside>
+    <script type="module" src="./show.js?release=beat-4"></script>
+  </body>
+</html>

@@ -7,10 +7,21 @@ import {
   presets,
   controls,
 } from "../candidate-a-rig/rig.js?release=inner-seal-1";
-import { Rehearsal } from "./performance.js?release=beat-4";
-import { LiveInput } from "./input.js?release=beat-4";
-import { MusicalPerformance } from "./musical-performance.js?release=beat-4";
-import { AudioTimeline } from "./beat.js?release=beat-4";
+import { Rehearsal } from "./performance.js?release=ink-5";
+import { LiveInput } from "./input.js?release=ink-5";
+import { MusicalPerformance } from "./musical-performance.js?release=ink-5";
+import { AudioTimeline } from "./beat.js?release=ink-5";
+import { EyePulse } from "./eye-pulse.js?release=ink-5";
+import { EyeDetails } from "./eye-details.js?release=ink-5";
+import { InkRenderer } from "./ink-renderer.js?release=ink-5";
+const eyePulse = new EyePulse();
+let eyeDetails,
+  ink,
+  lastEyeAmount = 0,
+  lastKickTime = -100,
+  lastPulseBeat = -1,
+  lastPulseRevision = -1,
+  appliedVisual = "";
 const timeline = new AudioTimeline();
 const $ = (id) => document.getElementById(id),
   clock = () => timeline.now(input?.context, performance.now() / 1000);
@@ -82,13 +93,15 @@ const input = new LiveInput({
     for (const e of events) {
       const ignored = e.kind === "hat" && !$("hats").checked;
       recent.push({ ...e, wallTime: time, ignored });
+      if (e.kind === "kick" && !rehearsal.running && !demonstrating)
+        kickEye(e.wallTime ?? time, e.strength);
       if (
         $("reactive").checked &&
         !demonstrating &&
         !rehearsal.running &&
         !ignored
       )
-        triggerEvent(e.kind, e.wallTime ?? time, e.strength, false);
+        triggerEvent(e.kind, e.wallTime ?? time, e.strength, false, false);
     }
     recent = recent.filter((e) => time - e.wallTime < 3).slice(-12);
     if (rig && !projectorId && channel && time - lastBroadcast > 0.05) {
@@ -98,6 +111,8 @@ const input = new LiveInput({
         type: "pose",
         pose: s.pose,
         motion: motion(time, s.head, $("idle").checked),
+        eyeAmount: eyeAmount(time),
+        visual: visualSettings(),
       });
       lastBroadcast = time;
     }
@@ -136,6 +151,7 @@ $("audioFile").onchange = async () => {
   if (controller.mode === "beat") controller.start(clock(), true);
   $("automatic").checked = controller.automatic;
   $("reactive").checked = true;
+  $("pulseEnabled").checked = true;
   fileURL = URL.createObjectURL(file);
   filePlayer = document.createElement("audio");
   const player = filePlayer;
@@ -168,7 +184,13 @@ $("audioFile").onchange = async () => {
       $("fileStatus").textContent = file.name + " · press Play to start";
     }
 };
-function triggerEvent(kind, t, strength, manual) {
+function kickEye(t, strength) {
+  lastKickTime = t;
+  if ($("pulseEnabled").checked && $("pulseSource").value === "kick")
+    eyePulse.trigger(t, strength);
+}
+function triggerEvent(kind, t, strength, manual, driveEyes = true) {
+  if (kind === "kick" && driveEyes) kickEye(t, strength);
   if (controller.trigger(kind, t, strength, { manual })) {
     $("heard").textContent = `${kind} → ${controller.eventLabel(kind)}`;
     $("lastGesture").textContent = `${kind} → ${controller.eventLabel(kind)}`;
@@ -330,6 +352,112 @@ $("behavior").onchange = () => {
   $("automatic").checked = controller.automatic;
   $("previousSettings").hidden = controller.mode !== "legacy";
 };
+function visualSettings() {
+  return ink
+    ? {
+        mode: ink.mode,
+        outline: ink.outline,
+        contrast: ink.contrast,
+        bands: ink.bands,
+        intensity: ink.intensity,
+        background: ink.background,
+        iris: eyeDetails.irisSize,
+        pupil: eyeDetails.pupilSize,
+      }
+    : null;
+}
+function applyVisual(v) {
+  if (!ink || !v) return;
+  const signature = JSON.stringify(v);
+  if (signature === appliedVisual) return;
+  appliedVisual = signature;
+  ink.mode = v.mode === "original" ? "original" : "ink";
+  ink.outline = Math.max(0, Math.min(5, v.outline));
+  ink.contrast = Math.max(0, Math.min(1, v.contrast));
+  ink.bands = Math.max(2, Math.min(5, v.bands));
+  ink.intensity = Math.max(0, Math.min(1, v.intensity));
+  ink.background = /^#[0-9a-f]{6}$/i.test(v.background)
+    ? v.background
+    : "#cec6b0";
+  eyeDetails.irisSize = Math.max(0.6, Math.min(1.4, v.iris));
+  eyeDetails.pupilSize = Math.max(0.5, Math.min(1.8, v.pupil));
+  ink.apply();
+  dirty = true;
+  if (!projectorId && channel)
+    channel.postMessage({ type: "visual", visual: visualSettings() });
+}
+function eyeAmount(t) {
+  if (!$("pulseEnabled").checked) return 0;
+  const b = controller.beatClock.read(t, controller.phraseBeats);
+  if (controller.beatClock.revision !== lastPulseRevision) {
+    lastPulseRevision = controller.beatClock.revision;
+    lastPulseBeat = -1;
+  }
+  const fallback =
+    $("pulseSource").value === "bpm" ||
+    t - lastKickTime > 120 / controller.beatClock.bpm;
+  $("pulseStatus").textContent =
+    $("pulseSource").value === "bpm"
+      ? "BPM clock pulses"
+      : fallback
+        ? "Kick source · BPM fallback"
+        : "Detected kick pulses";
+  const beat = Math.floor(b.beat);
+  if (beat !== lastPulseBeat) {
+    lastPulseBeat = beat;
+    if (fallback)
+      eyePulse.trigger(t - (b.phase * 60) / controller.beatClock.bpm, 1);
+  }
+  return eyePulse.sample(t);
+}
+for (const id of [
+  "irisSize",
+  "pupilSize",
+  "pulseIntensity",
+  "pulseAttack",
+  "pulseRelease",
+])
+  $(id).oninput = () => {
+    if (eyeDetails) {
+      eyeDetails.irisSize = Number($("irisSize").value);
+      eyeDetails.pupilSize = Number($("pupilSize").value);
+    }
+    eyePulse.intensity = Number($("pulseIntensity").value);
+    eyePulse.attack = Number($("pulseAttack").value) / 1000;
+    eyePulse.release = Number($("pulseRelease").value) / 1000;
+    dirty = true;
+  };
+$("testPulse").onclick = () => {
+  $("pulseEnabled").checked = true;
+  eyePulse.trigger(clock(), 1);
+  lastKickTime = clock();
+};
+for (const id of [
+  "outline",
+  "shadowContrast",
+  "shadingBands",
+  "inkIntensity",
+  "background",
+])
+  $(id).oninput = () => {
+    if (!ink) return;
+    applyVisual({
+      mode: $("renderMode").value,
+      outline: Number($("outline").value),
+      contrast: Number($("shadowContrast").value),
+      bands: Number($("shadingBands").value),
+      intensity: Number($("inkIntensity").value),
+      background: $("background").value,
+      iris: Number($("irisSize").value),
+      pupil: Number($("pupilSize").value),
+    });
+  };
+$("renderMode").onchange = () => {
+  if (!ink) return;
+  $("background").value =
+    $("renderMode").value === "ink" ? "#cec6b0" : "#000000";
+  $("outline").dispatchEvent(new Event("input"));
+};
 function setClean(value) {
   document.body.classList.toggle("clean", value);
   $("controls").hidden = value;
@@ -337,6 +465,10 @@ function setClean(value) {
   $("hide").setAttribute("aria-expanded", String(!value));
 }
 function reset() {
+  eyePulse.reset();
+  $("pulseEnabled").checked = false;
+  lastEyeAmount = 0;
+  eyeDetails?.update(zero(), 0);
   $("lastGesture").textContent = "Original sinister grin · reset";
   recent = [];
   rehearsal.stop();
@@ -498,6 +630,7 @@ if (projectorId) {
   $("projector").hidden = true;
 }
 channel?.addEventListener("message", ({ data }) => {
+  if (projectorId && data?.visual) applyVisual(data.visual);
   if (projectorId && data?.type === "pose") {
     lastSnapshot = data;
     lastSnapshotTime = clock();
@@ -539,6 +672,7 @@ function resize() {
   camera.position.set(0, 0.25, 5.3 / Math.min(1, camera.aspect / 0.95));
   camera.lookAt(0, 0.25, -0.1);
   camera.updateProjectionMatrix();
+  ink?.resize();
   dirty = true;
 }
 window.addEventListener("resize", resize);
@@ -619,7 +753,15 @@ function frame() {
     nextPose = sample.pose;
     nextMotion = motion(t, sample.head, $("idle").checked);
   }
+  if (projectorId && lastSnapshot?.visual) applyVisual(lastSnapshot.visual);
+  const pulse = projectorId
+    ? lastSnapshot && t - lastSnapshotTime < 2
+      ? lastSnapshot.eyeAmount || 0
+      : 0
+    : eyeAmount(t);
+  eyeDetails?.update(nextPose, pulse);
   const changed =
+    Math.abs(pulse - lastEyeAmount) > 1e-5 ||
     dirty ||
     Object.keys(nextPose).some(
       (k) => Math.abs(nextPose[k] - (lastPose[k] || 0)) > 1e-6,
@@ -629,6 +771,7 @@ function frame() {
       (k) => Math.abs(nextMotion[k] - lastMotion[k]) > 1e-6,
     );
   if (changed) {
+    lastEyeAmount = pulse;
     lastPose = rig.set(nextPose);
     lastMotion = nextMotion;
     applyMotion(lastMotion);
@@ -644,7 +787,13 @@ function frame() {
     );
   if (dirty) render();
   if (!projectorId && channel && t - lastBroadcast > 0.05) {
-    channel.postMessage({ type: "pose", pose: lastPose, motion: lastMotion });
+    channel.postMessage({
+      type: "pose",
+      pose: lastPose,
+      motion: lastMotion,
+      eyeAmount: lastEyeAmount,
+      visual: visualSettings(),
+    });
     lastBroadcast = t;
   }
 }
@@ -671,16 +820,23 @@ try {
   character = await createProceduralHead();
   scene.add(character.root);
   rig = bindRig(character);
+  eyeDetails = new EyeDetails(character);
+  ink = new InkRenderer(character, scene, renderer, eyeDetails);
+  ink.resize();
   controller.start(clock());
   $("load").textContent = "Candidate A ready · approved sculpt and rig 0924235";
   render();
   window.freakshowLive = {
     rig,
+    eyeDetails,
+    eyePulse,
+    ink,
     character,
     controller,
     rehearsal,
     input,
     renderer,
+    camera,
     presets,
     get pose() {
       return { ...lastPose };
@@ -703,7 +859,21 @@ try {
   console.error(e);
 }
 const sequenceTimer = setInterval(() => {
-  if (active && rig && !projectorId) advanceDemo(clock());
+  if (active && rig && !projectorId) {
+    const t = clock();
+    advanceDemo(t);
+    if (channel && t - lastBroadcast > 0.05) {
+      const s = controller.sample(t, $("idle").checked);
+      channel.postMessage({
+        type: "pose",
+        pose: s.pose,
+        motion: motion(t, s.head, $("idle").checked),
+        eyeAmount: eyeAmount(t),
+        visual: visualSettings(),
+      });
+      lastBroadcast = t;
+    }
+  }
 }, 16);
 window.addEventListener("pagehide", () => input.stop(false));
 window.addEventListener("beforeunload", () => {
@@ -713,6 +883,7 @@ window.addEventListener("beforeunload", () => {
   input.stop(false);
   channel?.close();
   projectorWindow?.close();
+  ink?.dispose();
   renderer?.dispose();
 });
 

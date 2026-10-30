@@ -1,0 +1,105 @@
+{
+  "geometry": {
+    "exact": true,
+    "shared": true,
+    "globes": 2
+  },
+  "captures": [
+    "Default sinister grin",
+    "Neutral",
+    "Angry",
+    "Surprised",
+    "Manic laughter",
+    "Unhappy / creepy frown"
+  ],
+  "small": 0.026,
+  "large": {
+    "iris": 0.0781,
+    "pupil": 0.059356000000000006
+  },
+  "pulseSamples": [
+    {
+      "amount": 0.17784407831220614,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0.2994571976176244,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0.2667694517041516,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0.577111642937386,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0.7476335135699591,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0.014692371197252996,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0.39814561195335696,
+      "name": "Default sinister grin"
+    },
+    {
+      "amount": 0.7671087574688995,
+      "name": "Angry"
+    },
+    {
+      "amount": 0.07748163292158389,
+      "name": "Angry"
+    },
+    {
+      "amount": 0.04134940725954986,
+      "name": "Angry"
+    },
+    {
+      "amount": 0.7870395543038017,
+      "name": "Angry"
+    },
+    {
+      "amount": 0,
+      "name": "Angry"
+    },
+    {
+      "amount": 0.0352971554996814,
+      "name": "Angry"
+    },
+    {
+      "amount": 0.7954856523201422,
+      "name": "Angry"
+    },
+    {
+      "amount": 0,
+      "name": "Angry"
+    },
+    {
+      "amount": 0.7040536870515737,
+      "name": "Angry"
+    },
+    {
+      "amount": 0,
+      "name": "Angry"
+    },
+    {
+      "amount": 0.40391476405607324,
+      "name": "Angry"
+    }
+  ],
+  "alias": true,
+  "exact": true,
+  "errors": []
+}
