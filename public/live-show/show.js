@@ -6,8 +6,11 @@ import {
   constrain,
   presets,
 } from "../candidate-a-rig/rig.js?release=inner-seal-1";
-import { FacialPerformance } from "./performance.js?release=show-1";
-import { LiveInput } from "./input.js?release=show-1";
+import {
+  FacialPerformance,
+  Rehearsal,
+} from "./performance.js?release=expression-events-2";
+import { LiveInput } from "./input.js?release=expression-events-2";
 const $ = (id) => document.getElementById(id),
   clock = () => performance.now() / 1000;
 const params = new URL(location.href).searchParams,
@@ -19,6 +22,7 @@ const channel =
     ? new BroadcastChannel("freakshow-live-" + id)
     : null;
 const controller = new FacialPerformance({ zero, constrain, presets });
+const rehearsal = new Rehearsal();
 let fence = null,
   dirty = true;
 let rig,
@@ -55,8 +59,13 @@ const input = new LiveInput({
     for (const e of events) {
       const ignored = e.kind === "hat" && !$("hats").checked;
       recent.push({ ...e, wallTime: time, ignored });
-      if ($("reactive").checked && !demonstrating && !ignored)
-        controller.trigger(e.kind, e.wallTime ?? time, e.strength);
+      if (
+        $("reactive").checked &&
+        !demonstrating &&
+        !rehearsal.running &&
+        !ignored
+      )
+        triggerEvent(e.kind, e.wallTime ?? time, e.strength, false);
     }
     recent = recent.filter((e) => time - e.wallTime < 3).slice(-12);
     if (rig && !projectorId && channel && time - lastBroadcast > 0.05) {
@@ -71,10 +80,93 @@ const input = new LiveInput({
     }
     const e = recent.at(-1);
     $("heard").textContent = e
-      ? `${e.kind === "melody" ? "Tonal note" : e.kind[0].toUpperCase() + e.kind.slice(1)} ${e.ignored ? "· ignored" : $("reactive").checked ? "→ facial accent" : "· reactions paused"}`
+      ? `${e.kind === "melody" ? "Tonal note" : e.kind[0].toUpperCase() + e.kind.slice(1)} ${e.ignored ? "· ignored" : $("reactive").checked ? "→ ${controller.mappings[e.kind].expression}" : "· reactions paused"}`
       : "Listening · no significant onset";
   },
 });
+function triggerEvent(kind, t, strength, manual) {
+  if (controller.trigger(kind, t, strength, { manual })) {
+    $("heard").textContent =
+      `${kind} → ${controller.mappings[kind].expression}`;
+    $("lastGesture").textContent =
+      `${kind} → ${controller.mappings[kind].expression}`;
+  }
+}
+for (const [kind, m] of Object.entries(controller.mappings)) {
+  const row = document.createElement("div");
+  row.className = "mapping";
+  const label = document.createElement("label");
+  label.textContent = {
+    kick: "Kick",
+    snare: "Snare",
+    clap: "Clap",
+    hat: "Hi-hat / other",
+    melody: "Melody / lead",
+  }[kind];
+  const select = document.createElement("select");
+  select.id = "map-" + kind;
+  select.setAttribute("aria-label", label.textContent + " expression");
+  for (const name of ["Eye twitch", ...Object.keys(presets)])
+    select.add(new Option(name, name));
+  select.value = m.expression;
+  select.onchange = () =>
+    controller.configure(kind, { expression: select.value });
+  const test = document.createElement("button");
+  test.textContent = "Trigger";
+  test.dataset.testEvent = kind;
+  test.onclick = () => gesture(kind);
+  row.append(label, select, test);
+  for (const [key, title, min, max, step] of [
+    ["intensity", "Intensity", 0, 1, 0.05],
+    ["cooldown", "Cooldown (seconds)", 0, 1, 0.01],
+  ]) {
+    const l = document.createElement("label"),
+      out = document.createElement("output"),
+      range = document.createElement("input");
+    l.textContent = title;
+    out.textContent = m[key];
+    range.type = "range";
+    range.min = min;
+    range.max = max;
+    range.step = step;
+    range.value = m[key];
+    range.id = kind + "-" + key;
+    range.oninput = () => {
+      controller.configure(kind, { [key]: Number(range.value) });
+      out.textContent = range.value;
+    };
+    l.append(out, range);
+    row.append(l);
+  }
+  $("mappings").append(row);
+}
+for (const key of ["attack", "hold", "release"]) {
+  const range = $(key);
+  range.value = controller.envelope[key] * 1000;
+  range.oninput = () => {
+    controller.setEnvelope({ [key]: Number(range.value) / 1000 });
+    $(key + "Value").textContent = range.value + " ms";
+  };
+}
+$("rehearsal").onclick = () => {
+  if (rehearsal.running) {
+    rehearsal.stop();
+    controller.preset({}, clock(), 0.18);
+  } else {
+    demonstrating = false;
+    $("demo").textContent = "Automatic demo";
+    $("reactive").checked = false;
+    rehearsal.start($("pattern").value, clock(), Number($("tempo").value));
+  }
+  $("rehearsal").textContent = rehearsal.running
+    ? "Stop rehearsal"
+    : "Start rehearsal";
+};
+for (const key of ["pattern", "tempo"])
+  $(key).onchange = () => {
+    if (rehearsal.running)
+      rehearsal.start($("pattern").value, clock(), Number($("tempo").value));
+  };
 function setClean(value) {
   document.body.classList.toggle("clean", value);
   $("controls").hidden = value;
@@ -82,6 +174,10 @@ function setClean(value) {
   $("hide").setAttribute("aria-expanded", String(!value));
 }
 function reset() {
+  $("lastGesture").textContent = "Original sinister grin · reset";
+  recent = [];
+  rehearsal.stop();
+  $("rehearsal").textContent = "Start rehearsal";
   demonstrating = false;
   controller.reset();
   $("reactive").checked = false;
@@ -133,6 +229,8 @@ $("sensitivity").oninput = () => {
 $("reactive").onchange = () => {
   controller.preset({}, clock(), 0.3);
   if ($("reactive").checked) {
+    rehearsal.stop();
+    $("rehearsal").textContent = "Start rehearsal";
     demonstrating = false;
     $("demo").textContent = "Automatic demo";
     controller.preset({}, clock(), 0.35);
@@ -157,10 +255,11 @@ async function refreshDevices() {
 navigator.mediaDevices?.addEventListener?.("devicechange", refreshDevices);
 refreshDevices();
 function gesture(kind) {
+  rehearsal.stop();
+  $("rehearsal").textContent = "Start rehearsal";
   demonstrating = false;
   $("demo").textContent = "Automatic demo";
-  controller.preset({}, clock(), 0.12);
-  controller.trigger(kind, clock(), 1);
+  triggerEvent(kind, clock(), 1, true);
 }
 document
   .querySelectorAll("[data-gesture]")
@@ -172,6 +271,8 @@ for (const [name, pose] of Object.entries(presets)) {
     .replace("Unhappy / creepy frown", "Unhappy / frown");
   b.dataset.preset = name;
   b.onclick = () => {
+    rehearsal.stop();
+    $("rehearsal").textContent = "Start rehearsal";
     demonstrating = false;
     $("demo").textContent = "Automatic demo";
     $("reactive").checked = false;
@@ -184,6 +285,8 @@ for (const [name, pose] of Object.entries(presets)) {
 }
 $("reset").onclick = reset;
 $("demo").onclick = () => {
+  rehearsal.stop();
+  $("rehearsal").textContent = "Start rehearsal";
   demonstrating = !demonstrating;
   $("demo").textContent = demonstrating ? "Stop demo" : "Automatic demo";
   $("reactive").checked = false;
@@ -305,6 +408,11 @@ function applyMotion(m) {
   character.root.scale.setScalar(m.scale);
 }
 function advanceDemo(t) {
+  for (const e of rehearsal.advance(t, {
+    claps: $("rehearsalClaps").checked,
+    hats: $("rehearsalHats").checked,
+  }))
+    triggerEvent(e.kind, t, e.strength, true);
   if (demonstrating && t >= demoNext) {
     const names = Object.keys(presets),
       name = names[demoIndex % names.length],
@@ -390,6 +498,7 @@ try {
     rig,
     character,
     controller,
+    rehearsal,
     input,
     renderer,
     presets,
@@ -413,9 +522,13 @@ try {
     ". Open Song Lab for the illustration fallback.";
   console.error(e);
 }
+const sequenceTimer = setInterval(() => {
+  if (active && rig && !projectorId) advanceDemo(clock());
+}, 16);
 window.addEventListener("pagehide", () => input.stop(false));
 window.addEventListener("beforeunload", () => {
   disposed = true;
+  clearInterval(sequenceTimer);
   input.stop(false);
   channel?.close();
   projectorWindow?.close();

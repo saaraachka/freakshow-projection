@@ -33,14 +33,17 @@
 </p>
 <p>
   The original 0924235 sculpt and six-expression rig are reused without geometry
-  changes. Distinct attack/release gestures are layered within its bounded
-  controls. Audio sample analysis runs in the audio worklet, independently of
+  changes. Each musical attack selects one existing expression with a smooth attack, hold and release to the original grin. New events redirect the current pose without resetting or stacking presets. Audio sample analysis runs in the audio worklet, independently of
   rendering. The failed local mouth prototypes are excluded.
 </p>
 <img
   src="./review/grin.jpg"
   alt="Approved Candidate A sinister grin on the black projection stage"
 />
+<h2>Expression mappings and rehearsal</h2>
+<p>Kick → Angry · Snare → Surprised · Clap → Unhappy / creepy frown · Melody → Manic laughter · Hi-hat → Eye twitch. Every event can be reassigned to any of the six existing presets, including Neutral. Open “Edit sound → expression mappings” for intensity, cooldown and test buttons. “Gesture timing” exposes attack, hold and release.</p>
+<p>Rehearsal runs without microphone access: 4/4 kick/snare with optional claps and hats, melodic accents, or rapid percussion. The most recent detection and assigned expression are shown separately from the input meter.</p>
+<p><a href="./rollback-09b1889/index.html">Previous Live Show 09b1889 rollback</a></p>
 <h2>Matched gesture and preset peaks</h2>
 <p>
   Kick, snare, clap, subtle hat, melody, then the six existing presets. These
@@ -54,13 +57,13 @@
 <h2>Consolidated verification</h2>
 <ul>
   <li>
-    34 unit tests; protected source inventory and sculpt/expression cache
+    38 unit tests; protected source inventory and sculpt/expression cache
     checks.
   </li>
   <li>
     Chromium: captured synthetic WAV through real getUserMedia → audio worklet →
-    FFT/onsets → bounded facial gestures. All four active event families
-    detected; hats detected but ignored by default.
+    FFT/onsets → bounded facial gestures. All four major event families
+    detected; hats use a subtle eye twitch by default.
   </li>
   <li>
     WebKit: synthetic MediaStream through the same audio pipeline; manual
@@ -68,7 +71,7 @@
     exact reset.
   </li>
   <li>
-    Six presets, interruptible transitions, rapid overlapping gestures,
+    Six presets, interruptible transitions, rapid expression redirections,
     automatic demo and manual fallback. Tested peaks and rapid overlap contain
     no nonfinite vertices or reversed source-relative triangles.
   </li>

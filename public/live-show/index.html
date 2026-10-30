@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="theme-color" content="#000" />
     <title>FREAKSHOW · Live Show</title>
-    <link rel="stylesheet" href="./show.css?release=show-1" />
+    <link rel="stylesheet" href="./show.css?release=expression-events-2" />
     <script type="importmap">
       { "imports": { "three": "../character-3d/vendor/three.module.js" } }
     </script>
@@ -25,7 +25,7 @@
     <button id="enterProjector" hidden>Enter fullscreen</button>
     <button id="reveal" hidden>Show controls · H</button>
     <aside id="controls">
-      <h1>Let the clown listen.</h1>
+      <h1>Possessed by percussion.</h1>
       <p id="load" role="status">Loading approved Candidate A…</p>
       <section>
         <h2>Audio input</h2>
@@ -55,7 +55,9 @@
           <label
             ><input id="reactive" type="checkbox" checked />
             Audio-reactive</label
-          ><label><input id="hats" type="checkbox" /> Subtle hi-hats</label>
+          ><label
+            ><input id="hats" type="checkbox" checked /> Subtle hi-hats</label
+          >
         </div>
         <label for="sensitivity"
           >Sensitivity <output id="sensitivityValue">1.00×</output></label
@@ -69,7 +71,8 @@
         />
         <p class="hint">
           Audio stays on this device. Input is never played through your
-          speakers. Onsets are estimates; adjust sensitivity to the room.
+          speakers. Kick/snare/clap separation from mixed audio is approximate.
+          Adjust sensitivity or use manual triggers.
         </p>
       </section>
       <section>
@@ -85,6 +88,49 @@
         <label
           ><input id="idle" type="checkbox" checked /> Eerie idle motion</label
         >
+      </section>
+      <section>
+        <h2>Expression gestures</h2>
+        <p id="lastGesture" role="status">
+          No gesture yet · original sinister grin
+        </p>
+        <details>
+          <summary>Edit sound → expression mappings</summary>
+          <div id="mappings"></div>
+        </details>
+        <details>
+          <summary>Gesture timing</summary>
+          <label
+            >Attack <output id="attackValue">45 ms</output
+            ><input id="attack" type="range" min="10" max="500" step="5"
+          /></label>
+          <label
+            >Peak hold <output id="holdValue">75 ms</output
+            ><input id="hold" type="range" min="0" max="500" step="5"
+          /></label>
+          <label
+            >Release <output id="releaseValue">180 ms</output
+            ><input id="release" type="range" min="20" max="1000" step="10"
+          /></label>
+        </details>
+      </section>
+      <section>
+        <h2>Rehearsal · no microphone needed</h2>
+        <select id="pattern" aria-label="Rehearsal pattern">
+          <option value="beat">4/4 kick / snare</option>
+          <option value="melody">Melodic accents</option>
+          <option value="stress">Rapid percussion stress test</option>
+        </select>
+        <label
+          >Tempo <input id="tempo" type="range" min="60" max="180" value="120"
+        /></label>
+        <label
+          ><input id="rehearsalClaps" type="checkbox" /> Alternate clap</label
+        >
+        <label
+          ><input id="rehearsalHats" type="checkbox" checked /> Hi-hats</label
+        >
+        <button id="rehearsal">Start rehearsal</button>
       </section>
       <section>
         <h2>Facial acting</h2>
@@ -117,6 +163,6 @@
         · <a href="../../?mode=song" target="_top">Song Lab</a>
       </footer>
     </aside>
-    <script type="module" src="./show.js?release=show-1"></script>
+    <script type="module" src="./show.js?release=expression-events-2"></script>
   </body>
 </html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#000" />
+    <title>FREAKSHOW · Live Show</title>
+    <link rel="stylesheet" href="./show.css?release=show-1" />
+    <script type="importmap">
+      { "imports": { "three": "../../character-3d/vendor/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <canvas
+      id="stage"
+      aria-label="Candidate A audio-reactive 3D clown"
+    ></canvas>
+    <header>
+      <strong>FREAKSHOW <small>LIVE SHOW</small></strong>
+      <div>
+        <button id="fullscreen">Fullscreen</button
+        ><button id="hide" aria-expanded="true">Hide controls</button>
+      </div>
+    </header>
+    <button id="enterProjector" hidden>Enter fullscreen</button>
+    <button id="reveal" hidden>Show controls · H</button>
+    <aside id="controls">
+      <h1>Let the clown listen.</h1>
+      <p id="load" role="status">Loading approved Candidate A…</p>
+      <section>
+        <h2>Audio input</h2>
+        <label for="device">Microphone / audio interface</label
+        ><select id="device">
+          <option value="">System default</option>
+        </select>
+        <div class="row">
+          <button id="connect">Enable input</button
+          ><button id="disconnect" disabled>Disable input</button
+          ><button id="resume" hidden>Resume input</button>
+        </div>
+        <p id="status" role="status" aria-live="polite">
+          Input off · manual gestures ready
+        </p>
+        <label for="level">Input level</label
+        ><meter
+          id="level"
+          min="0"
+          max="1"
+          low=".02"
+          high=".75"
+          optimum=".2"
+          value="0"
+        ></meter>
+        <div class="row">
+          <label
+            ><input id="reactive" type="checkbox" checked />
+            Audio-reactive</label
+          ><label><input id="hats" type="checkbox" /> Subtle hi-hats</label>
+        </div>
+        <label for="sensitivity"
+          >Sensitivity <output id="sensitivityValue">1.00×</output></label
+        ><input
+          id="sensitivity"
+          type="range"
+          min=".5"
+          max="2"
+          step=".05"
+          value="1"
+        />
+        <p class="hint">
+          Audio stays on this device. Input is never played through your
+          speakers. Onsets are estimates; adjust sensitivity to the room.
+        </p>
+      </section>
+      <section>
+        <h2>Live gestures</h2>
+        <div class="gestures">
+          <button data-gesture="kick">Kick <kbd>1</kbd></button
+          ><button data-gesture="snare">Snare <kbd>2</kbd></button
+          ><button data-gesture="clap">Clap <kbd>3</kbd></button
+          ><button data-gesture="hat">Hi-hat <kbd>4</kbd></button
+          ><button data-gesture="melody">Melody <kbd>5</kbd></button>
+        </div>
+        <p id="heard" aria-live="off">Waiting for a musical attack</p>
+        <label
+          ><input id="idle" type="checkbox" checked /> Eerie idle motion</label
+        >
+      </section>
+      <section>
+        <h2>Facial acting</h2>
+        <div id="presets" class="presets"></div>
+        <div class="row">
+          <button id="demo">Automatic demo</button
+          ><button id="reset">Reset to grin</button>
+        </div>
+        <p class="hint">
+          Reset pauses reactions and idle motion for the exact approved grin.
+          Demo pauses audio reactions. All poses use the approved rig’s existing
+          limits.
+        </p>
+      </section>
+      <section>
+        <button id="projector">Open projector window</button>
+        <p class="hint">
+          Move that window to the projector, then click Fullscreen there. H
+          hides controls; Esc leaves fullscreen.
+        </p>
+        <p id="projectionStatus"></p>
+      </section>
+      <footer>
+        Candidate A · protected rig 0924235<br /><a
+          href="../../candidate-a-rig/index.html?release=0924235"
+          target="_blank"
+          rel="noopener"
+          >Approved rig viewer</a
+        >
+        · <a href="../../../?mode=song" target="_top">Song Lab</a>
+      </footer>
+    </aside>
+    <script type="module" src="./show.js?release=show-1"></script>
+  </body>
+</html>

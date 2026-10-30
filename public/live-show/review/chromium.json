@@ -8,133 +8,159 @@
     "events": [
       {
         "kind": "kick",
-        "time": 22.040500907035437
+        "time": 27.08009750566893,
+        "expression": "Angry",
+        "intensity": 1
       },
       {
         "kind": "kick",
-        "time": 22.87906689342404
+        "time": 27.624710657602332,
+        "expression": "Angry",
+        "intensity": 1
       },
       {
         "kind": "snare",
-        "time": 23.58923945577635
+        "time": 27.708343990917783,
+        "expression": "Surprised",
+        "intensity": 0.35
       },
       {
         "kind": "melody",
-        "time": 23.817167800453515
+        "time": 28.231997278893683,
+        "expression": "Manic laughter",
+        "intensity": 1
       },
       {
         "kind": "melody",
-        "time": 24.048998639461743
+        "time": 28.484997278893683,
+        "expression": "Manic laughter",
+        "intensity": 1
       },
       {
-        "kind": "kick",
-        "time": 25.188403401366507
+        "kind": "melody",
+        "time": 28.71122312925766,
+        "expression": "Manic laughter",
+        "intensity": 1
       },
       {
         "kind": "snare",
-        "time": 25.188403401366507
+        "time": 29.688056689342403,
+        "expression": "Surprised",
+        "intensity": 1
       },
       {
         "kind": "clap",
-        "time": 26.191303401372465
+        "time": 30.66954693876359,
+        "expression": "Unhappy / creepy frown",
+        "intensity": 0.35
+      },
+      {
+        "kind": "hat",
+        "time": 31.697338095232134,
+        "expression": "Eye twitch",
+        "intensity": 0.3746226361654454
       },
       {
         "kind": "kick",
-        "time": 27.805233560090702
-      },
-      {
-        "kind": "kick",
-        "time": 28.072400226757367
+        "time": 32.32023378684211,
+        "expression": "Angry",
+        "intensity": 1
       },
       {
         "kind": "snare",
-        "time": 28.072400226757367
+        "time": 32.59267709749971,
+        "expression": "Surprised",
+        "intensity": 0.7592834818375409
       },
       {
         "kind": "clap",
-        "time": 28.322083900226758
+        "time": 32.84337709748779,
+        "expression": "Unhappy / creepy frown",
+        "intensity": 1
       },
       {
         "kind": "melody",
-        "time": 28.622383900238678
+        "time": 33.16344376416042,
+        "expression": "Manic laughter",
+        "intensity": 1
       }
     ],
     "deviceOptions": 4,
     "clock": true,
-    "level": 0.7457865128457701,
-    "maxLevel": 0.36690546583925715,
+    "level": 0,
+    "maxLevel": 0.36622102728168393,
     "context": "running",
     "detected": {
-      "kick": 5.974489795918368,
-      "snare": 5.974489795918368,
-      "clap": 6.224489795918367,
-      "hat": 5.107823129251701,
-      "melody": 6.524489795918367,
-      "body": 6.524489795918367
+      "kick": 5.752222222222223,
+      "snare": 6.018888888888888,
+      "clap": 6.268888888888888,
+      "hat": 5.135555555555555,
+      "melody": 6.585555555555556,
+      "body": 6.585555555555556
     }
   },
   "fullscreen": true,
   "rapid": {
     "q": {
-      "jawOpen": 3.8,
-      "mouthClose": 0,
-      "smileToFrown": 0,
-      "grin": 0,
-      "lipRound": 0,
+      "jawOpen": 4.105858147762601,
+      "mouthClose": 0.04728319367326665,
+      "smileToFrown": 0.3780864174691776,
+      "grin": 0.02797986323224196,
+      "lipRound": 0.022383890585793566,
       "mouthWide": 0,
       "mouthA": 0,
-      "cornerLeft": 0.35,
-      "cornerRight": 0.08,
+      "cornerLeft": 0.14604335903078336,
+      "cornerRight": 0.14604335903078336,
       "lipCompress": 0,
-      "upperLipRaise": 0,
+      "upperLipRaise": 0.0945663873465333,
       "browRelax": 0,
-      "browRaise": 0.55,
-      "innerRaise": 0.15,
-      "browAnger": 0.12,
-      "outerRaise": 0,
-      "browLeft": 0.25,
+      "browRaise": 0.3374379132656652,
+      "innerRaise": 0.09792952131284685,
+      "browAnger": 0.2521770329240888,
+      "outerRaise": 0.0945663873465333,
+      "browLeft": 0,
       "browRight": 0,
-      "eyeOpen": 0.4,
-      "squint": 0,
+      "eyeOpen": 0.22383890585793567,
+      "squint": 0.21145521664712563,
       "blink": 0,
-      "cheekRaise": 0.4,
+      "cheekRaise": 0.25248452259852383,
       "nasolabial": 0,
       "gazeX": 0,
       "gazeY": 0
     },
     "invalid": 0,
-    "voices": 24
+    "voices": 1
   },
   "geometryChecks": [
     {
       "name": "kick",
       "reversed": 0,
       "invalid": 0,
-      "minAreaRatio": 0.6793318412705383
+      "minAreaRatio": 0.27140674093792094
     },
     {
       "name": "snare",
       "reversed": 0,
       "invalid": 0,
-      "minAreaRatio": 0.6947718538034938
+      "minAreaRatio": 0.38376411293945184
     },
     {
       "name": "clap",
       "reversed": 0,
       "invalid": 0,
-      "minAreaRatio": 0.9089822037854912
+      "minAreaRatio": 0.21659874430468598
     },
     {
       "name": "hat",
       "reversed": 0,
       "invalid": 0,
-      "minAreaRatio": 0.9440153485054326
+      "minAreaRatio": 0.8863108001114843
     },
     {
       "name": "melody",
       "reversed": 0,
       "invalid": 0,
-      "minAreaRatio": 0.7474797091403708
+      "minAreaRatio": 0.6348111051405707
     },
     {
       "name": "Default sinister grin",
@@ -173,10 +199,100 @@
       "minAreaRatio": 0.21659874430468598
     },
     {
-      "name": "rapid overlap",
+      "name": "Default sinister grin → Neutral midpoint",
       "reversed": 0,
       "invalid": 0,
-      "minAreaRatio": 0.6323712518362562
+      "minAreaRatio": 0.5387434063089561
+    },
+    {
+      "name": "Default sinister grin → Angry midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.39897106786057723
+    },
+    {
+      "name": "Default sinister grin → Surprised midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.646902861084125
+    },
+    {
+      "name": "Default sinister grin → Manic laughter midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.8211199397194311
+    },
+    {
+      "name": "Default sinister grin → Unhappy / creepy frown midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.31114631695167594
+    },
+    {
+      "name": "Neutral → Angry midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.2598260703160969
+    },
+    {
+      "name": "Neutral → Surprised midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.2994067349924872
+    },
+    {
+      "name": "Neutral → Manic laughter midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.5593986226200757
+    },
+    {
+      "name": "Neutral → Unhappy / creepy frown midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.179975420870624
+    },
+    {
+      "name": "Angry → Surprised midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.33677627571501356
+    },
+    {
+      "name": "Angry → Manic laughter midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.4185825044257986
+    },
+    {
+      "name": "Angry → Unhappy / creepy frown midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.2620015486643819
+    },
+    {
+      "name": "Surprised → Manic laughter midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.5956118185880266
+    },
+    {
+      "name": "Surprised → Unhappy / creepy frown midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.3023174791791966
+    },
+    {
+      "name": "Manic laughter → Unhappy / creepy frown midpoint",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.32856559098771854
+    },
+    {
+      "name": "rapid redirect",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.4378841793233609
     }
   ],
   "exact": true,

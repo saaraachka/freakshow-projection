@@ -159,3 +159,14 @@ Open `?mode=live` in the main application, or `public/live-show/index.html` dire
 Use current desktop Chrome or Safari on HTTPS/localhost. If an embedded browser prevents microphone/fullscreen access, use **Open Live Show in its own tab**, or open the URL in the system browser. If a device disconnects or permission fails, manual gestures, acting presets and demo remain available. **Resume input** resumes a browser-suspended audio context.
 
 Development: `npm run dev`. Production: `PAGES_BASE=/freakshow-projection/ npm run build`. After an online visit, the service worker precaches the show and its approved sculpt dependencies; microphone permissions still belong to the browser. `npm run test:live` runs the consolidated browser check against the dev server on port 5194 by default (`SHOW_BASE` overrides it). `SHOW_WEBKIT=1` uses the environment's WebKit wrapper. The captured PCM fixture is generated synthetic percussion/tones, not a calibration song; WebKit validation uses a synthetic MediaStream and explicit permission rejection, not a physical microphone.
+
+
+### Expression-triggered Live Show
+
+Open `public/live-show/index.html` (or `?mode=live` in FREAKSHOW). The protected Candidate A rig and all six presets remain unchanged. Default mappings: kick → Angry, snare → Surprised, clap → Unhappy, melody → Manic laughter, hats → a subtle eye twitch. No event returns to the original sinister grin.
+
+Use **Edit sound → expression mappings** to assign any preset (including Neutral), set per-event intensity/cooldown, and trigger a test. **Gesture timing** controls attack/hold/release; defaults are 45/75/180 ms. One dominant expression redirects smoothly from the current pose; presets are not stacked. Default hat twitches are a bounded eye-only secondary accent. Audio classification is approximate for mixed microphone signals.
+
+**Rehearsal** needs no microphone: 4/4 backbeat, optional hats/claps, melodic accents, or rapid percussion. **Enable input** starts selected microphone/interface capture; sensitivity adjusts adaptive onset detection. Input is not monitored through speakers. Fullscreen and H hide controls. Reset stops rehearsal/reactivity/idle and restores the exact grin.
+
+Previous show runtime: `public/live-show/rollback-09b1889/index.html`; original source checkpoint: `checkpoint/candidate-a-live-show-1` (`09b1889`). Approved rig and visual checkpoint remain untouched. Browser verification: `npm run test:live` with `SHOW_BASE` set to the running build; synthetic captured PCM is used in cloud tests, not a physical audio interface.

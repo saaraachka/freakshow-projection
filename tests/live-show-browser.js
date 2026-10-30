@@ -94,9 +94,24 @@ try {
       ),
     );
   }
+  await p.locator("summary").filter({ hasText: "Edit sound" }).click();
+  await p.selectOption("#map-kick", "Neutral");
+  await p.click('[data-test-event="kick"]');
+  assert.equal(
+    await p.evaluate(() => freakshowLive.controller.events.at(-1).expression),
+    "Neutral",
+  );
+  await p.selectOption("#map-kick", "Angry");
+  for (const pattern of ["beat", "melody", "stress"]) {
+    await p.selectOption("#pattern", pattern);
+    await p.click("#rehearsal");
+    await p.waitForTimeout(1400);
+    assert.ok(await p.evaluate(() => freakshowLive.rehearsal.running));
+    await p.click("#rehearsal");
+  }
+  await p.click("#reset");
   console.log("manual checks complete");
   await p.click("#reactive");
-  await p.click("#idle");
   await p.evaluate(() => (freakshowLive.controller.events = []));
   await p.click("#connect");
   await p.waitForFunction(
@@ -194,13 +209,18 @@ try {
   assert.ok(exact);
   // Deterministic matched visual/geometry batch uses real protected rig at peaks.
   const review = await p.evaluate(async () => {
-    const { GESTURES } = await import("./performance.js?release=show-1");
+    const { GESTURES } = await import(
+      "./performance.js?release=expression-events-2"
+    );
     const a = freakshowLive,
       rows = [];
     for (const [k, g] of Object.entries(GESTURES)) {
       a.controller.reset();
       a.controller.trigger(k, 0);
-      const q = a.controller.sample(g.attack + g.hold * 0.5, false).pose;
+      const q = a.controller.sample(
+        a.controller.envelope.attack + a.controller.envelope.hold * 0.5,
+        false,
+      ).pose;
       rows.push({ name: k, q });
     }
     return [
@@ -318,7 +338,24 @@ try {
       a.rig.set({});
       return result;
     },
-    [...review, { name: "rapid overlap", q: rapid.q }],
+    [
+      ...review,
+      ...Object.entries(await p.evaluate(() => freakshowLive.presets)).flatMap(
+        ([a, x], i, all) =>
+          all
+            .slice(i + 1)
+            .map(([b, y]) => ({
+              name: a + " → " + b + " midpoint",
+              q: Object.fromEntries(
+                Object.keys({ ...x, ...y }).map((k) => [
+                  k,
+                  ((x[k] || 0) + (y[k] || 0)) * 0.5,
+                ]),
+              ),
+            })),
+      ),
+      { name: "rapid redirect", q: rapid.q },
+    ],
   );
   assert.ok(
     geometryChecks.every((c) => !c.reversed && !c.invalid),

@@ -51,6 +51,8 @@ export class OnsetDetector {
       body: -100,
     };
     this.time = null;
+    this.armed = Object.fromEntries(Object.keys(BANDS).map((k) => [k, true]));
+    this.lastEvent = -100;
   }
   process(features, time, sensitivity = 1) {
     const dt =
@@ -61,7 +63,13 @@ export class OnsetDetector {
     for (const k of Object.keys(BANDS)) {
       const f = features[k],
         p = this.stats[k];
+      if (
+        f.flux < Math.max(0.0015 / s, p.flux * 1.1) ||
+        f.energy < p.energy * 0.8
+      )
+        this.armed[k] = true;
       attacks[k] =
+        this.armed[k] &&
         f.energy > 0.003 / s &&
         f.energy > p.energy * 1.06 &&
         f.flux >
@@ -72,7 +80,11 @@ export class OnsetDetector {
     }
     const out = [],
       emit = (kind, band, cooldown) => {
-        if (time - this.last[kind] < cooldown) return;
+        if (time - this.last[kind] < cooldown || time - this.lastEvent < 0.075)
+          return;
+        this.lastEvent = time;
+        for (const k of Object.keys(BANDS))
+          if (attacks[k]) this.armed[k] = false;
         this.last[kind] = time;
         out.push({
           kind,
@@ -81,7 +93,7 @@ export class OnsetDetector {
         });
       };
     const { low, mid, presence, high } = features;
-    if (attacks.low && low.energy > mid.energy * 0.18)
+    if (attacks.low && low.energy > (mid.energy + presence.energy) * 0.7)
       emit("kick", "low", 0.13);
     const isHat = high.energy > (mid.energy + presence.energy) * 1.25;
     if (

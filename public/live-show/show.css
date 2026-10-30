@@ -223,3 +223,18 @@ body.clean #reveal {
   bottom: 12px;
   opacity: 0.75;
 }
+
+.mapping {
+  padding: 12px 0;
+  border-bottom: 1px solid #51463b;
+}
+.mapping button {
+  margin-top: 6px;
+}
+details {
+  margin: 12px 0;
+}
+summary {
+  cursor: pointer;
+  color: #ddbc92;
+}

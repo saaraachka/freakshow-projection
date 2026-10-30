@@ -316,7 +316,7 @@ function activateCandidateLive(enabled) {
     container.id = "candidate-live-show";
     const link = document.createElement("a");
     link.href = new URL(
-      "../public/live-show/index.html?release=show-1",
+      "../public/live-show/index.html?release=expression-events-2",
       import.meta.url,
     ).href;
     link.target = "_blank";
