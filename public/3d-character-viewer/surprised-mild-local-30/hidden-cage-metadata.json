@@ -1,0 +1,72 @@
+{
+  "baseAssetSha256": "03286cd28cc3ebf8c9fd065be417bc28c8fec2cac07b0d3e5ffeaf35d7a1fe49",
+  "driver": "Existing fitted CC0 MakeHuman hm08 cage; no additional fitting",
+  "driverVertices": 4139,
+  "mapping": "Closest donor triangle + barycentric coordinates + transported rest offset; semantic upper/lower lip correspondence",
+  "mapped": [
+    {
+      "category": 0,
+      "vertices": 5120,
+      "meanOffset": 0.03592589870189442
+    },
+    {
+      "category": 1,
+      "vertices": 923,
+      "meanOffset": 0.009861798103599233
+    },
+    {
+      "category": 2,
+      "vertices": 923,
+      "meanOffset": 0.026358091308618943
+    },
+    {
+      "category": 3,
+      "vertices": 234,
+      "meanOffset": 0.013250992145430823
+    }
+  ],
+  "jawWeights": "Official MakeHuman default_weights.mhw; sum jaw and descendant bone weights",
+  "donorRendered": false,
+  "topologyChanged": false,
+  "mouthMotion": {
+    "source": "Official CC0 face-poseunits.bvh / face-poseunits.json",
+    "skeletalJawExcluded": true,
+    "units": [
+      "JawDrop",
+      "LipsKiss",
+      "UpperLipUp",
+      "lowerLipDown",
+      "MouthLeftPullDown",
+      "MouthRightPullDown"
+    ],
+    "stats": {
+      "JawDrop": {
+        "maxDelta": 0.16093598171744053
+      },
+      "LipsKiss": {
+        "maxDelta": 0.15490835605018427
+      },
+      "UpperLipUp": {
+        "maxDelta": 0.13435701359569935
+      },
+      "lowerLipDown": {
+        "maxDelta": 0.20540376136357974
+      },
+      "MouthLeftPullDown": {
+        "maxDelta": 0.11782769048952178
+      },
+      "MouthRightPullDown": {
+        "maxDelta": 0.11985740664024812
+      }
+    },
+    "activation": "smoothstep from 10% to 30%; exact zero rest"
+  },
+  "vestibuleRepair": {
+    "vertices": {
+      "upper": 674,
+      "lower": 967
+    },
+    "reason": "Ray probe identified face triangle 163132 as the exposed lower vestibule wall, not teeth. Correct only upper/lower cage correspondence.",
+    "restChanged": false
+  }
+}
