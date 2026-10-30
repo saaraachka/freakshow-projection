@@ -1,0 +1,23 @@
+{
+  "checks": {
+    "exactRest": true,
+    "returned": true,
+    "fixedMismatch": 0,
+    "nonfinite": 0,
+    "upperFixed": true,
+    "topologyUnchanged": true
+  },
+  "metrics": {
+    "cageNodes": 720,
+    "cageCells": 490,
+    "restVerticalLipLandmarkGap": 0.2642662227153778,
+    "posedVerticalLipLandmarkGap": 0.34319281578063965,
+    "upperIndex": 63145,
+    "lowerIndex": 62402,
+    "folded": 0,
+    "minSignedRatio": 0.6348111051405707,
+    "metricNote": "Source lip-landmark proxy, not a substitute for the rendered aperture review."
+  },
+  "errors": [],
+  "gate": "visual review still required"
+}

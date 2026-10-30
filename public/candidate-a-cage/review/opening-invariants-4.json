@@ -1,0 +1,12 @@
+{
+  "checks": {
+    "exactRest": true,
+    "returned": true,
+    "fixedMismatch": 0,
+    "nonfinite": 0,
+    "upperFixed": true,
+    "topologyUnchanged": true
+  },
+  "errors": [],
+  "gate": "visual review still required"
+}

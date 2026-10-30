@@ -1,0 +1,58 @@
+{
+  "geometry": {
+    "folded": 0,
+    "degenerate": 0,
+    "minSignedRatio": 0.6348111051405707
+  },
+  "actual": [
+    {
+      "degrees": 2.737385257230659,
+      "time": 9562
+    },
+    {
+      "degrees": 4.585937285562002,
+      "time": 9984
+    },
+    {
+      "degrees": 5.817012750047492,
+      "time": 10483.09999999404
+    },
+    {
+      "degrees": 4.420005124694194,
+      "time": 11321.5
+    },
+    {
+      "degrees": 2.4600906383603443,
+      "time": 11765.5
+    },
+    {
+      "degrees": 0.6944792483427712,
+      "time": 12187.200000017881
+    },
+    {
+      "degrees": 0.0015401186698290603,
+      "time": 12680.700000017881
+    },
+    {
+      "degrees": 0.7951141865129887,
+      "time": 13091.300000011921
+    },
+    {
+      "degrees": 4.214754540936296,
+      "time": 13850.59999999404
+    },
+    {
+      "degrees": 5.999614945620272,
+      "time": 14656.200000017881
+    },
+    {
+      "degrees": 3.7725115078199982,
+      "time": 15495.09999999404
+    },
+    {
+      "degrees": 0.3710799598684109,
+      "time": 16300.90000000596
+    }
+  ],
+  "preview": "Real requestAnimationFrame preview, wall-clock phase, headless recording; not a mobile FPS certification."
+}
