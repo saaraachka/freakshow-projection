@@ -380,4 +380,4 @@ const cagePanel=document.createElement('section');cagePanel.style.cssText='paddi
 cagePanel.innerHTML='<h3>Hidden-cage early test</h3><p>Only Local-17 skin is rendered.</p><button data-cage-jaw="0">Exact Rest</button> <button data-cage-jaw=".30">30% jaw</button> <button data-cage-jaw=".35">35% jaw</button> <button data-cage-jaw=".40">40% jaw</button><p id="cage-readout">Rest</p>';
 document.querySelector('aside')?.prepend(cagePanel);if(!cagePanel.parentNode)document.body.append(cagePanel);
 document.querySelector('#expression-panel').style.display='none';document.querySelector('#model-version').disabled=true;
-for(const b of cagePanel.querySelectorAll('button'))b.onclick=()=>{character.expressions.set({anger:0,surprise:0},{immediate:true});character.deformation.set(+b.dataset.cageJaw);document.querySelector('#cage-readout').textContent=JSON.stringify(character.deformation.state);dirty=true;};
+for(const b of cagePanel.querySelectorAll('button'))b.onclick=()=>{character.expressions.set({jaw:+b.dataset.cageJaw},{immediate:true});document.querySelector('#cage-readout').textContent=JSON.stringify(character.deformation.state);dirty=true;};

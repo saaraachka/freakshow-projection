@@ -1,3 +1,4 @@
+import {installOpeningExpressionChannel} from "./opening-expression-channel.js";
 import {createHiddenCageDriver} from "./hidden-cage-driver.js";
 import { refineHairCoverage } from "./refinement-pass.js";
 import { loadExpressionCache } from "./expression-cache.js?architecture=11";
@@ -175,5 +176,6 @@ export async function createProceduralHead() {
   character.expressions = createExpressionSystem(character);
   character.expressions.set({anger:0,surprise:0},{immediate:true});
   character.deformation = await createHiddenCageDriver(character);
+  installOpeningExpressionChannel(character);
   return character;
 }

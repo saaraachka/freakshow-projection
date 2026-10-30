@@ -23,3 +23,5 @@
   "presets": "Angry and Surprised not added.",
   "release": "Development checkpoint only; no merge to main or Pages deployment."
 }
+
+Controller integration: the validated jaw channel is now wired through the existing expression API. Direct-driver and controller geometry/normals/dental matrices match exactly at 30/35/40, with exact rest restoration. No Angry/Surprised presets.
