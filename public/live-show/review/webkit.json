@@ -1,0 +1,261 @@
+{
+  "browser": "WebKit synthetic stream + rejection",
+  "rest": {
+    "vertices": 82720,
+    "exact": true
+  },
+  "audio": {
+    "events": [
+      {
+        "kind": "kick",
+        "time": 7.259081632653062
+      },
+      {
+        "kind": "kick",
+        "time": 7.442727891156463
+      },
+      {
+        "kind": "snare",
+        "time": 7.476061224489796
+      },
+      {
+        "kind": "kick",
+        "time": 7.974555555555557
+      },
+      {
+        "kind": "kick",
+        "time": 8.361378684807256
+      },
+      {
+        "kind": "snare",
+        "time": 8.361378684807256
+      },
+      {
+        "kind": "snare",
+        "time": 8.75938775510204
+      },
+      {
+        "kind": "kick",
+        "time": 8.761736961451247
+      },
+      {
+        "kind": "snare",
+        "time": 9.151038548752833
+      },
+      {
+        "kind": "kick",
+        "time": 9.160095238095238
+      },
+      {
+        "kind": "snare",
+        "time": 9.561403628117914
+      },
+      {
+        "kind": "kick",
+        "time": 9.959469387755103
+      },
+      {
+        "kind": "snare",
+        "time": 9.976136054421769
+      },
+      {
+        "kind": "kick",
+        "time": 10.358657596371883
+      },
+      {
+        "kind": "snare",
+        "time": 10.358657596371883
+      },
+      {
+        "kind": "kick",
+        "time": 10.759356009070295
+      },
+      {
+        "kind": "snare",
+        "time": 10.77602267573696
+      },
+      {
+        "kind": "snare",
+        "time": 11.16115192743764
+      },
+      {
+        "kind": "kick",
+        "time": 11.177818594104307
+      },
+      {
+        "kind": "kick",
+        "time": 11.5587052154195
+      },
+      {
+        "kind": "kick",
+        "time": 11.960188208616781
+      },
+      {
+        "kind": "snare",
+        "time": 12.360154195011336
+      },
+      {
+        "kind": "kick",
+        "time": 12.376820861678004
+      },
+      {
+        "kind": "kick",
+        "time": 12.776619047619048
+      },
+      {
+        "kind": "kick",
+        "time": 13.176392290249433
+      },
+      {
+        "kind": "kick",
+        "time": 13.575238095238095
+      },
+      {
+        "kind": "kick",
+        "time": 13.986009070294786
+      },
+      {
+        "kind": "kick",
+        "time": 14.375174603174603
+      },
+      {
+        "kind": "snare",
+        "time": 14.375174603174603
+      }
+    ],
+    "deviceOptions": 1,
+    "clock": true,
+    "level": 0.00022236245460224055,
+    "maxLevel": 0.7848412429247081,
+    "context": "running",
+    "detected": {
+      "kick": 7.377120181405895,
+      "snare": 7.377120181405895,
+      "clap": -100,
+      "hat": -100,
+      "melody": -100,
+      "body": 7.377120181405895
+    }
+  },
+  "fullscreen": true,
+  "rapid": {
+    "q": {
+      "jawOpen": 3.8,
+      "mouthClose": 0,
+      "smileToFrown": 0,
+      "grin": 0,
+      "lipRound": 0,
+      "mouthWide": 0,
+      "mouthA": 0,
+      "cornerLeft": 0.35,
+      "cornerRight": 0.08,
+      "lipCompress": 0,
+      "upperLipRaise": 0,
+      "browRelax": 0,
+      "browRaise": 0.55,
+      "innerRaise": 0.15,
+      "browAnger": 0.12,
+      "outerRaise": 0,
+      "browLeft": 0.25,
+      "browRight": 0,
+      "eyeOpen": 0.4,
+      "squint": 0,
+      "blink": 0,
+      "cheekRaise": 0.4,
+      "nasolabial": 0,
+      "gazeX": 0,
+      "gazeY": 0
+    },
+    "invalid": 0,
+    "voices": 24
+  },
+  "geometryChecks": [
+    {
+      "name": "kick",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6793318412705383
+    },
+    {
+      "name": "snare",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6947718538034938
+    },
+    {
+      "name": "clap",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.9089822037854912
+    },
+    {
+      "name": "hat",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.9440153485054326
+    },
+    {
+      "name": "melody",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.7474797091403708
+    },
+    {
+      "name": "Default sinister grin",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 1
+    },
+    {
+      "name": "Neutral",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.20096671176047823
+    },
+    {
+      "name": "Angry",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.27140674093792094
+    },
+    {
+      "name": "Surprised",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.38376411293945184
+    },
+    {
+      "name": "Manic laughter",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6348111051405707
+    },
+    {
+      "name": "Unhappy / creepy frown",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.21659874430468598
+    },
+    {
+      "name": "rapid overlap",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6323712518362562
+    }
+  ],
+  "exact": true,
+  "review": [
+    "kick",
+    "snare",
+    "clap",
+    "hat",
+    "melody",
+    "Default sinister grin",
+    "Neutral",
+    "Angry",
+    "Surprised",
+    "Manic laughter",
+    "Unhappy / creepy frown"
+  ],
+  "errors": []
+}

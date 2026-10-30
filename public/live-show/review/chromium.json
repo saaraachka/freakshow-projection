@@ -1,0 +1,197 @@
+{
+  "browser": "Chromium captured WAV via real getUserMedia",
+  "rest": {
+    "vertices": 82720,
+    "exact": true
+  },
+  "audio": {
+    "events": [
+      {
+        "kind": "kick",
+        "time": 22.040500907035437
+      },
+      {
+        "kind": "kick",
+        "time": 22.87906689342404
+      },
+      {
+        "kind": "snare",
+        "time": 23.58923945577635
+      },
+      {
+        "kind": "melody",
+        "time": 23.817167800453515
+      },
+      {
+        "kind": "melody",
+        "time": 24.048998639461743
+      },
+      {
+        "kind": "kick",
+        "time": 25.188403401366507
+      },
+      {
+        "kind": "snare",
+        "time": 25.188403401366507
+      },
+      {
+        "kind": "clap",
+        "time": 26.191303401372465
+      },
+      {
+        "kind": "kick",
+        "time": 27.805233560090702
+      },
+      {
+        "kind": "kick",
+        "time": 28.072400226757367
+      },
+      {
+        "kind": "snare",
+        "time": 28.072400226757367
+      },
+      {
+        "kind": "clap",
+        "time": 28.322083900226758
+      },
+      {
+        "kind": "melody",
+        "time": 28.622383900238678
+      }
+    ],
+    "deviceOptions": 4,
+    "clock": true,
+    "level": 0.7457865128457701,
+    "maxLevel": 0.36690546583925715,
+    "context": "running",
+    "detected": {
+      "kick": 5.974489795918368,
+      "snare": 5.974489795918368,
+      "clap": 6.224489795918367,
+      "hat": 5.107823129251701,
+      "melody": 6.524489795918367,
+      "body": 6.524489795918367
+    }
+  },
+  "fullscreen": true,
+  "rapid": {
+    "q": {
+      "jawOpen": 3.8,
+      "mouthClose": 0,
+      "smileToFrown": 0,
+      "grin": 0,
+      "lipRound": 0,
+      "mouthWide": 0,
+      "mouthA": 0,
+      "cornerLeft": 0.35,
+      "cornerRight": 0.08,
+      "lipCompress": 0,
+      "upperLipRaise": 0,
+      "browRelax": 0,
+      "browRaise": 0.55,
+      "innerRaise": 0.15,
+      "browAnger": 0.12,
+      "outerRaise": 0,
+      "browLeft": 0.25,
+      "browRight": 0,
+      "eyeOpen": 0.4,
+      "squint": 0,
+      "blink": 0,
+      "cheekRaise": 0.4,
+      "nasolabial": 0,
+      "gazeX": 0,
+      "gazeY": 0
+    },
+    "invalid": 0,
+    "voices": 24
+  },
+  "geometryChecks": [
+    {
+      "name": "kick",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6793318412705383
+    },
+    {
+      "name": "snare",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6947718538034938
+    },
+    {
+      "name": "clap",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.9089822037854912
+    },
+    {
+      "name": "hat",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.9440153485054326
+    },
+    {
+      "name": "melody",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.7474797091403708
+    },
+    {
+      "name": "Default sinister grin",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 1
+    },
+    {
+      "name": "Neutral",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.20096671176047823
+    },
+    {
+      "name": "Angry",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.27140674093792094
+    },
+    {
+      "name": "Surprised",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.38376411293945184
+    },
+    {
+      "name": "Manic laughter",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6348111051405707
+    },
+    {
+      "name": "Unhappy / creepy frown",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.21659874430468598
+    },
+    {
+      "name": "rapid overlap",
+      "reversed": 0,
+      "invalid": 0,
+      "minAreaRatio": 0.6323712518362562
+    }
+  ],
+  "exact": true,
+  "review": [
+    "kick",
+    "snare",
+    "clap",
+    "hat",
+    "melody",
+    "Default sinister grin",
+    "Neutral",
+    "Angry",
+    "Surprised",
+    "Manic laughter",
+    "Unhappy / creepy frown"
+  ],
+  "errors": []
+}

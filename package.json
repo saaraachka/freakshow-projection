@@ -7,7 +7,7 @@
     "dev": "node scripts/serve.js",
     "build": "node scripts/build.js",
     "preview": "node scripts/serve.js dist",
-    "test": "node --test tests/engine.test.js tests/rig.test.js tests/character.test.js",
+    "test": "node --test tests/engine.test.js tests/rig.test.js tests/character.test.js tests/live-show.test.js",
     "test:browser": "npm run build && node tests/browser.js",
     "check-session": "node scripts/check-session.js",
     "format": "prettier --write index.html styles.css src scripts tests README.md package.json manifest.webmanifest sw.js",
@@ -19,7 +19,8 @@
     "sculpt:check": "node scripts/check-character-sculpt-cache.js",
     "test:sculpt": "npm run build && node tests/sculpt-cleanup-browser.js",
     "expressions:bake": "node scripts/bake-expression-prototype.js",
-    "expressions:check": "node scripts/bake-expression-prototype.js --check"
+    "expressions:check": "node scripts/bake-expression-prototype.js --check",
+    "test:live": "node tests/live-show-browser.js"
   },
   "engines": {
     "node": ">=20"

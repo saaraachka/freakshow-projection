@@ -1,0 +1,6 @@
+{
+  "offline": true,
+  "audioWorklet": true,
+  "vertices": 82720,
+  "worker": "http://localhost:5195/freakshow-projection/sw.js"
+}

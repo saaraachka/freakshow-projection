@@ -65,6 +65,7 @@ function sceneOptions() {
 }
 let lastPreviewRender = -Infinity;
 function renderPreview(now = performance.now()) {
+  if (mode === "live") return;
   const settings = sceneOptions(),
     fps =
       settings.character !== "mesh" || settings.characterQuality === "high"
@@ -307,11 +308,42 @@ for (const key of Object.keys(DEFAULTS).filter((k) => $(k)))
     rebuild();
     persist();
   });
+let liveFrame = null;
+function activateCandidateLive(enabled) {
+  document.body.classList.toggle("candidate-live", enabled);
+  if (enabled && !liveFrame) {
+    const container = document.createElement("section");
+    container.id = "candidate-live-show";
+    const link = document.createElement("a");
+    link.href = new URL(
+      "../public/live-show/index.html?release=show-1",
+      import.meta.url,
+    ).href;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = "Open Live Show in its own tab";
+    liveFrame = document.createElement("iframe");
+    liveFrame.title = "FREAKSHOW Candidate A Live Show";
+    liveFrame.allow = "microphone; fullscreen";
+    liveFrame.allowFullscreen = true;
+    liveFrame.src = link.href;
+    container.append(link, liveFrame);
+    document.querySelector("main").prepend(container);
+  }
+  if (liveFrame) {
+    liveFrame.parentElement.hidden = !enabled;
+    liveFrame.contentWindow?.postMessage(
+      { type: "freakshow-live-active", active: enabled },
+      location.origin,
+    );
+  }
+}
 function setMode(next) {
   if (mode === next) return;
   audio.pause();
   stopMic();
   mode = next;
+  activateCandidateLive(mode === "live");
   rigMotion.reset();
   paused = false;
   $("pauseMotion").textContent = "Pause motion";
@@ -906,6 +938,7 @@ function tick(now) {
   if (isProjector) return;
   const delta = Math.min(0.1, (now - (lastFrame || now)) / 1000);
   lastFrame = now;
+  if (mode === "live") return;
   if (mode === "song" && frames.length) {
     const index = Math.min(
       frames.length - 1,
@@ -1028,3 +1061,6 @@ document.addEventListener("keydown", (e) => {
     else $("pauseMotion").click();
   }
 });
+
+if (new URLSearchParams(location.search).get("mode") === "live")
+  setMode("live");

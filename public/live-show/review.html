@@ -1,0 +1,91 @@
+<!doctype html><meta charset="utf-8" /><meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+/><title>FREAKSHOW · Live Show release review</title
+><style>
+  body {
+    max-width: 1120px;
+    margin: 24px auto;
+    padding: 16px;
+    background: #111216;
+    color: #eee4d4;
+    font: 16px/1.5 system-ui;
+  }
+  a {
+    color: #edbd88;
+  }
+  img {
+    max-width: 100%;
+    display: block;
+    margin: 20px 0;
+  }
+  small {
+    color: #bcb4a8;
+  }
+</style>
+<h1>Candidate A · Live Show</h1>
+<p>
+  <a href="./index.html">Open the live show</a> ·
+  <a href="../../?mode=live">Open inside FREAKSHOW</a> ·
+  <a href="../candidate-a-rig/index.html?release=0924235"
+    >Unchanged approved rig viewer</a
+  >
+</p>
+<p>
+  The original 0924235 sculpt and six-expression rig are reused without geometry
+  changes. Distinct attack/release gestures are layered within its bounded
+  controls. Audio sample analysis runs in the audio worklet, independently of
+  rendering. The failed local mouth prototypes are excluded.
+</p>
+<img
+  src="./review/grin.jpg"
+  alt="Approved Candidate A sinister grin on the black projection stage"
+/>
+<h2>Matched gesture and preset peaks</h2>
+<p>
+  Kick, snare, clap, subtle hat, melody, then the six existing presets. These
+  are rendered 3D screenshots using identical camera and lighting; the live
+  character remains an actual 3D mesh.
+</p>
+<img
+  src="./review/poses.jpg"
+  alt="Matched views of the five musical gestures and six approved facial presets"
+/>
+<h2>Consolidated verification</h2>
+<ul>
+  <li>
+    34 unit tests; protected source inventory and sculpt/expression cache
+    checks.
+  </li>
+  <li>
+    Chromium: captured synthetic WAV through real getUserMedia → audio worklet →
+    FFT/onsets → bounded facial gestures. All four active event families
+    detected; hats detected but ignored by default.
+  </li>
+  <li>
+    WebKit: synthetic MediaStream through the same audio pipeline; manual
+    controls, permission rejection, fullscreen, projector synchronization and
+    exact reset.
+  </li>
+  <li>
+    Six presets, interruptible transitions, rapid overlapping gestures,
+    automatic demo and manual fallback. Tested peaks and rapid overlap contain
+    no nonfinite vertices or reversed source-relative triangles.
+  </li>
+  <li>
+    GitHub Pages base-path build; offline reload renders 82,720-vertex Candidate
+    A and starts the cached audio worklet. Leaving Live Show stops capture.
+  </li>
+</ul>
+<p>
+  <a href="./review/chromium.json">Chromium observations</a> ·
+  <a href="./review/webkit.json">WebKit observations</a> ·
+  <a href="./review/offline.json">Offline observations</a>
+</p>
+<small
+  >These are cloud browser-engine tests, not physical Windows/macOS
+  audio-interface tests. Instrument labels are onset estimates, not audio source
+  separation. Existing Neutral/Frown/Surprised limitations are unchanged from
+  the approved baseline. Tests establish bounded behavior, not perfect
+  recognition of every song.</small
+>

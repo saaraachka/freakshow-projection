@@ -759,3 +759,26 @@ body.projector #preview {
 body.mesh-character #preview:fullscreen {
   max-height: none;
 }
+
+/* Candidate A show uses its own WebGL canvas; Song Lab/Studio stay intact. */
+.candidate-live main > .heading,
+.candidate-live main > .workspace,
+.candidate-live main > footer {
+  display: none;
+}
+#candidate-live-show > a {
+  display: block;
+  text-align: right;
+  padding: 8px 4px;
+  color: var(--muted, #bcb3a7);
+  font-size: 13px;
+}
+#candidate-live-show iframe {
+  display: block;
+  width: 100%;
+  height: calc(100dvh - 115px);
+  min-height: 550px;
+  border: 1px solid #3d3734;
+  background: #000;
+  border-radius: 10px;
+}
