@@ -1,0 +1,51 @@
+{
+  "checks": {
+    "exactRest": true,
+    "poses": {
+      "Default sinister grin": {
+        "invalid": 0,
+        "reversed": 0,
+        "minSignedAreaRatio": 1
+      },
+      "Neutral": {
+        "invalid": 0,
+        "reversed": 0,
+        "minSignedAreaRatio": 0.1896550770656022
+      },
+      "Angry": {
+        "invalid": 0,
+        "reversed": 0,
+        "minSignedAreaRatio": 0.6933591907276819
+      },
+      "Surprised": {
+        "invalid": 0,
+        "reversed": 14,
+        "minSignedAreaRatio": -0.49395523129687346
+      },
+      "Manic laughter": {
+        "invalid": 0,
+        "reversed": 0,
+        "minSignedAreaRatio": 0.6348111051405707
+      },
+      "Evil smirk": {
+        "invalid": 0,
+        "reversed": 0,
+        "minSignedAreaRatio": 0.7815584072184218
+      },
+      "Snarl": {
+        "invalid": 0,
+        "reversed": 0,
+        "minSignedAreaRatio": 0.646620459262457
+      },
+      "Scream": {
+        "invalid": 0,
+        "reversed": 0,
+        "minSignedAreaRatio": 0.2640992705585848
+      }
+    },
+    "returned": true,
+    "indicesUnchanged": true,
+    "teethRestored": true
+  },
+  "errors": []
+}

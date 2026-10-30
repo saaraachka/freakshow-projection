@@ -1,0 +1,26 @@
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {createProceduralHead} from '../3d-character-viewer/baseline-fed4cd1/procedural-head.js';
+import {bindRig,controls,presets,zero} from './rig.js';
+const $=id=>document.getElementById(id),renderer=new THREE.WebGLRenderer({canvas:$('prototype'),antialias:true});renderer.setClearColor(0x191d24);renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+const scene=new THREE.Scene(),clay=new THREE.MeshStandardMaterial({color:0xaaa59d,roughness:.9});scene.overrideMaterial=clay;scene.add(new THREE.HemisphereLight(0xffffff,0x555555,1.5));for(const [power,pos]of [[2.4,[3,5,5]],[1.2,[-4,2,3]],[2,[2,4,-5]]]){const l=new THREE.DirectionalLight(0xffffff,power);l.position.set(...pos);scene.add(l);}
+const camera=new THREE.PerspectiveCamera(37,1,.01,100),orbit=new OrbitControls(camera,$('prototype'));orbit.minDistance=1.4;orbit.maxDistance=18;let dirty=true,character,rig,current=zero(),transition=null,sequence=null,next=0,seqIndex=0,lastBlink=0;
+function render(){renderer.render(scene,camera);dirty=false;}
+function setView(name='front'){const target=new THREE.Vector3(0,.28,-.1),dir=new THREE.Vector3(...({front:[0,0,1],three:[.75,.1,1],side:[1,0,0]})[name]);orbit.target.copy(target);camera.position.copy(dir).normalize().multiplyScalar(5.4/Math.min(1,camera.aspect/.96)).add(target);orbit.update();dirty=true;}
+function resize(){const e=$('prototype').parentElement;renderer.setSize(e.clientWidth,e.clientHeight,false);camera.aspect=e.clientWidth/e.clientHeight;camera.updateProjectionMatrix();dirty=true;}
+new ResizeObserver(resize).observe($('prototype').parentElement);resize();setView();orbit.addEventListener('change',()=>dirty=true);
+function sync(){for(const key of Object.keys(controls)){$(key).value=current[key];$(`${key}-value`).textContent=current[key].toFixed(key==='jawOpen'?1:2);}}
+function pose(q){if(!rig)return;current=rig.set(q);sync();dirty=true;}
+function to(q,duration=+$('duration').value){transition={from:{...current},to:{...zero(),...q},start:performance.now(),duration:Math.max(.05,duration)*1000};}
+for(const [name,value]of Object.entries(presets)){const b=document.createElement('button');b.textContent=name;b.dataset.preset=name;b.onclick=()=>{sequence=null;to(value);document.querySelectorAll('[data-preset]').forEach(x=>x.classList.toggle('active',x===b));};$('presets').append(b);}
+for(const [key,[label,min,max,value]]of Object.entries(controls)){const l=document.createElement('label');l.textContent=label;const o=document.createElement('output');o.id=key+'-value';o.textContent=value;const i=document.createElement('input');i.id=key;i.type='range';i.min=min;i.max=max;i.value=value;i.step=key==='jawOpen'?.05:.01;i.oninput=()=>{transition=sequence=null;pose({...current,[key]:+i.value});};l.append(o,i);$('channels').append(l);}
+for(const b of document.querySelectorAll('[data-view]'))b.onclick=()=>setView(b.dataset.view);
+$('clay').onchange=()=>{scene.overrideMaterial=$('clay').checked?clay:null;dirty=true;};$('rest').onclick=()=>{transition=sequence=null;$('auto-blink').checked=false;pose(zero());};$('stop').onclick=()=>{transition=sequence=null;};$('duration').oninput=()=>{$('duration-value').textContent=$('duration').value+' s';};
+$('cycle').onclick=()=>{sequence='slow';seqIndex=0;next=0;};$('rapid').onclick=()=>{sequence='rapid';seqIndex=0;next=0;};
+try{character=await createProceduralHead();scene.add(character.root);rig=bindRig(character);$('status').textContent='Original Candidate A surface · independent channels · interruptible eased transitions';pose(zero());}catch(e){$('status').textContent=e.message;throw e;}
+window.candidateARig={character,rig,controls,presets,pose(q){transition=sequence=null;pose(q);render();},transition(q,d){to(q,d);},setView(name){setView(name);render();},get current(){return {...current};},get transitioning(){return !!transition;},render};
+function frame(now){requestAnimationFrame(frame);if(!rig)return;if(sequence&&now>=next){const list=Object.values(presets);to(list[seqIndex++%list.length],sequence==='rapid'?.18:+$('duration').value);next=now+(sequence==='rapid'?450:(+$('duration').value+1.2)*1000);}
+ if(transition){const t=Math.min(1,(now-transition.start)/transition.duration),w=t*t*t*(10+t*(-15+6*t)),q={};for(const key of Object.keys(controls))q[key]=transition.from[key]+(transition.to[key]-transition.from[key])*w;pose(q);if(t===1)transition=null;}
+ if($('auto-blink').checked){const phase=now%4200,b=phase<280?Math.sin(Math.PI*phase/280)**2:0;if(b!==lastBlink){rig.set({...current,blink:Math.max(b,current.blink)});lastBlink=b;dirty=true;}}else if(lastBlink){rig.set(current);lastBlink=0;dirty=true;}
+ if(dirty){const t=performance.now();render();$('timing').textContent=`${rig.jaw.degrees.toFixed(1)}° jaw · ${character.face.geometry.attributes.position.count.toLocaleString()} original skin vertices`;}}
+requestAnimationFrame(frame);

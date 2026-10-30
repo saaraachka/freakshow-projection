@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Candidate A · Facial performance lab</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #171c23;
+        color: #e6e0d5;
+        font: 15px system-ui;
+      }
+      header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #49505b;
+      }
+      h1 {
+        font-size: 23px;
+        margin: 4px 0;
+      }
+      small {
+        color: #b7cc9a;
+      }
+      button {
+        background: #303b49;
+        color: inherit;
+        border: 1px solid #637083;
+        border-radius: 7px;
+        padding: 9px;
+        cursor: pointer;
+      }
+      button.active {
+        background: #b8d18e;
+        color: #18201c;
+      }
+      button:disabled {
+        opacity: 0.5;
+      }
+      nav,
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin: 10px 0;
+      }
+      label {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+      }
+      input {
+        accent-color: #bbd98b;
+      }
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        max-width: 1600px;
+        margin: auto;
+      }
+      .stage {
+        height: 650px;
+        position: sticky;
+        top: 0;
+        min-width: 0;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      aside {
+        padding: 16px;
+        background: #202630;
+      }
+      #presets {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+      }
+      #channels label {
+        display: grid;
+        grid-template-columns: 1fr 44px;
+        width: 100%;
+        margin: 14px 0 5px;
+        font-size: 13px;
+      }
+      #channels input {
+        grid-column: 1/3;
+        width: 100%;
+      }
+      output {
+        text-align: right;
+        color: #c6dba4;
+      }
+      footer {
+        padding: 20px;
+        max-width: 1100px;
+        margin: auto;
+        color: #bdc5cb;
+      }
+      a {
+        color: #c6dda5;
+      }
+      #status {
+        min-height: 20px;
+      }
+      details {
+        margin: 12px 0;
+      }
+      #reference {
+        display: none;
+      }
+      @media (max-width: 760px) {
+        main {
+          display: block;
+        }
+        .stage {
+          height: 460px;
+          position: relative;
+        }
+        aside {
+          padding: 14px;
+        }
+        #channels {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0 18px;
+        }
+        header {
+          padding: 12px;
+        }
+        h1 {
+          font-size: 20px;
+        }
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../character-3d/vendor/three.module.js",
+          "three/addons/controls/OrbitControls.js": "../character-3d/vendor/OrbitControls.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <small>CANDIDATE A · SEPARATE DEVELOPMENT VIEWER</small>
+      <h1>Facial performance lab</h1>
+      <p id="status">Loading protected Candidate A…</p>
+      <nav>
+        <button data-view="front">Front</button
+        ><button data-view="three">¾</button
+        ><button data-view="side">Profile</button
+        ><label><input id="clay" type="checkbox" checked /> Clay</label
+        ><button id="rest">Exact approved grin</button>
+      </nav>
+      <div class="row">
+        <label
+          >Transition
+          <input
+            id="duration"
+            type="range"
+            min=".1"
+            max="3"
+            value=".8"
+            step=".1"
+          /><output id="duration-value">0.8 s</output></label
+        ><button id="cycle">Cycle expressions</button
+        ><button id="rapid">Rapid gestures</button
+        ><button id="rehearsal">Percussion rehearsal</button
+        ><button id="stop">Pause</button
+        ><label
+          ><input id="auto-blink" type="checkbox" /> Gentle lid motion</label
+        >
+      </div>
+      <div class="row">
+        <span>Tap / keys 1–4:</span><button data-gesture="kick">1 · Kick</button
+        ><button data-gesture="snare">2 · Snare</button
+        ><button data-gesture="clap">3 · Clap</button
+        ><button data-gesture="hat">4 · Hi-hat / other</button
+        ><span id="activity" role="status">Approved grin</span>
+      </div>
+    </header>
+    <main>
+      <div class="stage">
+        <canvas
+          id="prototype"
+          aria-label="Interactive original Candidate A facial rig"
+        ></canvas
+        ><canvas id="reference"></canvas>
+      </div>
+      <aside>
+        <h2>Expressions</h2>
+        <div id="presets"></div>
+        <details>
+          <summary>Individual controls · bounded ranges</summary>
+          <div id="channels"></div>
+        </details>
+        <details>
+          <summary>Future expressions</summary>
+          <p>Experimental; excluded from cycling and rehearsal.</p>
+          <div id="experimental"></div>
+        </details>
+        <p id="timing"></p>
+      </aside>
+    </main>
+    <footer>
+      <p id="limits">
+        Event review build · five supported expressions. Jaw: 0–6°. Surprised is
+        softly open, not a pursed O; Neutral retains this clown’s character.
+        Full closure, full blink and extreme pursing are restricted. Rehearsal
+        uses timed gestures only—no microphone or audio analysis. Production and
+        prior checkpoints are unchanged.
+      </p>
+      <p>
+        <a href="./review.html">Batch visual review and limitations</a> ·
+        <a href="../candidate-a-cage/index.html">Protected jaw-stage viewer</a>
+        ·
+        <a href="../sculpt-comparison/index.html">Original visual comparison</a>
+      </p>
+    </footer>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

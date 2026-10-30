@@ -1,0 +1,67 @@
+import * as THREE from 'three';
+import {bindCandidateACage} from '../candidate-a-cage/jaw-cage.js';
+import {mouthLine,eyeLandmark,lipLandmarks} from '../3d-character-viewer/baseline-fed4cd1/implicit-skin.js';
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),smooth=(x,a,b)=>{let t=clamp((x-a)/(b-a));return t*t*t*(10+t*(-15+6*t));},G=x=>Math.exp(-x*x);
+export const controls={
+ jawOpen:['Jaw opening',0,6,0],mouthClose:['Lip closure',0,1,0],grin:['Grin relaxation',0,1,0],lipRound:['Lip rounding',0,1,0],mouthWide:['E / lateral stretch',0,1,0],mouthA:['A / lip separation',0,1,0],cornerLeft:['Left corner',-1,1,0],cornerRight:['Right corner',-1,1,0],lipCompress:['Lip compression',0,1,0],upperLipRaise:['Upper lip / snarl',0,1,0],browRelax:['Brow relaxation',0,1,0],browRaise:['Both brows raised',0,1,0],innerRaise:['Inner brow lift',0,1,0],browAnger:['Inner brows down',0,1,0],outerRaise:['Outer brow lift',0,1,0],browLeft:['Left brow lift',0,1,0],browRight:['Right brow lift',0,1,0],eyeOpen:['Eyes wider',0,1,0],squint:['Eyelid narrowing',0,1,0],blink:['Blink',0,1,0],cheekRaise:['Cheek lift',-1,1,0],nasolabial:['Nasolabial tension',-1,1,0],gazeX:['Gaze left / right',-1,1,0],gazeY:['Gaze down / up',-1,1,0]};
+export const zero=()=>Object.fromEntries(Object.keys(controls).map(k=>[k,0]));
+export const presets={
+ 'Default sinister grin':{},
+ 'Neutral':{mouthClose:1,grin:.65,browRelax:.75,browRaise:.18,browAnger:0,cheekRaise:-.25},
+ 'Angry':{browAnger:.8,outerRaise:.25,squint:.35,cornerLeft:.15,cornerRight:.15,cheekRaise:.25},
+ 'Surprised':{jawOpen:6,browRaise:.7,innerRaise:.35,eyeOpen:.9,grin:.32,lipRound:.85,cheekRaise:-.15},
+ 'Manic laughter':{jawOpen:6,browRaise:.35,cheekRaise:.65,cornerLeft:.4,cornerRight:.4,squint:.25},
+ 'Evil smirk':{cornerLeft:.65,cornerRight:-.18,browLeft:.6,squint:.25,cheekRaise:.2},
+ 'Snarl':{jawOpen:1.2,upperLipRaise:.8,browAnger:.55,nasolabial:.7,squint:.3},
+ 'Scream':{jawOpen:6,mouthA:.65,eyeOpen:1,browRaise:.8,innerRaise:.4,grin:.2}
+};
+export function bindRig(character){
+ const jaw=bindCandidateACage(character),g=character.face.geometry,P=jaw.rest,N=jaw.restNormals,count=P.length/3,fields={};
+ for(const name of Object.keys(controls))if(!['jawOpen','gazeX','gazeY'].includes(name))fields[name]=new Float32Array(P.length);
+ // Smooth, anatomy-local control fields on the original sculpt. No target rest
+ // shape is transferred; original topology, material groups and teeth survive.
+ for(let i=0;i<count;i++){
+  const k=i*3,x=P[k],y=P[k+1],z=P[k+2],a=Math.abs(x),front=smooth(z,.12,.38),side=1-smooth(a,.72,.90),c=mouthLine(x),v=y-c,span=Math.sqrt(Math.max(0,1-(x/.665)**2)),lip=lipLandmarks(x);
+  const mouth=front*side*(1-smooth(a,.62,.82))*(1-smooth(Math.abs(v),.20,.38))*(1-smooth(y,-.14,-.04));
+  const upper=smooth(v,-.025,.035),lower=1-upper,body=G((Math.abs(v)-.12*span)/.10),corner=G((a-.62)/.13)*G(v/.15)*front;
+  const delta=(name,dx,dy,dz)=>fields[name].set([dx,dy,dz],k);
+  // Closure translates each lip body towards contact; the broad cheek support
+ // relaxes the grin without replacing the approved zero state.
+  const closure=mouth,meet=-.43;
+  const h=.125*span,epsilon=.012,softClip=.5*(Math.sqrt((v+h)**2+epsilon**2)-Math.sqrt((v-h)**2+epsilon**2));
+  delta('mouthClose',0,closure*(-.98*softClip+(meet-c)*.40),mouth*.008*body);
+  delta('grin',-x*.075*mouth,-.065*(a/.665)**2*mouth,.004*mouth);
+  delta('lipRound',-x*.60*mouth,(-.12*(a/.665)**2+.012*Math.tanh(v/.04)*body)*mouth,(.028*upper+.012*lower)*body*mouth);
+  delta('mouthWide',x*.065*mouth,.008*Math.sign(v)*mouth,-.008*mouth);
+  delta('mouthA',-x*.015*mouth,.022*Math.sign(v)*body*mouth,0);
+  delta('lipCompress',0,-.010*Math.sign(v)*body*mouth,-.008*body*mouth);
+  delta('upperLipRaise',0,.045*mouth*upper*G(x/.50),-.006*mouth*upper);
+  delta('cornerLeft',0,.050*corner*(x<0?1:0),.004*corner*(x<0?1:0));
+  delta('cornerRight',0,.050*corner*(x>0?1:0),.004*corner*(x>0?1:0));
+  const cheek=G((a-.59)/.19)*G((y+.11)/.22)*front;
+  delta('cheekRaise',0,.035*cheek,.012*cheek);
+  const fold=G((a-(.23+.88*clamp(-y-.1,0,.5)))/.11)*G((y+.28)/.20)*front;
+  delta('nasolabial',0,.013*fold,.010*fold);
+  const browY=.445+.52*(a-.35),brow=G((y-browY)/.16)*(smooth(a,.10,.21))*(1-smooth(a,.61,.77))*front,inner=1-smooth(a,.20,.48),outer=smooth(a,.30,.60);
+  delta('browRelax',0,-.45*(a-.35)*brow,0);
+  delta('browRaise',0,.075*brow,-.008*brow);
+  delta('innerRaise',0,.075*brow*inner,-.010*brow*inner);
+  delta('browAnger',0,-.036*brow*inner,.008*brow*inner);
+  delta('outerRaise',0,.045*brow*outer,0);
+  delta('browLeft',0,x<0?.065*brow:0,0);delta('browRight',0,x>0?.065*brow:0,0);
+  const e=eyeLandmark(x<0?-1:1),dx=x-e.x,dy=y-e.y-e.tilt*dx,eq=Math.hypot(dx/e.width,dy/e.height),rim=G((eq-1)/.85)*smooth(z,e.z+.08,e.z+.18)*(1-smooth(Math.abs(dx),.19,.29));
+  // Rotate lid tissue over its globe instead of letting its edge sink inward.
+  const lidShift=(amount)=>{const move=amount*rim*dy,ny=y+move,rx=x-e.x,old=Math.sqrt(Math.max(.001,.242**2-rx*rx-(y-e.y)**2)),next=Math.sqrt(Math.max(.001,.242**2-rx*rx-(ny-e.y)**2));return [0,move,(next-old)*rim];};
+  delta('eyeOpen',...lidShift(.60));delta('squint',...lidShift(-.28));delta('blink',...lidShift(-.97));
+ }
+ const caps=[];character.root.traverse(o=>{if(o.isMesh&&['CurvedAcidGreenIris','CurvedPupil'].includes(o.name)){const arr=o.geometry.attributes.position.array;let sx=0;for(let i=0;i<arr.length;i+=3)sx+=arr[i];const e=eyeLandmark(sx<0?-1:1);caps.push({mesh:o,rest:arr.slice(),center:new THREE.Vector3(e.x,e.y,e.z)});}});
+ let current=zero();
+ function set(input={}){
+  const q=zero();for(const [key,c]of Object.entries(controls))q[key]=clamp(Number(input[key])||0,c[1],c[2]);
+  jaw.set(q.jawOpen);const p=g.attributes.position.array,active=Object.keys(fields).filter(k=>Math.abs(q[k])>.000001);
+  if(active.length){for(const key of active){const f=fields[key],w=q[key];for(let j=0;j<p.length;j++)p[j]+=f[j]*w;}g.computeVertexNormals();g.attributes.position.needsUpdate=true;g.computeBoundingSphere();}
+  for(const cap of caps){const arr=cap.mesh.geometry.attributes.position.array;if(q.gazeX===0&&q.gazeY===0)arr.set(cap.rest);else{const rot=new THREE.Euler(-q.gazeY*.16,q.gazeX*.20,0),v=new THREE.Vector3();for(let j=0;j<arr.length;j+=3){v.fromArray(cap.rest,j).sub(cap.center).applyEuler(rot).add(cap.center).toArray(arr,j);}}cap.mesh.geometry.attributes.position.needsUpdate=true;}
+  current=q;return q;
+ }
+ set();return {set,jaw,fields,rest:P,restNormals:N,get current(){return {...current};}};
+}
